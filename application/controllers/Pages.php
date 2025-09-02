@@ -33,6 +33,8 @@ class Pages extends CI_Controller
                     'note' => $this->input->post('notes'),
                     'name' => $_FILES['file']['name']
                 ]);
+
+                echo '<script>alert("Training manual added successfully!"); window.location.href = "/";</script>';
             }
         }
 

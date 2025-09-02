@@ -97,6 +97,15 @@
             dropAreaPlaceholder.classList.add("d-none");
         });
     }
+
+    function showFloatingAlert() {
+        const alert = document.getElementById('floatingAlert');
+        alert.classList.add('show');
+
+        setTimeout(() => {
+            alert.classList.remove('show');
+        }, 4000);
+    }
 </script>
 
 

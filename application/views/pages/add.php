@@ -3,6 +3,39 @@
         opacity: 0.7 !important;
     }
 
+    /* Floating Success Alert */
+    .success-alert-floating {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #00b09b, #96c93d);
+        color: white;
+        padding: 20px 25px;
+        border-radius: 15px;
+        box-shadow: 0 15px 35px rgba(0, 176, 155, 0.3);
+        transform: translateX(400px);
+        transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        z-index: 1000;
+        max-width: 350px;
+    }
+
+    .success-alert-floating.show {
+        transform: translateX(0);
+    }
+
+    .success-alert-floating .success-icon {
+        width: 50px;
+        height: 50px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 15px;
+        animation: pulse 2s infinite;
+    }
+    /* end of Floating Success Alert */
+
     .upload-box {
         border: 2px dashed #d3d3d3;
         border-radius: 20px;
@@ -59,7 +92,7 @@
         background: #f8f9fa;
     }
 </style>
-
+<?php require 'partials/floating-alert.php' ?>
 <form action="/add" method="post" enctype="multipart/form-data">
     <div class="d-flex gap-2">
         <button type="submit" class="btn btn-primary d-flex align-items-center gap-1">
