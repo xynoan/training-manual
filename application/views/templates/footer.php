@@ -30,12 +30,17 @@
     });
 
     // helper functions
+    function clearFiles() {
+        fileInput.value = "";
+        fileList.innerHTML = "";
+        dropAreaPlaceholder.classList.remove("d-none");
+    }
+
     function handleFiles(files) {
+        /* error handlers */
         if (files.length > maxFiles) {
             alert(`You can only upload a maximum of ${maxFiles} files.`);
-            fileInput.value = "";
-            fileList.innerHTML = "";
-            dropAreaPlaceholder.classList.remove("d-none");
+            clearFiles();
             return;
         }
 
@@ -44,16 +49,17 @@
 
             if (!allowedTypes.includes(ext)) {
                 alert(`Invalid file type: "${file.name}". Only PDF and PPT files are allowed.`);
-                fileInput.value = "";
+                clearFiles();
                 return;
             }
 
             if (file.size > maxSizeMB * 1024 * 1024) {
                 alert(`File "${file.name}" exceeds ${maxSizeMB} MB.`);
-                fileInput.value = "";
+                clearFiles();
                 return;
             }
         }
+        /* end of error handlers */
 
         fileList.innerHTML = "";
         Array.from(files).forEach(file => {
