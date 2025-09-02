@@ -34,6 +34,8 @@
         if (files.length > maxFiles) {
             alert(`You can only upload a maximum of ${maxFiles} files.`);
             fileInput.value = "";
+            fileList.innerHTML = "";
+            dropAreaPlaceholder.classList.remove("d-none");
             return;
         }
 

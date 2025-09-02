@@ -4,6 +4,10 @@ class Pages extends CI_Controller
 
     public function view($page = 'home')
     {
+        // foreach($this->Training_model->get_all_trainings() as $training) {
+        //     dd($training);
+        // }
+        // dd($this->Training_model->get_all_trainings());
         $errors = [];
 
         if (! file_exists(APPPATH . 'views/pages/' . $page . '.php')) {
@@ -34,8 +38,16 @@ class Pages extends CI_Controller
                     'name' => $_FILES['file']['name']
                 ]);
 
-                echo '<script>alert("Training manual added successfully!"); window.location.href = "/";</script>';
+                echo 
+                '<script>
+                    alert("Training manual added successfully!");
+                    window.location.href = "/";
+                </script>';
             }
+        }
+
+        if ($page === 'home') {
+            $data['trainings'] = $this->Training_model->get_all_trainings();
         }
 
         $data['title'] = "TRAINING MANUAL";
