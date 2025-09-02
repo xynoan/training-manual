@@ -20,9 +20,10 @@
         <thead>
             <tr>
                 <th scope="col">Title</th>
-                <th scope="col">File</th>
+                <th scope="col">Files</th>
                 <th scope="col">Uploaded by</th>
                 <th scope="col">Uploaded at</th>
+                <th scope="col">Notes</th>
                 <th scope="col">Actions</th>
             </tr>
         </thead>
@@ -36,6 +37,7 @@
                 </td>
                 <td>nath</td>
                 <td>08/18/2025</td>
+                <td>test notes</td>
                 <td>
                     <div class="btn-group">
                         <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
@@ -72,6 +74,7 @@
                 </td>
                 <td>nath</td>
                 <td>08/18/2025</td>
+                <td>test notes</td>
                 <td>
                     <div class="btn-group">
                         <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
@@ -108,6 +111,7 @@
                 </td>
                 <td>nath</td>
                 <td>08/18/2025</td>
+                <td>test notes</td>
                 <td>
                     <div class="btn-group">
                         <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
