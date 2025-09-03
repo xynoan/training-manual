@@ -94,7 +94,7 @@
     }
 </style>
 <?php require 'partials/floating-alert.php' ?>
-<form action="<?= site_url('pages/view/edit?id=' . $training['id']) ?>" method="post" enctype="multipart/form-data">
+<form action="<?= base_url('pages/view/edit?id=' . $training['id']) ?>" method="post" enctype="multipart/form-data">
     <div class="d-flex gap-2">
         <button type="submit" class="btn btn-success d-flex align-items-center gap-1" onclick="showFloatingAlert()">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-floppy2" viewBox="0 0 16 16">
@@ -114,7 +114,7 @@
         <p class="fs-4 ">Title</p>
     </label>
     <div class="w-50">
-        <input type="text" class="form-control" id="title" name="title" value="<?= $training['title'] ?>">
+        <input type="text" class="form-control" id="title" name="title" value="<?= $isset($_POST['title']) ? $_POST['title'] : $training['title'] ?>">
     </div>
     <?php if (isset($errors['title'])) : ?>
         <p class="text-danger mt-2"><?= $errors['title'] ?></p>
@@ -138,6 +138,6 @@
         <p class="fs-4 ">Notes</p>
     </label>
     <div class="w-50">
-        <textarea class="form-control" id="notes" name="notes" placeholder="Optional"><?= $training['note'] ?></textarea>
+        <textarea class="form-control" id="notes" name="notes" placeholder="Optional"><?= isset($_POST['notes']) ? $_POST['notes'] : $training['note'] ?></textarea>
     </div>
 </form>
