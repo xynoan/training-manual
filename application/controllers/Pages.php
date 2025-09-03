@@ -76,18 +76,7 @@ class Pages extends CI_Controller
             show_404();
         }
 
-        if ($this->Training_model->delete_training($id)) {
-            echo
-            '<script>
-                alert("Training manual deleted successfully!");
-                window.location.href = "/";
-            </script>';
-        } else {
-            echo
-            '<script>
-                alert("Error.");
-            </script>';
-        }
+        $this->Training_model->delete_training($id);
 
         redirect('/');
     }
