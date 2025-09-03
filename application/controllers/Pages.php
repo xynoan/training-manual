@@ -32,18 +32,32 @@ class Pages extends CI_Controller
             }
 
             if (empty($errors)) {
-                $this->Training_model->insert_training([
-                    'title' => $this->input->post('title'),
-                    'note' => $this->input->post('notes'),
-                    'name' => $_FILES['file']['name']
-                ]);
-
-                // error: when removing alert, the showFloatingALert() from onclick no longer works
-                echo
-                '<script>
+                if ($page === 'add') {
+                    $this->Training_model->insert_training([
+                        'title' => $this->input->post('title'),
+                        'note' => $this->input->post('notes'),
+                        'name' => $_FILES['file']['name']
+                    ]);
+                    // error: when removing alert, the showFloatingALert() from onclick no longer works
+                    echo
+                    '<script>
                     alert("Training manual added successfully!");
                     window.location.href = "/";
                 </script>';
+                } 
+                
+                if ($page === 'edit?id=' . $_GET['id']) {
+                    $this->Training_model->update_training($_GET['id'], [
+                        'title' => $this->input->post('title'),
+                        'note' => $this->input->post('notes'),
+                        'name' => $_FILES['file']['name']
+                    ]);
+                    echo
+                    '<script>
+                        alert("Training manual updated successfully!");
+                        window.location.href = "/";
+                    </script>';
+                }
             }
         }
 
@@ -61,6 +75,20 @@ class Pages extends CI_Controller
 
             $data['trainings'] = $this->Training_model->get_all_trainings_paginated($config['per_page'], $offset);
             $data['pagination'] = $this->pagination->create_links();
+        }
+
+        if ($page === 'edit') {
+            if (!isset($_GET['id']) || empty($_GET['id'])) {
+                show_404();
+            }
+
+            $training = $this->Training_model->get_training_by_id($_GET['id']);
+
+            if (!$training) {
+                show_404();
+            }
+
+            $data['training'] = $training;
         }
 
         $data['title'] = "TRAINING MANUAL";

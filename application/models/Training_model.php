@@ -75,6 +75,32 @@ class Training_model extends CI_Model
         return $this->db->delete('tbl_training_manual', ['id' => $id]);
     }
 
+    public function get_training_by_id($id)
+    {
+        $this->db->select('
+        tm.id, 
+        tm.title, 
+        GROUP_CONCAT(tmf.file_name) AS file_names, 
+        tm.created_by, 
+        tm.created_at, 
+        tmn.note
+    ');
+        $this->db->from('tbl_training_manual tm');
+        $this->db->join('tbl_training_manual_file tmf', 'tm.id = tmf.manual_id', 'left');
+        $this->db->join('tbl_training_manual_notes tmn', 'tm.id = tmn.manual_id', 'left');
+        $this->db->where('tm.id', $id);
+        $this->db->group_by('tm.id');
+        $this->db->order_by('tm.id', 'ASC');
+        $query = $this->db->get();
+        $result = $query->row_array();
+        if ($result) {
+            $result['file_names'] = $result['file_names']
+                ? explode(',', $result['file_names'])
+                : [];
+        }
+        return $result;
+    }
+
     public function get_all_trainings_paginated($limit, $offset)
     {
         $this->db->select('
