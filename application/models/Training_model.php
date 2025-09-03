@@ -35,7 +35,7 @@ class Training_model extends CI_Model
         return $manual_id;
     }
 
-    public function get_all_trainings()
+    public function get_all_trainings_paginated($limit, $offset)
     {
         $this->db->select('
         tm.id, 
@@ -50,6 +50,7 @@ class Training_model extends CI_Model
         $this->db->join('tbl_training_manual_notes tmn', 'tm.id = tmn.manual_id', 'left');
         $this->db->group_by('tm.id');
         $this->db->order_by('tm.id', 'ASC');
+        $this->db->limit($limit, $offset);
 
         $query = $this->db->get();
         $results = $query->result_array();
@@ -61,5 +62,10 @@ class Training_model extends CI_Model
         }
 
         return $results;
+    }
+
+    public function count_all_trainings()
+    {
+        return $this->db->count_all('tbl_training_manual');
     }
 }
