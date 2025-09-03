@@ -33,7 +33,7 @@
                 <?php foreach ($trainings as $training): ?>
                     <?php $uploaded_at = date_format(date_create($training['created_at']), "m/d/Y") ?>
                     <tr>
-                        <td><?= $training['title'] ?></td>
+                        <td><?= htmlspecialchars($training['title']) ?></td>
                         <td>
                             <?php foreach ($training['file_names'] as $index => $file_name): ?>
                                 <a class="link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover" href="#">
@@ -44,7 +44,7 @@
                         </td>
                         <td>nath</td>
                         <td><?= $uploaded_at ?></td>
-                        <td><?= isset($training['note']) ? $training['note'] : '' ?></td>
+                        <td><?= isset($training['note']) ? htmlspecialchars($training['note']) : '' ?></td>
                         <td>
                             <div class="btn-group">
                                 <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
