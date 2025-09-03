@@ -114,7 +114,8 @@
         <p class="fs-4 ">Title</p>
     </label>
     <div class="w-50">
-        <input type="text" class="form-control" id="title" name="title" value="<?= $isset($_POST['title']) ? $_POST['title'] : $training['title'] ?>">
+        <input type="text" class="form-control" id="title" name="title"
+            value="<?= isset($_POST['title']) ? htmlspecialchars($_POST['title']) : htmlspecialchars($training['title']) ?>">
     </div>
     <?php if (isset($errors['title'])) : ?>
         <p class="text-danger mt-2"><?= $errors['title'] ?></p>
@@ -138,6 +139,6 @@
         <p class="fs-4 ">Notes</p>
     </label>
     <div class="w-50">
-        <textarea class="form-control" id="notes" name="notes" placeholder="Optional"><?= isset($_POST['notes']) ? $_POST['notes'] : $training['note'] ?></textarea>
+        <textarea class="form-control" id="notes" name="notes" placeholder="Optional"><?= isset($_POST['notes']) ? htmlspecialchars($_POST['notes']) : htmlspecialchars($training['note']) ?></textarea>
     </div>
 </form>
