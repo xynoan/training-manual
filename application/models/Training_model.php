@@ -6,6 +6,8 @@ class Training_model extends CI_Model
         $this->load->database();
     }
 
+    // operations: insert, update, delete, get
+
     public function insert_training($data)
     {
         $training_data = array(
@@ -33,6 +35,11 @@ class Training_model extends CI_Model
         }
 
         return $manual_id;
+    }
+
+    public function delete_training($id)
+    {
+        return $this->db->delete('tbl_training_manual', ['id' => $id]);
     }
 
     public function get_all_trainings_paginated($limit, $offset)

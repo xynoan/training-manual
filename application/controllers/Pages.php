@@ -69,4 +69,26 @@ class Pages extends CI_Controller
         $this->load->view('pages/' . $page, array_merge($data, ['errors' => $errors]));
         $this->load->view('templates/footer', $data);
     }
+
+    public function delete($id = null)
+    {
+        if (!$id) {
+            show_404();
+        }
+
+        if ($this->Training_model->delete_training($id)) {
+            echo
+            '<script>
+                alert("Training manual deleted successfully!");
+                window.location.href = "/";
+            </script>';
+        } else {
+            echo
+            '<script>
+                alert("Error.");
+            </script>';
+        }
+
+        redirect('/');
+    }
 }
