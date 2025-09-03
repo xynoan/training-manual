@@ -38,6 +38,7 @@ class Pages extends CI_Controller
                     'name' => $_FILES['file']['name']
                 ]);
 
+                // error: when removing alert, the showFloatingALert() from onclick no longer works
                 echo
                 '<script>
                     alert("Training manual added successfully!");
