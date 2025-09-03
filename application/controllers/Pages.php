@@ -44,8 +44,8 @@ class Pages extends CI_Controller
                     alert("Training manual added successfully!");
                     window.location.href = "/";
                 </script>';
-                } 
-                
+                }
+
                 if ($page === 'edit' && isset($_GET['id'])) {
                     $this->Training_model->update_training($_GET['id'], [
                         'title' => $this->input->post('title'),
@@ -106,7 +106,9 @@ class Pages extends CI_Controller
 
         $this->Training_model->delete_training($id);
 
-        redirect('/');
+        echo
+        '<script>
+            window.location.href = "/";
+        </script>';
     }
-  
 }
