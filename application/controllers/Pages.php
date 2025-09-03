@@ -47,16 +47,18 @@ class Pages extends CI_Controller
         }
 
         if ($page === 'home') {
-            $uri_segment = 4; 
+            $uri_segment = 1;
             $config['total_rows'] = $this->Training_model->count_all_trainings();
             $config['per_page'] = 10;
             $config['uri_segment'] = $uri_segment;
 
             $this->pagination->initialize($config);
 
-            $page_num = ($this->uri->segment($uri_segment)) ? $this->uri->segment($uri_segment) : 0;
+            $page_num = ($this->uri->segment($uri_segment)) ? $this->uri->segment($uri_segment) : 1;
+            // convert page number (1,2,3...) into offset (0,10,20...)
+            $offset = ($page_num - 1) * $config['per_page'];
 
-            $data['trainings'] = $this->Training_model->get_all_trainings_paginated($config['per_page'], $page_num);
+            $data['trainings'] = $this->Training_model->get_all_trainings_paginated($config['per_page'], $offset);
             $data['pagination'] = $this->pagination->create_links();
         }
 

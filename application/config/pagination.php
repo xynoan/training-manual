@@ -1,7 +1,8 @@
 <?php
 
 $config = array(
-    'base_url' => base_url('pages/view/home'),
+    'base_url' => base_url(),
+    'use_page_numbers' => TRUE,
     'full_tag_open' => '<ul class="pagination">',
     'full_tag_close' => '</ul>',
     'first_tag_open' => '<li class="page-item"><span class="page-link">',
