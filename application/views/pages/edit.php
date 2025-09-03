@@ -34,6 +34,7 @@
         margin-bottom: 15px;
         animation: pulse 2s infinite;
     }
+
     /* end of Floating Success Alert */
 
     .upload-box {
@@ -93,7 +94,7 @@
     }
 </style>
 <?php require 'partials/floating-alert.php' ?>
-<form action="/edit" method="post" enctype="multipart/form-data">
+<form action="<?= site_url('pages/view/edit?id=' . $training['id']) ?>" method="post" enctype="multipart/form-data">
     <div class="d-flex gap-2">
         <button type="submit" class="btn btn-primary d-flex align-items-center gap-1" onclick="showFloatingAlert()">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-floppy2" viewBox="0 0 16 16">

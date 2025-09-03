@@ -46,7 +46,7 @@ class Pages extends CI_Controller
                 </script>';
                 } 
                 
-                if ($page === 'edit?id=' . $_GET['id']) {
+                if ($page === 'edit' && isset($_GET['id'])) {
                     $this->Training_model->update_training($_GET['id'], [
                         'title' => $this->input->post('title'),
                         'note' => $this->input->post('notes'),
@@ -108,4 +108,5 @@ class Pages extends CI_Controller
 
         redirect('/');
     }
+  
 }
