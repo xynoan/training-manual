@@ -4,10 +4,6 @@ class Pages extends CI_Controller
 
     public function view($page = 'home')
     {
-        // foreach($this->Training_model->get_all_trainings() as $training) {
-        //     dd($training);
-        // }
-        // dd($this->Training_model->get_all_trainings());
         $errors = [];
 
         if (! file_exists(APPPATH . 'views/pages/' . $page . '.php')) {
@@ -15,9 +11,6 @@ class Pages extends CI_Controller
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // dd($_FILES);
-            // dd($_POST);
-
             if (empty($_POST) && empty($_FILES) && $_SERVER['CONTENT_LENGTH'] > 0) {
                 $displayMaxSize = ini_get('post_max_size');
                 $errors['file'] = "File size exceeds the maximum allowed size of {$displayMaxSize}.";
@@ -85,7 +78,6 @@ class Pages extends CI_Controller
                     $base_timestamp = time();
                     for ($i = 0; $i < count($_FILES['file']['name']); $i++) {
                         if (!empty($_FILES['file']['name'][$i]) && $_FILES['file']['error'][$i] === UPLOAD_ERR_OK) {
-                            // Add microseconds and index to avoid filename collisions
                             $timestamp = $base_timestamp . sprintf('%03d', $i);
                             $filename = $timestamp . '_' . $_FILES['file']['name'][$i];
                             $filepath = $upload_dir . $filename;
@@ -102,7 +94,6 @@ class Pages extends CI_Controller
                         $index = 0;
                         foreach ($temp_files as $temp_file) {
                             if (file_exists($temp_file['temp_path'])) {
-                                // Add index to avoid filename collisions
                                 $timestamp = $base_timestamp . sprintf('%03d', $index);
                                 $filename = $timestamp . '_' . $temp_file['original_name'];
                                 $filepath = $upload_dir . $filename;
@@ -139,7 +130,6 @@ class Pages extends CI_Controller
                         'note' => $this->input->post('notes')
                     ];
                     
-                    // Only update files if new files were uploaded
                     if (!empty($files_to_save)) {
                         $update_data['name'] = $files_to_save;
                     }
@@ -232,17 +222,12 @@ class Pages extends CI_Controller
         $files = scandir($upload_dir);
         $target_file = null;
         
-        // Create a more precise matching pattern
-        // Look for files that end with exactly "_" + filename
-        // Handle both old format (timestamp_filename) and new format (timestamp###_filename)
         foreach ($files as $file) {
             if ($file !== '.' && $file !== '..') {
-                // Check if the file ends with exactly "_filename" (new format with index)
                 if (preg_match('/^\d+\d{3}_' . preg_quote($file_name, '/') . '$/', $file)) {
                     $target_file = $upload_dir . $file;
                     break;
                 }
-                // Check if the file ends with exactly "_filename" (old format)
                 if (preg_match('/^\d+_' . preg_quote($file_name, '/') . '$/', $file)) {
                     $target_file = $upload_dir . $file;
                     break;
@@ -250,7 +235,6 @@ class Pages extends CI_Controller
             }
         }
         
-        // If exact match not found, try the old method as fallback
         if (!$target_file) {
             foreach ($files as $file) {
                 if ($file !== '.' && $file !== '..' && strpos($file, '_' . $file_name) !== false) {
@@ -261,7 +245,6 @@ class Pages extends CI_Controller
         }
         
         if (!$target_file || !file_exists($target_file)) {
-            // Debug information for troubleshooting
             if (ENVIRONMENT === 'development') {
                 echo "Debug Info:<br>";
                 echo "Training ID: " . $training_id . "<br>";
