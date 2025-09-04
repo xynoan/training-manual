@@ -82,9 +82,12 @@ class Pages extends CI_Controller
                 }
                 
                 if ($has_current_files) {
+                    $base_timestamp = time();
                     for ($i = 0; $i < count($_FILES['file']['name']); $i++) {
                         if (!empty($_FILES['file']['name'][$i]) && $_FILES['file']['error'][$i] === UPLOAD_ERR_OK) {
-                            $filename = time() . '_' . $_FILES['file']['name'][$i];
+                            // Add microseconds and index to avoid filename collisions
+                            $timestamp = $base_timestamp . sprintf('%03d', $i);
+                            $filename = $timestamp . '_' . $_FILES['file']['name'][$i];
                             $filepath = $upload_dir . $filename;
                             
                             if (move_uploaded_file($_FILES['file']['tmp_name'][$i], $filepath)) {
@@ -95,14 +98,19 @@ class Pages extends CI_Controller
                 } else if ($has_temp_files) {
                     $temp_files = $this->session->userdata('temp_files');
                     if ($temp_files) {
+                        $base_timestamp = time();
+                        $index = 0;
                         foreach ($temp_files as $temp_file) {
                             if (file_exists($temp_file['temp_path'])) {
-                                $filename = time() . '_' . $temp_file['original_name'];
+                                // Add index to avoid filename collisions
+                                $timestamp = $base_timestamp . sprintf('%03d', $index);
+                                $filename = $timestamp . '_' . $temp_file['original_name'];
                                 $filepath = $upload_dir . $filename;
                                 
                                 if (copy($temp_file['temp_path'], $filepath)) {
                                     $files_to_save[] = $temp_file['original_name'];
                                 }
+                                $index++;
                             }
                         }
                     }
@@ -218,20 +226,56 @@ class Pages extends CI_Controller
             show_404();
         }
 
-        $file_name = $training['file_names'][$file_index];
+        $file_name = trim($training['file_names'][$file_index]);
         
         $upload_dir = APPPATH . '../uploads/';
         $files = scandir($upload_dir);
         $target_file = null;
         
+        // Create a more precise matching pattern
+        // Look for files that end with exactly "_" + filename
+        // Handle both old format (timestamp_filename) and new format (timestamp###_filename)
         foreach ($files as $file) {
-            if ($file !== '.' && $file !== '..' && strpos($file, '_' . $file_name) !== false) {
-                $target_file = $upload_dir . $file;
-                break;
+            if ($file !== '.' && $file !== '..') {
+                // Check if the file ends with exactly "_filename" (new format with index)
+                if (preg_match('/^\d+\d{3}_' . preg_quote($file_name, '/') . '$/', $file)) {
+                    $target_file = $upload_dir . $file;
+                    break;
+                }
+                // Check if the file ends with exactly "_filename" (old format)
+                if (preg_match('/^\d+_' . preg_quote($file_name, '/') . '$/', $file)) {
+                    $target_file = $upload_dir . $file;
+                    break;
+                }
+            }
+        }
+        
+        // If exact match not found, try the old method as fallback
+        if (!$target_file) {
+            foreach ($files as $file) {
+                if ($file !== '.' && $file !== '..' && strpos($file, '_' . $file_name) !== false) {
+                    $target_file = $upload_dir . $file;
+                    break;
+                }
             }
         }
         
         if (!$target_file || !file_exists($target_file)) {
+            // Debug information for troubleshooting
+            if (ENVIRONMENT === 'development') {
+                echo "Debug Info:<br>";
+                echo "Training ID: " . $training_id . "<br>";
+                echo "File Index: " . $file_index . "<br>";
+                echo "Requested File Name: " . $file_name . "<br>";
+                echo "Available files in uploads:<br>";
+                foreach ($files as $file) {
+                    if ($file !== '.' && $file !== '..') {
+                        echo "- " . $file . "<br>";
+                    }
+                }
+                echo "Target file found: " . ($target_file ? $target_file : 'None') . "<br>";
+                exit;
+            }
             show_404();
         }
 
