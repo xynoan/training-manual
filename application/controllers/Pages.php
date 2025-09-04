@@ -77,13 +77,11 @@ class Pages extends CI_Controller
                 $files_to_save = [];
                 $upload_dir = APPPATH . '../uploads/';
                 
-                // Create uploads directory if it doesn't exist
                 if (!is_dir($upload_dir)) {
                     mkdir($upload_dir, 0755, true);
                 }
                 
                 if ($has_current_files) {
-                    // Handle direct file uploads
                     for ($i = 0; $i < count($_FILES['file']['name']); $i++) {
                         if (!empty($_FILES['file']['name'][$i]) && $_FILES['file']['error'][$i] === UPLOAD_ERR_OK) {
                             $filename = time() . '_' . $_FILES['file']['name'][$i];
@@ -95,7 +93,6 @@ class Pages extends CI_Controller
                         }
                     }
                 } else if ($has_temp_files) {
-                    // Handle files from temp storage
                     $temp_files = $this->session->userdata('temp_files');
                     if ($temp_files) {
                         foreach ($temp_files as $temp_file) {
@@ -117,7 +114,6 @@ class Pages extends CI_Controller
                         'note' => $this->input->post('notes'),
                         'name' => $files_to_save
                     ]);
-                    // Clean up temp files after successful save
                     $this->_cleanup_temp_files();
                     $this->session->unset_userdata('uploaded_files');
                     $this->session->unset_userdata('temp_files');
@@ -135,7 +131,6 @@ class Pages extends CI_Controller
                         'note' => $this->input->post('notes'),
                         'name' => $files_to_save
                     ]);
-                    // Clean up temp files after successful save
                     $this->_cleanup_temp_files();
                     $this->session->unset_userdata('uploaded_files');
                     $this->session->unset_userdata('temp_files');
@@ -199,6 +194,85 @@ class Pages extends CI_Controller
         '<script>
             window.location.href = "/";
         </script>';
+    }
+
+    public function preview_file($training_id = null, $file_index = null)
+    {
+        if (!$training_id || $file_index === null) {
+            show_404();
+        }
+
+        // Get the training record to verify it exists and get file names
+        $training = $this->Training_model->get_training_by_id($training_id);
+        
+        if (!$training || empty($training['file_names'])) {
+            show_404();
+        }
+
+        // Check if the file index is valid
+        if (!isset($training['file_names'][$file_index])) {
+            show_404();
+        }
+
+        $file_name = $training['file_names'][$file_index];
+        
+        // Find the actual file in uploads directory
+        $upload_dir = APPPATH . '../uploads/';
+        $files = scandir($upload_dir);
+        $target_file = null;
+        
+        foreach ($files as $file) {
+            if ($file !== '.' && $file !== '..' && strpos($file, '_' . $file_name) !== false) {
+                $target_file = $upload_dir . $file;
+                break;
+            }
+        }
+        
+        if (!$target_file || !file_exists($target_file)) {
+            show_404();
+        }
+
+        // Get file info
+        $file_info = pathinfo($target_file);
+        $mime_type = $this->_get_mime_type($target_file);
+        
+        // Set appropriate headers for different file types
+        header('Content-Type: ' . $mime_type);
+        header('Content-Length: ' . filesize($target_file));
+        
+        // For PDF files, display inline; for others, suggest download
+        if (strtolower($file_info['extension']) === 'pdf') {
+            header('Content-Disposition: inline; filename="' . $file_name . '"');
+        } else {
+            header('Content-Disposition: attachment; filename="' . $file_name . '"');
+        }
+        
+        // Output the file
+        readfile($target_file);
+        exit;
+    }
+
+    private function _get_mime_type($file)
+    {
+        $file_info = pathinfo($file);
+        $extension = strtolower($file_info['extension']);
+        
+        $mime_types = array(
+            'pdf' => 'application/pdf',
+            'doc' => 'application/msword',
+            'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'xls' => 'application/vnd.ms-excel',
+            'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'ppt' => 'application/vnd.ms-powerpoint',
+            'pptx' => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+            'txt' => 'text/plain',
+            'jpg' => 'image/jpeg',
+            'jpeg' => 'image/jpeg',
+            'png' => 'image/png',
+            'gif' => 'image/gif'
+        );
+        
+        return isset($mime_types[$extension]) ? $mime_types[$extension] : 'application/octet-stream';
     }
 
     private function _cleanup_temp_files()

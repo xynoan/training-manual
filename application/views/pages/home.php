@@ -36,7 +36,12 @@
                         <td><?= htmlspecialchars($training['title']) ?></td>
                         <td>
                             <?php foreach ($training['file_names'] as $index => $file_name): ?>
-                                <a class="link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover" href="#">
+                                <a class="link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover file-preview-link" 
+                                   href="/pages/preview_file/<?= $training['id'] ?>/<?= $index ?>"
+                                   data-training-id="<?= $training['id'] ?>"
+                                   data-file-index="<?= $index ?>"
+                                   data-file-name="<?= htmlspecialchars($file_name) ?>"
+                                   data-file-extension="<?= strtolower(pathinfo($file_name, PATHINFO_EXTENSION)) ?>">
                                     <?= $file_name ?>
                                 </a>
                                 <?= $index < count($training['file_names']) - 1 ? ', ' : '' ?>
@@ -85,3 +90,122 @@
 <div>
     <?= $pagination ?>
 </div>
+
+<!-- File Preview Modal -->
+<div class="modal fade" id="filePreviewModal" tabindex="-1" aria-labelledby="filePreviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="filePreviewModalLabel">File Preview</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="filePreviewContent" style="height: 600px;">
+                    <div class="d-flex justify-content-center align-items-center h-100">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a id="downloadFileBtn" href="#" class="btn btn-primary" download>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
+                        <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
+                        <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
+                    </svg>
+                    Download File
+                </a>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filePreviewModal = new bootstrap.Modal(document.getElementById('filePreviewModal'));
+    const filePreviewContent = document.getElementById('filePreviewContent');
+    const downloadBtn = document.getElementById('downloadFileBtn');
+    const modalTitle = document.getElementById('filePreviewModalLabel');
+
+    document.querySelectorAll('.file-preview-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const fileName = this.dataset.fileName;
+            const fileExtension = this.dataset.fileExtension;
+            const previewUrl = this.href;
+            
+            modalTitle.textContent = `Preview: ${fileName}`;
+            downloadBtn.href = previewUrl;
+            downloadBtn.download = fileName;
+            
+            // Show loading spinner
+            filePreviewContent.innerHTML = `
+                <div class="d-flex justify-content-center align-items-center h-100">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            `;
+            
+            filePreviewModal.show();
+            
+            // Handle different file types
+            if (fileExtension === 'pdf') {
+                // For PDF files, embed them directly
+                filePreviewContent.innerHTML = `
+                    <iframe src="${previewUrl}" 
+                            width="100%" 
+                            height="100%" 
+                            style="border: none;">
+                        <p>Your browser does not support PDFs. 
+                           <a href="${previewUrl}" target="_blank">Click here to download the PDF</a>
+                        </p>
+                    </iframe>
+                `;
+            } else if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
+                // For images
+                filePreviewContent.innerHTML = `
+                    <div class="text-center">
+                        <img src="${previewUrl}" 
+                             class="img-fluid" 
+                             alt="${fileName}"
+                             style="max-height: 100%; max-width: 100%;">
+                    </div>
+                `;
+            } else if (fileExtension === 'txt') {
+                // For text files, fetch and display content
+                fetch(previewUrl)
+                    .then(response => response.text())
+                    .then(text => {
+                        filePreviewContent.innerHTML = `
+                            <pre style="white-space: pre-wrap; word-wrap: break-word; height: 100%; overflow-y: auto; padding: 1rem; background-color: #f8f9fa; border-radius: 0.375rem;">${text}</pre>
+                        `;
+                    })
+                    .catch(error => {
+                        filePreviewContent.innerHTML = `
+                            <div class="alert alert-warning">
+                                <h5>Preview not available</h5>
+                                <p>Cannot preview this file type. You can download it using the button below.</p>
+                            </div>
+                        `;
+                    });
+            } else {
+                // For other file types, show a message
+                filePreviewContent.innerHTML = `
+                    <div class="alert alert-info">
+                        <h5>Preview not available</h5>
+                        <p>This file type (${fileExtension.toUpperCase()}) cannot be previewed in the browser. You can download it using the button below.</p>
+                        <div class="mt-3">
+                            <strong>File:</strong> ${fileName}<br>
+                            <strong>Type:</strong> ${fileExtension.toUpperCase()}
+                        </div>
+                    </div>
+                `;
+            }
+        });
+    });
+});
+</script>
