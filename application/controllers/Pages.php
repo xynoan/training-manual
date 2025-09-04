@@ -27,34 +27,101 @@ class Pages extends CI_Controller
                 $errors['title'] = 'Please provide a title.';
             }
 
-            if (empty($_FILES['file']['name'][0])) {
+            $has_current_files = !empty($_FILES['file']['name'][0]);
+            $has_temp_files = !empty($this->session->userdata('temp_files'));
+            
+            if ($page === 'add' && !$has_current_files && !$has_temp_files) {
                 $errors['file'] = 'File is required';
+            } else if ($page === 'edit' && !$has_current_files && !$has_temp_files) {
+                $training = $this->Training_model->get_training_by_id($_GET['id']);
+                if (!$training || empty($training['file_names'])) {
+                    $errors['file'] = 'File is required';
+                }
             }
 
-            if (!empty($errors) && !empty($_FILES['file']['name'][0])) {
-                $uploaded_files = [];
-                for ($i = 0; $i < count($_FILES['file']['name']); $i++) {
-                    if (!empty($_FILES['file']['name'][$i])) {
-                        $uploaded_files[] = [
-                            'name' => $_FILES['file']['name'][$i],
-                            'size' => $_FILES['file']['size'][$i],
-                            'type' => $_FILES['file']['type'][$i]
-                        ];
+            if (!empty($errors)) {
+                if ($has_current_files) {
+                    $uploaded_files = [];
+                    $temp_files = [];
+                    
+                    for ($i = 0; $i < count($_FILES['file']['name']); $i++) {
+                        if (!empty($_FILES['file']['name'][$i]) && $_FILES['file']['error'][$i] === UPLOAD_ERR_OK) {
+                            $uploaded_files[] = [
+                                'name' => $_FILES['file']['name'][$i],
+                                'size' => $_FILES['file']['size'][$i],
+                                'type' => $_FILES['file']['type'][$i]
+                            ];
+                            
+                            $temp_filename = uniqid() . '_' . $_FILES['file']['name'][$i];
+                            $temp_path = sys_get_temp_dir() . '/' . $temp_filename;
+                            
+                            if (move_uploaded_file($_FILES['file']['tmp_name'][$i], $temp_path)) {
+                                $temp_files[] = [
+                                    'original_name' => $_FILES['file']['name'][$i],
+                                    'temp_path' => $temp_path,
+                                    'temp_filename' => $temp_filename,
+                                    'size' => $_FILES['file']['size'][$i],
+                                    'type' => $_FILES['file']['type'][$i]
+                                ];
+                            }
+                        }
                     }
+                    
+                    $this->_cleanup_temp_files();
+                    $this->session->set_userdata('uploaded_files', $uploaded_files);
+                    $this->session->set_userdata('temp_files', $temp_files);
                 }
-                $this->session->set_userdata('uploaded_files', $uploaded_files);
-            } else {
-                $this->session->unset_userdata('uploaded_files');
             }
 
             if (empty($errors)) {
+                $files_to_save = [];
+                $upload_dir = APPPATH . '../uploads/';
+                
+                // Create uploads directory if it doesn't exist
+                if (!is_dir($upload_dir)) {
+                    mkdir($upload_dir, 0755, true);
+                }
+                
+                if ($has_current_files) {
+                    // Handle direct file uploads
+                    for ($i = 0; $i < count($_FILES['file']['name']); $i++) {
+                        if (!empty($_FILES['file']['name'][$i]) && $_FILES['file']['error'][$i] === UPLOAD_ERR_OK) {
+                            $filename = time() . '_' . $_FILES['file']['name'][$i];
+                            $filepath = $upload_dir . $filename;
+                            
+                            if (move_uploaded_file($_FILES['file']['tmp_name'][$i], $filepath)) {
+                                $files_to_save[] = $_FILES['file']['name'][$i];
+                            }
+                        }
+                    }
+                } else if ($has_temp_files) {
+                    // Handle files from temp storage
+                    $temp_files = $this->session->userdata('temp_files');
+                    if ($temp_files) {
+                        foreach ($temp_files as $temp_file) {
+                            if (file_exists($temp_file['temp_path'])) {
+                                $filename = time() . '_' . $temp_file['original_name'];
+                                $filepath = $upload_dir . $filename;
+                                
+                                if (copy($temp_file['temp_path'], $filepath)) {
+                                    $files_to_save[] = $temp_file['original_name'];
+                                }
+                            }
+                        }
+                    }
+                }
+                
                 if ($page === 'add') {
                     $this->Training_model->insert_training([
                         'title' => $this->input->post('title'),
                         'note' => $this->input->post('notes'),
-                        'name' => $_FILES['file']['name']
+                        'name' => $files_to_save
                     ]);
-                    // error: when removing alert, the showFloatingALert() from onclick no longer works
+                    // Clean up temp files after successful save
+                    $this->_cleanup_temp_files();
+                    $this->session->unset_userdata('uploaded_files');
+                    $this->session->unset_userdata('temp_files');
+                    
                     echo
                     '<script>
                     alert("Training manual added successfully!");
@@ -66,8 +133,13 @@ class Pages extends CI_Controller
                     $this->Training_model->update_training($_GET['id'], [
                         'title' => $this->input->post('title'),
                         'note' => $this->input->post('notes'),
-                        'name' => $_FILES['file']['name']
+                        'name' => $files_to_save
                     ]);
+                    // Clean up temp files after successful save
+                    $this->_cleanup_temp_files();
+                    $this->session->unset_userdata('uploaded_files');
+                    $this->session->unset_userdata('temp_files');
+                    
                     echo
                     '<script>
                         alert("Training manual updated successfully!");
@@ -127,5 +199,17 @@ class Pages extends CI_Controller
         '<script>
             window.location.href = "/";
         </script>';
+    }
+
+    private function _cleanup_temp_files()
+    {
+        $temp_files = $this->session->userdata('temp_files');
+        if ($temp_files) {
+            foreach ($temp_files as $temp_file) {
+                if (file_exists($temp_file['temp_path'])) {
+                    unlink($temp_file['temp_path']);
+                }
+            }
+        }
     }
 }

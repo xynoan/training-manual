@@ -144,6 +144,5 @@
 </form>
 
 <script>
-    // Pass uploaded files data from PHP to JavaScript
     window.uploadedFilesData = <?= json_encode($uploaded_files) ?>;
 </script>

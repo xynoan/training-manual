@@ -22,7 +22,7 @@ class Training_model extends CI_Model
         $files = array(
             'manual_id' => $manual_id,
             'file_name' => $file_name,
-            'file_path' => 'hard-coded for now'
+            'file_path' => 'uploads/'
         );
         $this->db->insert('tbl_training_manual_file', $files);
 
@@ -51,7 +51,7 @@ class Training_model extends CI_Model
 
             $files = array(
                 'file_name' => $file_name,
-                'file_path' => 'hard-coded for now'
+                'file_path' => 'uploads/'
             );
 
             $this->db->where('manual_id', $id);
