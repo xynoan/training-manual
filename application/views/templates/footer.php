@@ -36,6 +36,44 @@
         dropAreaPlaceholder.classList.remove("d-none");
     }
 
+    function createFileBox(file) {
+        const box = document.createElement("div");
+        box.className = "file-box border rounded-3 p-3 text-center shadow-sm";
+
+        const ext = file.name.split('.').pop().toUpperCase();
+
+        let sizeText;
+        if (file.size < 1024 * 1024) {
+            sizeText = (file.size / 1024).toFixed(1) + " KB";
+        } else {
+            sizeText = (file.size / (1024 * 1024)).toFixed(2) + " MB";
+        }
+
+        const nameOnly = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
+        const maxLength = 18;
+        let displayName = nameOnly.length > maxLength ?
+            nameOnly.substring(0, maxLength) + "..." :
+            nameOnly;
+
+        const typeEl = document.createElement("div");
+        typeEl.className = "fw-bold text-secondary mb-1";
+        typeEl.textContent = ext;
+
+        const sizeEl = document.createElement("div");
+        sizeEl.className = "fw-bold text-primary mb-1";
+        sizeEl.textContent = sizeText;
+
+        const nameEl = document.createElement("div");
+        nameEl.className = "small text-muted";
+        nameEl.textContent = displayName;
+
+        box.appendChild(typeEl);
+        box.appendChild(sizeEl);
+        box.appendChild(nameEl);
+
+        return box;
+    }
+
     function handleFiles(files) {
         /* error handlers */
         if (files.length > maxFiles) {
@@ -63,47 +101,15 @@
 
         fileList.innerHTML = "";
         Array.from(files).forEach(file => {
-            const box = document.createElement("div");
-            box.className = "file-box border rounded-3 p-3 text-center shadow-sm";
-
-            const ext = file.name.split('.').pop().toUpperCase();
-
-            let sizeText;
-            if (file.size < 1024 * 1024) {
-                sizeText = (file.size / 1024).toFixed(1) + " KB";
-            } else {
-                sizeText = (file.size / (1024 * 1024)).toFixed(2) + " MB";
-            }
-
-            const nameOnly = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
-            const maxLength = 18;
-            let displayName = nameOnly.length > maxLength ?
-                nameOnly.substring(0, maxLength) + "..." :
-                nameOnly;
-
-            const typeEl = document.createElement("div");
-            typeEl.className = "fw-bold text-secondary mb-1";
-            typeEl.textContent = ext;
-
-            const sizeEl = document.createElement("div");
-            sizeEl.className = "fw-bold text-primary mb-1";
-            sizeEl.textContent = sizeText;
-
-            const nameEl = document.createElement("div");
-            nameEl.className = "small text-muted";
-            nameEl.textContent = displayName;
-
-            box.appendChild(typeEl);
-            box.appendChild(sizeEl);
-            box.appendChild(nameEl);
+            const box = createFileBox(file);
             fileList.appendChild(box);
-
-            if (dropArea.classList.contains("error")) {
-                dropArea.classList.remove("error");
-            }
-
-            dropAreaPlaceholder.classList.add("d-none");
         });
+        
+        if (dropArea.classList.contains("error")) {
+            dropArea.classList.remove("error");
+        }
+        
+        dropAreaPlaceholder.classList.add("d-none");
     }
 
     function restoreUploadedFiles() {
@@ -111,39 +117,7 @@
             fileList.innerHTML = "";
             
             window.uploadedFilesData.forEach(file => {
-                const box = document.createElement("div");
-                box.className = "file-box border rounded-3 p-3 text-center shadow-sm";
-
-                const ext = file.name.split('.').pop().toUpperCase();
-
-                let sizeText;
-                if (file.size < 1024 * 1024) {
-                    sizeText = (file.size / 1024).toFixed(1) + " KB";
-                } else {
-                    sizeText = (file.size / (1024 * 1024)).toFixed(2) + " MB";
-                }
-
-                const nameOnly = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
-                const maxLength = 18;
-                let displayName = nameOnly.length > maxLength ?
-                    nameOnly.substring(0, maxLength) + "..." :
-                    nameOnly;
-
-                const typeEl = document.createElement("div");
-                typeEl.className = "fw-bold text-secondary mb-1";
-                typeEl.textContent = ext;
-
-                const sizeEl = document.createElement("div");
-                sizeEl.className = "fw-bold text-primary mb-1";
-                sizeEl.textContent = sizeText;
-
-                const nameEl = document.createElement("div");
-                nameEl.className = "small text-muted";
-                nameEl.textContent = displayName;
-
-                box.appendChild(typeEl);
-                box.appendChild(sizeEl);
-                box.appendChild(nameEl);
+                const box = createFileBox(file);
                 fileList.appendChild(box);
             });
             
