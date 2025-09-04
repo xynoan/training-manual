@@ -3,13 +3,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Pages extends CI_Controller
 {
-    private $upload_config = [
-        'upload_path' => './uploads/',
-        'allowed_types' => 'pdf|ppt|pptx',
-        'max_size' => 102400, // 100MB
-        'encrypt_name' => FALSE
-    ];
-
     public function __construct()
     {
         parent::__construct();
