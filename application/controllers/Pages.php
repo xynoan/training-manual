@@ -149,7 +149,6 @@ class Pages extends CI_Controller
         }
 
         if ($page === 'home') {
-            // Clear any temporary uploaded files when navigating to home page
             _cleanup_temp_files($this);
             $this->session->unset_userdata('uploaded_files');
             $this->session->unset_userdata('temp_files');
