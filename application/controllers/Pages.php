@@ -149,6 +149,11 @@ class Pages extends CI_Controller
         }
 
         if ($page === 'home') {
+            // Clear any temporary uploaded files when navigating to home page
+            _cleanup_temp_files($this);
+            $this->session->unset_userdata('uploaded_files');
+            $this->session->unset_userdata('temp_files');
+            
             $uri_segment = 1;
             $config['total_rows'] = $this->Training_model->count_all_trainings();
             $config['per_page'] = 10;
