@@ -60,7 +60,7 @@ class Pages extends CI_Controller
                         }
                     }
                     
-                    $this->_cleanup_temp_files();
+                    _cleanup_temp_files($this);
                     $this->session->set_userdata('uploaded_files', $uploaded_files);
                     $this->session->set_userdata('temp_files', $temp_files);
                 }
@@ -113,7 +113,7 @@ class Pages extends CI_Controller
                         'note' => $this->input->post('notes'),
                         'name' => $files_to_save
                     ]);
-                    $this->_cleanup_temp_files();
+                    _cleanup_temp_files($this);
                     $this->session->unset_userdata('uploaded_files');
                     $this->session->unset_userdata('temp_files');
                     
@@ -135,7 +135,7 @@ class Pages extends CI_Controller
                     }
                     
                     $this->Training_model->update_training($_GET['id'], $update_data);
-                    $this->_cleanup_temp_files();
+                    _cleanup_temp_files($this);
                     $this->session->unset_userdata('uploaded_files');
                     $this->session->unset_userdata('temp_files');
                     
@@ -263,7 +263,7 @@ class Pages extends CI_Controller
         }
 
         $file_info = pathinfo($target_file);
-        $mime_type = $this->_get_mime_type($target_file);
+        $mime_type = _get_mime_type($target_file);
         
         header('Content-Type: ' . $mime_type);
         header('Content-Length: ' . filesize($target_file));
@@ -277,39 +277,5 @@ class Pages extends CI_Controller
         readfile($target_file);
         exit;
     }
-
-    private function _get_mime_type($file)
-    {
-        $file_info = pathinfo($file);
-        $extension = strtolower($file_info['extension']);
-        
-        $mime_types = array(
-            'pdf' => 'application/pdf',
-            'doc' => 'application/msword',
-            'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            'xls' => 'application/vnd.ms-excel',
-            'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'ppt' => 'application/vnd.ms-powerpoint',
-            'pptx' => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-            'txt' => 'text/plain',
-            'jpg' => 'image/jpeg',
-            'jpeg' => 'image/jpeg',
-            'png' => 'image/png',
-            'gif' => 'image/gif'
-        );
-        
-        return isset($mime_types[$extension]) ? $mime_types[$extension] : 'application/octet-stream';
-    }
-
-    private function _cleanup_temp_files()
-    {
-        $temp_files = $this->session->userdata('temp_files');
-        if ($temp_files) {
-            foreach ($temp_files as $temp_file) {
-                if (file_exists($temp_file['temp_path'])) {
-                    unlink($temp_file['temp_path']);
-                }
-            }
-        }
-    }
+    
 }
