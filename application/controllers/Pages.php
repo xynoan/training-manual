@@ -31,6 +31,22 @@ class Pages extends CI_Controller
                 $errors['file'] = 'File is required';
             }
 
+            if (!empty($errors) && !empty($_FILES['file']['name'][0])) {
+                $uploaded_files = [];
+                for ($i = 0; $i < count($_FILES['file']['name']); $i++) {
+                    if (!empty($_FILES['file']['name'][$i])) {
+                        $uploaded_files[] = [
+                            'name' => $_FILES['file']['name'][$i],
+                            'size' => $_FILES['file']['size'][$i],
+                            'type' => $_FILES['file']['type'][$i]
+                        ];
+                    }
+                }
+                $this->session->set_userdata('uploaded_files', $uploaded_files);
+            } else {
+                $this->session->unset_userdata('uploaded_files');
+            }
+
             if (empty($errors)) {
                 if ($page === 'add') {
                     $this->Training_model->insert_training([
@@ -92,6 +108,7 @@ class Pages extends CI_Controller
         }
 
         $data['title'] = "TRAINING MANUAL";
+        $data['uploaded_files'] = $this->session->userdata('uploaded_files') ?: [];
 
         $this->load->view('templates/header', $data);
         $this->load->view('pages/' . $page, array_merge($data, ['errors' => $errors]));

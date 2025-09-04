@@ -142,3 +142,8 @@
         <textarea class="form-control" id="notes" name="notes" placeholder="Optional"><?= isset($_POST['notes']) ? $_POST['notes'] : $training['note'] ?></textarea>
     </div>
 </form>
+
+<script>
+    // Pass uploaded files data from PHP to JavaScript
+    window.uploadedFilesData = <?= json_encode($uploaded_files) ?>;
+</script>

@@ -140,3 +140,7 @@
         <textarea class="form-control" id="notes" name="notes" placeholder="Optional"><?= isset($_POST['notes']) ? $_POST['notes'] : '' ?></textarea>
     </div>
 </form>
+
+<script>
+    window.uploadedFilesData = <?= json_encode($uploaded_files) ?>;
+</script>
