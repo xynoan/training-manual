@@ -145,4 +145,5 @@
 
 <script>
     window.uploadedFilesData = <?= json_encode($uploaded_files) ?>;
+    window.existingFilesData = <?= json_encode($training['file_names']) ?>;
 </script>

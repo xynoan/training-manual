@@ -126,11 +126,17 @@ class Pages extends CI_Controller
                 }
 
                 if ($page === 'edit' && isset($_GET['id'])) {
-                    $this->Training_model->update_training($_GET['id'], [
+                    $update_data = [
                         'title' => $this->input->post('title'),
-                        'note' => $this->input->post('notes'),
-                        'name' => $files_to_save
-                    ]);
+                        'note' => $this->input->post('notes')
+                    ];
+                    
+                    // Only update files if new files were uploaded
+                    if (!empty($files_to_save)) {
+                        $update_data['name'] = $files_to_save;
+                    }
+                    
+                    $this->Training_model->update_training($_GET['id'], $update_data);
                     $this->_cleanup_temp_files();
                     $this->session->unset_userdata('uploaded_files');
                     $this->session->unset_userdata('temp_files');
@@ -202,21 +208,18 @@ class Pages extends CI_Controller
             show_404();
         }
 
-        // Get the training record to verify it exists and get file names
         $training = $this->Training_model->get_training_by_id($training_id);
         
         if (!$training || empty($training['file_names'])) {
             show_404();
         }
 
-        // Check if the file index is valid
         if (!isset($training['file_names'][$file_index])) {
             show_404();
         }
 
         $file_name = $training['file_names'][$file_index];
         
-        // Find the actual file in uploads directory
         $upload_dir = APPPATH . '../uploads/';
         $files = scandir($upload_dir);
         $target_file = null;
@@ -232,22 +235,18 @@ class Pages extends CI_Controller
             show_404();
         }
 
-        // Get file info
         $file_info = pathinfo($target_file);
         $mime_type = $this->_get_mime_type($target_file);
         
-        // Set appropriate headers for different file types
         header('Content-Type: ' . $mime_type);
         header('Content-Length: ' . filesize($target_file));
         
-        // For PDF files, display inline; for others, suggest download
         if (strtolower($file_info['extension']) === 'pdf') {
             header('Content-Disposition: inline; filename="' . $file_name . '"');
         } else {
             header('Content-Disposition: attachment; filename="' . $file_name . '"');
         }
         
-        // Output the file
         readfile($target_file);
         exit;
     }

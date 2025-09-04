@@ -141,7 +141,6 @@ document.addEventListener('DOMContentLoaded', function() {
             downloadBtn.href = previewUrl;
             downloadBtn.download = fileName;
             
-            // Show loading spinner
             filePreviewContent.innerHTML = `
                 <div class="d-flex justify-content-center align-items-center h-100">
                     <div class="spinner-border" role="status">
@@ -152,9 +151,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             filePreviewModal.show();
             
-            // Handle different file types
             if (fileExtension === 'pdf') {
-                // For PDF files, embed them directly
                 filePreviewContent.innerHTML = `
                     <iframe src="${previewUrl}" 
                             width="100%" 
@@ -166,7 +163,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     </iframe>
                 `;
             } else if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
-                // For images
                 filePreviewContent.innerHTML = `
                     <div class="text-center">
                         <img src="${previewUrl}" 
@@ -176,7 +172,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 `;
             } else if (fileExtension === 'txt') {
-                // For text files, fetch and display content
                 fetch(previewUrl)
                     .then(response => response.text())
                     .then(text => {
@@ -193,7 +188,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         `;
                     });
             } else {
-                // For other file types, show a message
                 filePreviewContent.innerHTML = `
                     <div class="alert alert-info">
                         <h5>Preview not available</h5>

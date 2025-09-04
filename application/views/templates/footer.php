@@ -38,41 +38,68 @@
 
     function createFileBox(file) {
         const box = document.createElement("div");
-        box.className = "file-box border rounded-3 p-3 text-center shadow-sm";
+        
+        // Check if file is a File object or just a filename string
+        const isFileObject = file && typeof file === 'object' && file.name;
+        const fileName = isFileObject ? file.name : file;
+        
+        // Set different styling for existing files vs new files
+        box.className = isFileObject ? 
+            "file-box border rounded-3 p-3 text-center shadow-sm" :
+            "file-box border rounded-3 p-3 text-center shadow-sm bg-light";
 
-        const ext = file.name.split('.').pop().toUpperCase();
+        const ext = fileName.split('.').pop().toUpperCase();
+        const nameOnly = fileName.substring(0, fileName.lastIndexOf('.')) || fileName;
 
-        let sizeText;
-        if (file.size < 1024 * 1024) {
-            sizeText = (file.size / 1024).toFixed(1) + " KB";
+        if (isFileObject) {
+            // Handle File object (new uploads)
+            let sizeText;
+            if (file.size < 1024 * 1024) {
+                sizeText = (file.size / 1024).toFixed(1) + " KB";
+            } else {
+                sizeText = (file.size / (1024 * 1024)).toFixed(2) + " MB";
+            }
+
+            const maxLength = 18;
+            let displayName = nameOnly.length > maxLength ?
+                nameOnly.substring(0, maxLength) + "..." :
+                nameOnly;
+
+            const typeEl = document.createElement("div");
+            typeEl.className = "fw-bold text-secondary mb-1";
+            typeEl.textContent = ext;
+
+            const sizeEl = document.createElement("div");
+            sizeEl.className = "fw-bold text-primary mb-1";
+            sizeEl.textContent = sizeText;
+
+            const nameEl = document.createElement("div");
+            nameEl.className = "small text-muted";
+            nameEl.textContent = displayName;
+
+            box.appendChild(typeEl);
+            box.appendChild(sizeEl);
+            box.appendChild(nameEl);
         } else {
-            sizeText = (file.size / (1024 * 1024)).toFixed(2) + " MB";
+            // Handle filename string (existing files)
+            box.innerHTML = `
+                <div class="d-flex flex-column align-items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-file-earmark-text text-primary mb-2" viewBox="0 0 16 16">
+                        <path d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zM5.5 9a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zM5.5 11a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1z"/>
+                        <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/>
+                    </svg>
+                    <div class="text-truncate w-100" title="${fileName}">
+                        <strong>${nameOnly}</strong>
+                    </div>
+                    <small class="text-muted">${ext}</small>
+                    <small class="text-success">Existing File</small>
+                </div>
+            `;
         }
-
-        const nameOnly = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
-        const maxLength = 18;
-        let displayName = nameOnly.length > maxLength ?
-            nameOnly.substring(0, maxLength) + "..." :
-            nameOnly;
-
-        const typeEl = document.createElement("div");
-        typeEl.className = "fw-bold text-secondary mb-1";
-        typeEl.textContent = ext;
-
-        const sizeEl = document.createElement("div");
-        sizeEl.className = "fw-bold text-primary mb-1";
-        sizeEl.textContent = sizeText;
-
-        const nameEl = document.createElement("div");
-        nameEl.className = "small text-muted";
-        nameEl.textContent = displayName;
-
-        box.appendChild(typeEl);
-        box.appendChild(sizeEl);
-        box.appendChild(nameEl);
 
         return box;
     }
+
 
     function handleFiles(files) {
         /* error handlers */
@@ -113,18 +140,33 @@
     }
 
     function restoreUploadedFiles() {
+        let hasFiles = false;
+        fileList.innerHTML = "";
+        
+        // Display existing files from database (for edit mode)
+        if (window.existingFilesData && window.existingFilesData.length > 0) {
+            window.existingFilesData.forEach(fileName => {
+                if (fileName && fileName.trim()) {
+                    const box = createFileBox(fileName.trim());
+                    fileList.appendChild(box);
+                    hasFiles = true;
+                }
+            });
+        }
+        
+        // Display newly uploaded files from session
         if (window.uploadedFilesData && window.uploadedFilesData.length > 0) {
-            fileList.innerHTML = "";
-            
             window.uploadedFilesData.forEach(file => {
                 const box = createFileBox(file);
                 fileList.appendChild(box);
+                hasFiles = true;
             });
-            
+        }
+        
+        if (hasFiles) {
             if (dropArea.classList.contains("error")) {
                 dropArea.classList.remove("error");
             }
-            
             dropAreaPlaceholder.classList.add("d-none");
         }
     }
