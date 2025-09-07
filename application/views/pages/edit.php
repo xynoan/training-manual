@@ -1,5 +1,7 @@
 <?php require 'partials/floating-alert.php' ?>
 <form action="<?= base_url('pages/view/edit?id=' . $training['id']) ?>" method="post" enctype="multipart/form-data">
+    <!-- Add this hidden input for removed files -->
+    <input type="hidden" id="removedFiles" name="removedFiles" value="[]">
     <div class="d-flex gap-2">
         <button type="submit" class="btn btn-success d-flex align-items-center gap-1" onclick="showFloatingAlert()">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-floppy2" viewBox="0 0 16 16">
@@ -46,12 +48,10 @@
     <div class="w-50">
         <textarea class="form-control" id="notes" name="notes" placeholder="Optional"><?= isset($_POST['notes']) ? $_POST['notes'] : $training['note'] ?></textarea>
     </div>
-    
-    <!-- Hidden input to track removed existing files -->
-    <input type="hidden" id="removedFiles" name="removed_files" value="">
 </form>
 
 <script>
     window.uploadedFilesData = <?= json_encode($uploaded_files) ?>;
     window.existingFilesData = <?= json_encode($training['file_names']) ?>;
+    window.removedFilesData = <?= json_encode(isset($removed_files) ? $removed_files : []) ?>;
 </script>

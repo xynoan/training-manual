@@ -234,9 +234,18 @@
         currentFiles = [];
         removedExistingFiles = [];
         
+        // Load removed files information (for validation error scenarios)
+        if (window.removedFilesData && window.removedFilesData.length > 0) {
+            removedExistingFiles = window.removedFilesData.map(fileName => fileName.trim());
+        }
+        
         // Load existing files from database (for edit mode)
         if (window.existingFilesData && window.existingFilesData.length > 0) {
-            existingFiles = window.existingFilesData.filter(fileName => fileName && fileName.trim());
+            // Filter out files that were marked for removal
+            existingFiles = window.existingFilesData.filter(fileName => {
+                const trimmedName = fileName && fileName.trim();
+                return trimmedName && !removedExistingFiles.includes(trimmedName);
+            });
         }
         
         // Load newly uploaded files from session (if any)
@@ -245,6 +254,9 @@
             // This would need to be handled based on your backend implementation
             currentFiles = window.uploadedFilesData || [];
         }
+        
+        // Update the hidden input for removed files
+        updateRemovedFilesInput();
         
         // Render the file list
         renderFileList();
