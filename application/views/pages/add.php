@@ -45,6 +45,9 @@
     <div class="w-50">
         <textarea class="form-control" id="notes" name="notes" placeholder="Optional"><?= isset($_POST['notes']) ? $_POST['notes'] : '' ?></textarea>
     </div>
+    
+    <!-- Hidden input to track removed existing files (not used in add mode, but keeps consistency) -->
+    <input type="hidden" id="removedFiles" name="removed_files" value="">
 </form>
 
 <script>

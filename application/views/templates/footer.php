@@ -9,6 +9,11 @@
     const maxSizeMB = 100;
     const allowedTypes = ["pdf", "ppt", "pptx"];
 
+    // Track files for removal functionality
+    let currentFiles = []; // Array to hold current File objects
+    let existingFiles = []; // Array to hold existing file names
+    let removedExistingFiles = []; // Array to track removed existing files
+
     dropArea.addEventListener("click", () => fileInput.click());
 
     fileInput.addEventListener("change", () => handleFiles(fileInput.files));
@@ -33,23 +38,107 @@
     function clearFiles() {
         fileInput.value = "";
         fileList.innerHTML = "";
+        currentFiles = [];
         dropAreaPlaceholder.classList.remove("d-none");
     }
 
-    function createFileBox(file) {
+    function removeFile(index, isNewFile) {
+        if (isNewFile) {
+            // Remove from current files array
+            const actualIndex = index - existingFiles.length;
+            if (actualIndex >= 0 && actualIndex < currentFiles.length) {
+                currentFiles.splice(actualIndex, 1);
+                updateFileInput();
+            }
+        } else {
+            // Mark existing file for removal
+            const fileName = existingFiles[index];
+            if (fileName && !removedExistingFiles.includes(fileName)) {
+                removedExistingFiles.push(fileName);
+                updateRemovedFilesInput();
+            }
+            existingFiles.splice(index, 1);
+        }
+        
+        // Re-render the file list
+        renderFileList();
+        
+        // Show placeholder if no files
+        if (currentFiles.length === 0 && existingFiles.length === 0) {
+            dropAreaPlaceholder.classList.remove("d-none");
+        }
+    }
+
+    function updateRemovedFilesInput() {
+        const removedFilesInput = document.getElementById('removedFiles');
+        if (removedFilesInput) {
+            removedFilesInput.value = JSON.stringify(removedExistingFiles);
+        }
+    }
+
+    function updateFileInput() {
+        // Create a new DataTransfer object to update the file input
+        const dt = new DataTransfer();
+        currentFiles.forEach(file => {
+            dt.items.add(file);
+        });
+        fileInput.files = dt.files;
+    }
+
+    function renderFileList() {
+        fileList.innerHTML = "";
+        let index = 0;
+        
+        // Render existing files first
+        existingFiles.forEach((fileName, i) => {
+            if (fileName && fileName.trim()) {
+                const box = createFileBox(fileName.trim(), index, false);
+                fileList.appendChild(box);
+                index++;
+            }
+        });
+        
+        // Render current new files
+        currentFiles.forEach((file, i) => {
+            const box = createFileBox(file, index, true);
+            fileList.appendChild(box);
+            index++;
+        });
+    }
+
+    function createFileBox(file, index, isNewFile = null) {
         const box = document.createElement("div");
+        box.className = "position-relative";
         
         // Check if file is a File object or just a filename string
-        const isFileObject = file && typeof file === 'object' && file.name;
+        const isFileObject = isNewFile !== null ? isNewFile : (file && typeof file === 'object' && file.name);
         const fileName = isFileObject ? file.name : file;
         
+        const fileBox = document.createElement("div");
         // Set different styling for existing files vs new files
-        box.className = isFileObject ? 
+        fileBox.className = isFileObject ? 
             "file-box border rounded-3 p-3 text-center shadow-sm" :
             "file-box border rounded-3 p-3 text-center shadow-sm bg-light";
 
         const ext = fileName.split('.').pop().toUpperCase();
         const nameOnly = fileName.substring(0, fileName.lastIndexOf('.')) || fileName;
+
+        // Create remove button
+        const removeBtn = document.createElement("button");
+        removeBtn.type = "button";
+        removeBtn.className = "btn btn-sm btn-danger position-absolute top-0 start-100 translate-middle rounded-circle p-1";
+        removeBtn.style.zIndex = "10";
+        removeBtn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+            </svg>
+        `;
+        
+        // Add click event to remove button
+        removeBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            removeFile(index, isFileObject);
+        });
 
         if (isFileObject) {
             // Handle File object (new uploads)
@@ -77,12 +166,12 @@
             nameEl.className = "small text-muted";
             nameEl.textContent = displayName;
 
-            box.appendChild(typeEl);
-            box.appendChild(sizeEl);
-            box.appendChild(nameEl);
+            fileBox.appendChild(typeEl);
+            fileBox.appendChild(sizeEl);
+            fileBox.appendChild(nameEl);
         } else {
             // Handle filename string (existing files)
-            box.innerHTML = `
+            fileBox.innerHTML = `
                 <div class="d-flex flex-column align-items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-file-earmark-text text-primary mb-2" viewBox="0 0 16 16">
                         <path d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zM5.5 9a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zM5.5 11a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1z"/>
@@ -97,15 +186,17 @@
             `;
         }
 
+        box.appendChild(fileBox);
+        box.appendChild(removeBtn);
         return box;
     }
 
 
     function handleFiles(files) {
-        /* error handlers */
-        if (files.length > maxFiles) {
-            alert(`You can only upload a maximum of ${maxFiles} files.`);
-            clearFiles();
+        // Check total files including existing ones
+        const totalFiles = files.length + existingFiles.length;
+        if (totalFiles > maxFiles) {
+            alert(`You can only upload a maximum of ${maxFiles} files total.`);
             return;
         }
 
@@ -114,23 +205,21 @@
 
             if (!allowedTypes.includes(ext)) {
                 alert(`Invalid file type: "${file.name}". Only PDF and PPT files are allowed.`);
-                clearFiles();
                 return;
             }
 
             if (file.size > maxSizeMB * 1024 * 1024) {
                 alert(`File "${file.name}" exceeds ${maxSizeMB} MB.`);
-                clearFiles();
                 return;
             }
         }
         /* end of error handlers */
 
-        fileList.innerHTML = "";
-        Array.from(files).forEach(file => {
-            const box = createFileBox(file);
-            fileList.appendChild(box);
-        });
+        // Update current files array
+        currentFiles = Array.from(files);
+        
+        // Re-render the file list
+        renderFileList();
         
         if (dropArea.classList.contains("error")) {
             dropArea.classList.remove("error");
@@ -140,29 +229,27 @@
     }
 
     function restoreUploadedFiles() {
-        let hasFiles = false;
-        fileList.innerHTML = "";
+        // Initialize arrays
+        existingFiles = [];
+        currentFiles = [];
+        removedExistingFiles = [];
         
-        // Display existing files from database (for edit mode)
+        // Load existing files from database (for edit mode)
         if (window.existingFilesData && window.existingFilesData.length > 0) {
-            window.existingFilesData.forEach(fileName => {
-                if (fileName && fileName.trim()) {
-                    const box = createFileBox(fileName.trim());
-                    fileList.appendChild(box);
-                    hasFiles = true;
-                }
-            });
+            existingFiles = window.existingFilesData.filter(fileName => fileName && fileName.trim());
         }
         
-        // Display newly uploaded files from session
+        // Load newly uploaded files from session (if any)
         if (window.uploadedFilesData && window.uploadedFilesData.length > 0) {
-            window.uploadedFilesData.forEach(file => {
-                const box = createFileBox(file);
-                fileList.appendChild(box);
-                hasFiles = true;
-            });
+            // Note: uploadedFilesData might contain file info, not File objects
+            // This would need to be handled based on your backend implementation
+            currentFiles = window.uploadedFilesData || [];
         }
         
+        // Render the file list
+        renderFileList();
+        
+        const hasFiles = existingFiles.length > 0 || currentFiles.length > 0;
         if (hasFiles) {
             if (dropArea.classList.contains("error")) {
                 dropArea.classList.remove("error");
