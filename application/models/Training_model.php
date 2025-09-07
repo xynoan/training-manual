@@ -26,13 +26,11 @@ class Training_model extends CI_Model
         );
         $this->db->insert('tbl_training_manual_file', $files);
 
-        if (isset($data['note']) && !empty($data['note'])) {
-            $notes_data = array(
-                'manual_id' => $manual_id,
-                'note' => $data['note']
-            );
-            $this->db->insert('tbl_training_manual_notes', $notes_data);
-        }
+        $notes_data = array(
+            'manual_id' => $manual_id,
+            'note' => $data['note']
+        );
+        $this->db->insert('tbl_training_manual_notes', $notes_data);
 
         return $manual_id;
     }
