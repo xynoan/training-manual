@@ -88,6 +88,12 @@
         fill: #adb5bd;
     }
 
+    .upload-box svg.removeFile {
+        width: 25px;
+        height: 25px;
+        fill: white;
+    }
+
     .upload-box p {
         margin-top: 10px;
         color: #adb5bd;
