@@ -159,20 +159,19 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const dateFormat = 'MM/DD/YYYY HH:mm';
             $('input[name="dates"]').daterangepicker({
                 autoUpdateInput: false,
                 timePicker: true,
                 timePicker24Hour: true,
-                timePickerIncrement: 15,
                 locale: {
                     cancelLabel: 'Clear',
-                    format: 'MM/DD/YYYY HH:mm'
+                    format: dateFormat
                 }
             });
 
             $('input[name="dates"]').on('apply.daterangepicker', function(ev, picker) {
-                $(this).val(picker.startDate.format('MM/DD/YYYY HH:mm') + ' - ' + picker.endDate.format('MM/DD/YYYY HH:mm'));
-                // Automatically submit the form when Apply is clicked
+                $(this).val(picker.startDate.format(dateFormat) + ' - ' + picker.endDate.format(dateFormat));
                 $(this).closest('form').submit();
             });
 
