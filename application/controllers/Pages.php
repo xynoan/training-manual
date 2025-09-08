@@ -120,7 +120,7 @@ class Pages extends CI_Controller
                     echo
                     '<script>
                     alert("Training manual added successfully!");
-                    window.location.href = "/";
+                    window.location.href = "' . base_url() . '";
                 </script>';
                 }
 
@@ -161,7 +161,7 @@ class Pages extends CI_Controller
                         echo
                         '<script>
                             alert("Training manual updated successfully!");
-                            window.location.href = "/";
+                            window.location.href = "' . base_url() . '";
                         </script>';
                     } else {
                         $data['removed_files'] = $removed_files;
@@ -247,7 +247,7 @@ class Pages extends CI_Controller
 
         echo
         '<script>
-            window.location.href = "/";
+            window.location.href = "' . base_url() . '";
         </script>';
     }
 
