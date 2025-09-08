@@ -80,17 +80,20 @@
                         <tr>
                             <td class="align-middle"><?= htmlspecialchars($training['title']) ?></td>
                             <td class="align-middle">
-                                <?php foreach ($training['file_names'] as $index => $file_name): ?>
-                                    <a class="link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover file-preview-link me-2"
-                                        href="<?= base_url('pages/preview_file/' . $training['id'] . '/' . $index) ?>"
-                                        data-training-id="<?= $training['id'] ?>"
-                                        data-file-index="<?= $index ?>"
-                                        data-file-name="<?= htmlspecialchars($file_name) ?>"
-                                        data-file-extension="<?= strtolower(pathinfo($file_name, PATHINFO_EXTENSION)) ?>"
-                                        title="<?= htmlspecialchars($file_name) ?>">
-                                        <?= get_file_icon(pathinfo($file_name, PATHINFO_EXTENSION)) ?>
-                                    </a>
-                                <?php endforeach; ?>
+                                <div class="d-flex flex-wrap gap-2 align-items-center">
+                                    <?php foreach ($training['file_names'] as $index => $file_name): ?>
+                                        <a class="link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover file-preview-link d-inline-flex align-items-center"
+                                            href="<?= base_url('pages/preview_file/' . $training['id'] . '/' . $index) ?>"
+                                            data-training-id="<?= $training['id'] ?>"
+                                            data-file-index="<?= $index ?>"
+                                            data-file-name="<?= htmlspecialchars($file_name) ?>"
+                                            data-file-extension="<?= strtolower(pathinfo($file_name, PATHINFO_EXTENSION)) ?>"
+                                            title="<?= htmlspecialchars($file_name) ?>"
+                                            style="font-size: 1.25rem;">
+                                            <?= get_file_icon(pathinfo($file_name, PATHINFO_EXTENSION)) ?>
+                                        </a>
+                                    <?php endforeach; ?>
+                                </div>
                             </td>
                             <td class="align-middle">Nath</td>
                             <td class="align-middle"><?= $uploaded_at ?></td>
