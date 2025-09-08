@@ -1,12 +1,5 @@
     <a href="<?= base_url('add') ?>" class="btn btn-danger d-flex align-items-center gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-            class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
-            <path
-                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 
-         0v3h-3a.5.5 0 0 0 0 
-         1h3v3a.5.5 0 0 0 1 
-         0v-3h3a.5.5 0 0 0 0-1h-3z" />
-        </svg>
+        <i class="fas fa-plus-circle"></i>
         Add
     </a>
     </div>
@@ -27,17 +20,12 @@
                 <label class="form-label small text-muted mb-1">&nbsp;</label>
                 <div class="d-flex gap-2">
                     <button class="btn btn-primary" type="submit">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-funnel" viewBox="0 0 16 16">
-                            <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2z" />
-                        </svg>
+                        <i class="fas fa-filter"></i>
                         Filter
                     </button>
                     <?php if (!empty($search) || !empty($dates)): ?>
                         <a href="<?= base_url() ?>" class="btn btn-outline-danger d-flex justify-content-center align-items-center gap-1" title="Clear all filters">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
-                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
-                                <path d="m4.646 4.646.708.708L8 8l2.646-2.646.708-.708L8.707 8l2.647 2.646-.708.708L8 8.707l-2.646 2.647-.708-.708L7.293 8z" />
-                            </svg>
+                            <i class="fas fa-times-circle"></i>
                             Clear
                         </a>
                     <?php endif; ?>
@@ -93,15 +81,15 @@
                             <td class="align-middle"><?= htmlspecialchars($training['title']) ?></td>
                             <td class="align-middle">
                                 <?php foreach ($training['file_names'] as $index => $file_name): ?>
-                                    <a class="link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover file-preview-link"
+                                    <a class="link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover file-preview-link me-2"
                                         href="<?= base_url('pages/preview_file/' . $training['id'] . '/' . $index) ?>"
                                         data-training-id="<?= $training['id'] ?>"
                                         data-file-index="<?= $index ?>"
                                         data-file-name="<?= htmlspecialchars($file_name) ?>"
-                                        data-file-extension="<?= strtolower(pathinfo($file_name, PATHINFO_EXTENSION)) ?>">
-                                        <?= $file_name ?>
+                                        data-file-extension="<?= strtolower(pathinfo($file_name, PATHINFO_EXTENSION)) ?>"
+                                        title="<?= htmlspecialchars($file_name) ?>">
+                                        <?= get_file_icon(pathinfo($file_name, PATHINFO_EXTENSION)) ?>
                                     </a>
-                                    <?= $index < count($training['file_names']) - 1 ? ', ' : '' ?>
                                 <?php endforeach; ?>
                             </td>
                             <td class="align-middle">Nath</td>
@@ -115,10 +103,7 @@
                                     <ul class="dropdown-menu">
                                         <li>
                                             <a class="d-flex align-items-center gap-2 dropdown-item text-primary" href="<?= base_url('edit?id=' . $training['id']) ?>">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                                                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                                                    <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
-                                                </svg>
+                                                <i class="fas fa-edit"></i>
                                                 Edit
                                             </a>
                                         </li>
@@ -126,9 +111,7 @@
                                             <a class="d-flex align-items-center gap-2 dropdown-item text-danger"
                                                 href="<?= base_url('pages/delete/' . $training['id']) ?>"
                                                 onclick="return confirm('Are you sure you want to delete this training manual?');">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
-                                                    <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
-                                                </svg>
+                                                <i class="fas fa-trash"></i>
                                                 Delete
                                             </a>
                                         </li>
@@ -238,10 +221,7 @@
                     hoverPreviewContent.innerHTML = `
                         <div class="p-3">
                             <div class="d-flex align-items-center mb-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-file-earmark-pdf text-danger me-2" viewBox="0 0 16 16">
-                                    <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/>
-                                    <path d="M4.603 14.087a.8.8 0 0 1-.438-.42c-.195-.388-.13-.776.08-1.102.198-.307.526-.568.897-.787a7.68 7.68 0 0 1 1.482-.645 19.697 19.697 0 0 0 1.062-2.227 7.269 7.269 0 0 1-.43-1.295c-.086-.4-.119-.796-.046-1.136.075-.354.274-.672.65-.823.192-.077.4-.12.602-.077a.7.7 0 0 1 .477.365c.088.164.12.356.127.538.007.188-.012.396-.047.614-.084.51-.27 1.134-.52 1.794a10.954 10.954 0 0 0 .98 1.686 5.753 5.753 0 0 1 1.334.05c.364.066.734.195.96.465.12.144.193.32.2.518.007.192-.047.382-.138.563a1.04 1.04 0 0 1-.354.416.856.856 0 0 1-.51.138c-.331-.014-.654-.196-.933-.417a5.712 5.712 0 0 1-.911-.95 11.651 11.651 0 0 0-1.997.406 11.307 11.307 0 0 1-1.02 1.51c-.292.35-.609.656-.927.787a.793.793 0 0 1-.58.029zm1.379-1.901c-.166.076-.32.156-.459.238-.328.194-.541.383-.647.547-.094.145-.096.25-.04.361.01.022.02.036.026.044a.266.266 0 0 0 .035-.012c.137-.056.355-.235.635-.572a8.18 8.18 0 0 0 .45-.606zm1.64-1.33a12.71 12.71 0 0 1 1.01-.193 11.744 11.744 0 0 1-.51-.858 20.801 20.801 0 0 1-.5 1.05zm2.446.45c.15.163.296.3.435.41.24.19.407.253.498.256a.107.107 0 0 0 .07-.015.307.307 0 0 0 .094-.125.436.436 0 0 0 .059-.2.095.095 0 0 0-.026-.063c-.052-.062-.2-.152-.518-.209a3.876 3.876 0 0 0-.612-.053zM8.078 7.8a6.7 6.7 0 0 0 .2-.828c.031-.188.043-.343.038-.465a.613.613 0 0 0-.032-.198.517.517 0 0 0-.145.04c-.087.035-.158.106-.196.283-.04.192-.03.469.135.968z"/>
-                                </svg>
+                                <i class="fas fa-file-pdf text-danger me-2" style="font-size: 24px;"></i>
                                 <strong>PDF Document</strong>
                             </div>
                             <p class="text-muted mb-2">Click to view full PDF in modal</p>
@@ -266,10 +246,7 @@
                             hoverPreviewContent.innerHTML = `
                                 <div class="p-3">
                                     <div class="d-flex align-items-center mb-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-file-text me-2" viewBox="0 0 16 16">
-                                            <path d="M5 4a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1zm-.5 2.5A.5.5 0 0 1 5 6h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5M5 8a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1z"/>
-                                            <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"/>
-                                        </svg>
+                                        <i class="fas fa-file-alt me-2" style="font-size: 20px;"></i>
                                         <strong>Text File</strong>
                                     </div>
                                     <pre style="white-space: pre-wrap; word-wrap: break-word; font-size: 0.875rem; margin: 0; max-height: 200px; overflow-y: auto; background-color: #f8f9fa; padding: 0.75rem; border-radius: 0.375rem;">${truncatedText}</pre>
@@ -288,10 +265,7 @@
                     hoverPreviewContent.innerHTML = `
                         <div class="p-3">
                             <div class="d-flex align-items-center mb-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-file-earmark-ppt text-warning me-2" viewBox="0 0 16 16">
-                                    <path d="M7 5.5a1 1 0 0 0-1 1V13a.5.5 0 0 0 1 0v-2h1.188a2.75 2.75 0 0 0 0-5.5zm0 1h1.188a1.75 1.75 0 1 1 0 3.5H7z"/>
-                                    <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/>
-                                </svg>
+                                <i class="fas fa-file-powerpoint text-warning me-2" style="font-size: 24px;"></i>
                                 <strong>PowerPoint Presentation</strong>
                             </div>
                             <p class="text-muted mb-2">Click to download and view presentation</p>
@@ -302,9 +276,7 @@
                     hoverPreviewContent.innerHTML = `
                         <div class="p-3">
                             <div class="d-flex align-items-center mb-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-file-earmark me-2" viewBox="0 0 16 16">
-                                    <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/>
-                                </svg>
+                                <i class="fas fa-file me-2" style="font-size: 20px;"></i>
                                 <strong>${fileExtension.toUpperCase()} File</strong>
                             </div>
                             <p class="text-muted mb-2">Preview not available for this file type</p>

@@ -121,9 +121,7 @@
         removeBtn.className = "btn btn-sm btn-danger position-absolute top-0 start-100 translate-middle rounded-circle p-1";
         removeBtn.style.zIndex = "10";
         removeBtn.innerHTML = `
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-x removeFile" viewBox="0 0 16 16">
-                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
-            </svg>
+            <i class="fas fa-times removeFile" style="font-size: 12px;"></i>
         `;
         
         removeBtn.addEventListener("click", (e) => {
@@ -162,10 +160,7 @@
         } else {
             fileBox.innerHTML = `
                 <div class="d-flex flex-column align-items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-file-earmark-text text-primary mb-2" viewBox="0 0 16 16">
-                        <path d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zM5.5 9a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zM5.5 11a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1z"/>
-                        <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/>
-                    </svg>
+                    <i class="fas fa-file-alt text-primary mb-2" style="font-size: 24px;"></i>
                     <div class="text-truncate w-100" title="${fileName}">
                         <strong>${nameOnly}</strong>
                     </div>
