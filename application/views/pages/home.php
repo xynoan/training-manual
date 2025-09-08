@@ -91,7 +91,7 @@
                         <?php $uploaded_at = date_format(date_create($training['created_at']), "d/m/Y H:i") ?>
                         <tr>
                             <td class="align-middle"><?= htmlspecialchars($training['title']) ?></td>
-                            <td>
+                            <td class="align-middle">
                                 <?php foreach ($training['file_names'] as $index => $file_name): ?>
                                     <a class="link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover file-preview-link"
                                         href="<?= base_url('pages/preview_file/' . $training['id'] . '/' . $index) ?>"
@@ -107,7 +107,7 @@
                             <td class="align-middle">Nath</td>
                             <td class="align-middle"><?= $uploaded_at ?></td>
                             <td class="align-middle"><?= isset($training['note']) ? htmlspecialchars($training['note']) : '' ?></td>
-                            <td>
+                            <td class="align-middle">
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-danger btn-sm dropdown-toggle rounded" data-bs-toggle="dropdown" aria-expanded="false">
                                         Actions
