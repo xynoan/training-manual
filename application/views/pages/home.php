@@ -57,9 +57,9 @@
                 Date Range:
                 <?php if (!empty($date_from) && !empty($date_to)): ?>
                     <?php if ($date_from === $date_to): ?>
-                        <?= date('M j, Y', strtotime($date_from)) ?>
+                        <?= date('M j, Y H:i', strtotime($date_from)) ?>
                     <?php else: ?>
-                        <?= date('M j, Y', strtotime($date_from)) ?> to <?= date('M j, Y', strtotime($date_to)) ?>
+                        <?= date('M j, Y H:i', strtotime($date_from)) ?> to <?= date('M j, Y H:i', strtotime($date_to)) ?>
                     <?php endif; ?>
                 <?php endif; ?>
             <?php endif; ?>
@@ -161,13 +161,19 @@
         document.addEventListener('DOMContentLoaded', function() {
             $('input[name="dates"]').daterangepicker({
                 autoUpdateInput: false,
+                timePicker: true,
+                timePicker24Hour: true,
+                timePickerIncrement: 15,
                 locale: {
-                    cancelLabel: 'Clear'
+                    cancelLabel: 'Clear',
+                    format: 'MM/DD/YYYY HH:mm'
                 }
             });
 
             $('input[name="dates"]').on('apply.daterangepicker', function(ev, picker) {
-                $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+                $(this).val(picker.startDate.format('MM/DD/YYYY HH:mm') + ' - ' + picker.endDate.format('MM/DD/YYYY HH:mm'));
+                // Automatically submit the form when Apply is clicked
+                $(this).closest('form').submit();
             });
 
             $('input[name="dates"]').on('cancel.daterangepicker', function(ev, picker) {

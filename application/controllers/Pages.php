@@ -185,11 +185,11 @@ class Pages extends CI_Controller
                 if (strpos($dates, ' - ') !== false) {
                     $date_parts = explode(' - ', $dates);
                     if (count($date_parts) == 2) {
-                        $date_from = date('Y-m-d', strtotime(trim($date_parts[0])));
-                        $date_to = date('Y-m-d', strtotime(trim($date_parts[1])));
+                        $date_from = date('Y-m-d H:i:s', strtotime(trim($date_parts[0])));
+                        $date_to = date('Y-m-d H:i:s', strtotime(trim($date_parts[1])));
                     }
                 } else {
-                    $date_from = date('Y-m-d', strtotime($dates));
+                    $date_from = date('Y-m-d H:i:s', strtotime($dates));
                     $date_to = $date_from;
                 }
             }

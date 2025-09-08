@@ -120,10 +120,10 @@ class Training_model extends CI_Model
         }
         
         if (!empty($date_from)) {
-            $this->db->where('DATE(tm.created_at) >=', $date_from);
+            $this->db->where('tm.created_at >=', $date_from);
         }
         if (!empty($date_to)) {
-            $this->db->where('DATE(tm.created_at) <=', $date_to);
+            $this->db->where('tm.created_at <=', $date_to);
         }
         
         $this->db->group_by('tm.id');
@@ -159,10 +159,10 @@ class Training_model extends CI_Model
             }
             
             if (!empty($date_from)) {
-                $this->db->where('DATE(tm.created_at) >=', $date_from);
+                $this->db->where('tm.created_at >=', $date_from);
             }
             if (!empty($date_to)) {
-                $this->db->where('DATE(tm.created_at) <=', $date_to);
+                $this->db->where('tm.created_at <=', $date_to);
             }
             
             $query = $this->db->get();
