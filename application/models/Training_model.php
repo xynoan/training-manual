@@ -99,7 +99,7 @@ class Training_model extends CI_Model
         return $result;
     }
 
-    public function get_all_trainings_paginated($limit, $offset)
+    public function get_all_trainings_paginated($limit, $offset, $search = null)
     {
         $this->db->select('
         tm.id, 
@@ -112,6 +112,16 @@ class Training_model extends CI_Model
         $this->db->from('tbl_training_manual tm');
         $this->db->join('tbl_training_manual_file tmf', 'tm.id = tmf.manual_id', 'left');
         $this->db->join('tbl_training_manual_notes tmn', 'tm.id = tmn.manual_id', 'left');
+        
+        // Add search functionality
+        if (!empty($search)) {
+            $this->db->group_start();
+            $this->db->like('tm.title', $search);
+            $this->db->or_like('tmn.note', $search);
+            $this->db->or_like('tmf.file_name', $search);
+            $this->db->group_end();
+        }
+        
         $this->db->group_by('tm.id');
         $this->db->order_by('tm.id', 'ASC');
         $this->db->limit($limit, $offset);
@@ -128,8 +138,25 @@ class Training_model extends CI_Model
         return $results;
     }
 
-    public function count_all_trainings()
+    public function count_all_trainings($search = null)
     {
+        if (!empty($search)) {
+            $this->db->select('COUNT(DISTINCT tm.id) as count');
+            $this->db->from('tbl_training_manual tm');
+            $this->db->join('tbl_training_manual_file tmf', 'tm.id = tmf.manual_id', 'left');
+            $this->db->join('tbl_training_manual_notes tmn', 'tm.id = tmn.manual_id', 'left');
+            
+            $this->db->group_start();
+            $this->db->like('tm.title', $search);
+            $this->db->or_like('tmn.note', $search);
+            $this->db->or_like('tmf.file_name', $search);
+            $this->db->group_end();
+            
+            $query = $this->db->get();
+            $result = $query->row_array();
+            return $result['count'];
+        }
+        
         return $this->db->count_all('tbl_training_manual');
     }
 }

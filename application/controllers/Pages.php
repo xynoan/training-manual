@@ -183,10 +183,20 @@ class Pages extends CI_Controller
             $this->session->unset_userdata('uploaded_files');
             $this->session->unset_userdata('temp_files');
             
+            // Get search parameter
+            $search = $this->input->get('search') ?: $this->input->post('search');
+            
             $uri_segment = 1;
-            $config['total_rows'] = $this->Training_model->count_all_trainings();
+            $config['total_rows'] = $this->Training_model->count_all_trainings($search);
             $config['per_page'] = 10;
             $config['uri_segment'] = $uri_segment;
+            
+            // Add search parameter to pagination base URL
+            if (!empty($search)) {
+                $config['base_url'] = base_url() . '?search=' . urlencode($search) . '&page=';
+                $config['page_query_string'] = TRUE;
+                $config['query_string_segment'] = 'page';
+            }
 
             $this->pagination->initialize($config);
 
@@ -194,8 +204,9 @@ class Pages extends CI_Controller
             // convert page number (1,2,3...) into offset (0,10,20...)
             $offset = ($page_num - 1) * $config['per_page'];
 
-            $data['trainings'] = $this->Training_model->get_all_trainings_paginated($config['per_page'], $offset);
+            $data['trainings'] = $this->Training_model->get_all_trainings_paginated($config['per_page'], $offset, $search);
             $data['pagination'] = $this->pagination->create_links();
+            $data['search'] = $search;
         }
 
         if ($page === 'edit') {
