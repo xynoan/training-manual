@@ -183,17 +183,31 @@ class Pages extends CI_Controller
             $this->session->unset_userdata('uploaded_files');
             $this->session->unset_userdata('temp_files');
             
-            // Get search parameter
+            // Get search and date parameters
             $search = $this->input->get('search') ?: $this->input->post('search');
+            $date_from = $this->input->get('date_from') ?: $this->input->post('date_from');
+            $date_to = $this->input->get('date_to') ?: $this->input->post('date_to');
             
             $uri_segment = 1;
-            $config['total_rows'] = $this->Training_model->count_all_trainings($search);
+            $config['total_rows'] = $this->Training_model->count_all_trainings($search, $date_from, $date_to);
             $config['per_page'] = 10;
             $config['uri_segment'] = $uri_segment;
             
-            // Add search parameter to pagination base URL
+            // Add search and date parameters to pagination base URL
+            $query_params = [];
             if (!empty($search)) {
-                $config['base_url'] = base_url() . '?search=' . urlencode($search) . '&page=';
+                $query_params['search'] = $search;
+            }
+            if (!empty($date_from)) {
+                $query_params['date_from'] = $date_from;
+            }
+            if (!empty($date_to)) {
+                $query_params['date_to'] = $date_to;
+            }
+            
+            if (!empty($query_params)) {
+                $query_string = http_build_query($query_params);
+                $config['base_url'] = base_url() . '?' . $query_string . '&page=';
                 $config['page_query_string'] = TRUE;
                 $config['query_string_segment'] = 'page';
             }
@@ -204,9 +218,11 @@ class Pages extends CI_Controller
             // convert page number (1,2,3...) into offset (0,10,20...)
             $offset = ($page_num - 1) * $config['per_page'];
 
-            $data['trainings'] = $this->Training_model->get_all_trainings_paginated($config['per_page'], $offset, $search);
+            $data['trainings'] = $this->Training_model->get_all_trainings_paginated($config['per_page'], $offset, $search, $date_from, $date_to);
             $data['pagination'] = $this->pagination->create_links();
             $data['search'] = $search;
+            $data['date_from'] = $date_from;
+            $data['date_to'] = $date_to;
         }
 
         if ($page === 'edit') {

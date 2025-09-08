@@ -11,34 +11,81 @@
 </a>
 </div>
 <div class="mb-4">
-    <form method="GET" action="<?= base_url() ?>" class="d-flex justify-content-end">
-        <div class="input-group" style="max-width: 400px;">
-            <input type="text" class="form-control" id="search" name="search" 
-                   placeholder="Search by title, notes, or filename..." 
-                   value="<?= isset($search) ? htmlspecialchars($search) : '' ?>">
-            <button class="btn btn-outline-secondary" type="submit">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
-                </svg>
-            </button>
-            <?php if (!empty($search)): ?>
-                <a href="<?= base_url() ?>" class="btn btn-outline-danger" title="Clear search">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16" style="width: 25px; height: 25px;">
-                        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
+    <form method="GET" action="<?= base_url() ?>" class="row g-3">
+        <!-- Search Input -->
+        <div class="col-md-6">
+            <div class="input-group">
+                <input type="text" class="form-control" id="search" name="search" 
+                       placeholder="Search by title, notes, or filename..." 
+                       value="<?= isset($search) ? htmlspecialchars($search) : '' ?>">
+                <span class="input-group-text">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
                     </svg>
-                </a>
-            <?php endif; ?>
+                </span>
+            </div>
+        </div>
+        
+        <!-- Date Range Filters -->
+        <div class="col-md-2">
+            <label for="date_from" class="form-label small text-muted mb-1">From Date</label>
+            <input type="date" class="form-control" id="date_from" name="date_from" 
+                   title="Filter from this date"
+                   value="<?= isset($date_from) ? htmlspecialchars($date_from) : '' ?>">
+        </div>
+        <div class="col-md-2">
+            <label for="date_to" class="form-label small text-muted mb-1">To Date</label>
+            <input type="date" class="form-control" id="date_to" name="date_to" 
+                   title="Filter up to this date"
+                   value="<?= isset($date_to) ? htmlspecialchars($date_to) : '' ?>">
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="col-md-2">
+            <label class="form-label small text-muted mb-1">&nbsp;</label>
+            <div class="d-flex gap-2">
+                <button class="btn btn-primary" type="submit">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-funnel" viewBox="0 0 16 16">
+                        <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2z"/>
+                    </svg>
+                    Filter
+                </button>
+                <?php if (!empty($search) || !empty($date_from) || !empty($date_to)): ?>
+                    <a href="<?= base_url() ?>" class="btn btn-outline-danger" title="Clear all filters">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
+                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                            <path d="m4.646 4.646.708.708L8 8l2.646-2.646.708-.708L8.707 8l2.647 2.646-.708.708L8 8.707l-2.646 2.647-.708-.708L7.293 8z"/>
+                        </svg>
+                        Clear
+                    </a>
+                <?php endif; ?>
+            </div>
         </div>
     </form>
 </div>
 
-<?php if (!empty($search)): ?>
+<?php if (!empty($search) || !empty($date_from) || !empty($date_to)): ?>
     <div class="alert alert-info mb-3">
-        <strong>Search Results for:</strong> "<?= htmlspecialchars($search) ?>"
+        <strong>Filters Applied:</strong>
+        <?php if (!empty($search)): ?>
+            Search: "<?= htmlspecialchars($search) ?>"
+        <?php endif; ?>
+        <?php if (!empty($date_from) || !empty($date_to)): ?>
+            <?php if (!empty($search)): ?> | <?php endif; ?>
+            Date Range: 
+            <?php if (!empty($date_from)): ?>
+                From <?= date('M j, Y', strtotime($date_from)) ?>
+            <?php endif; ?>
+            <?php if (!empty($date_from) && !empty($date_to)): ?> to <?php endif; ?>
+            <?php if (!empty($date_to)): ?>
+                <?php if (empty($date_from)): ?>Up to <?php endif; ?><?= date('M j, Y', strtotime($date_to)) ?>
+            <?php endif; ?>
+        <?php endif; ?>
+        
         <?php if (!empty($trainings)): ?>
-            - Found <?= count($trainings) ?> result(s)
+            <br><small>Found <?= count($trainings) ?> result(s)</small>
         <?php else: ?>
-            - No results found
+            <br><small>No results found</small>
         <?php endif; ?>
     </div>
 <?php endif; ?>
@@ -113,10 +160,10 @@
     </div>
 <?php endif; ?>
 <?php if (empty($trainings)): ?>
-    <?php if (!empty($search)): ?>
+    <?php if (!empty($search) || !empty($date_from) || !empty($date_to)): ?>
         <div class="text-center">
-            <p class="fs-4 text-muted">No training manuals match your search.</p>
-            <p>Try different keywords or <a href="<?= base_url() ?>">view all training manuals</a>.</p>
+            <p class="fs-4 text-muted">No training manuals match your filters.</p>
+            <p>Try adjusting your search terms or date range, or <a href="<?= base_url() ?>">view all training manuals</a>.</p>
         </div>
     <?php else: ?>
         <p class="text-center fs-4">No training manuals found.</p>

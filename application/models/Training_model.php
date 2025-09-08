@@ -99,7 +99,7 @@ class Training_model extends CI_Model
         return $result;
     }
 
-    public function get_all_trainings_paginated($limit, $offset, $search = null)
+    public function get_all_trainings_paginated($limit, $offset, $search = null, $date_from = null, $date_to = null)
     {
         $this->db->select('
         tm.id, 
@@ -122,6 +122,14 @@ class Training_model extends CI_Model
             $this->db->group_end();
         }
         
+        // Add date filtering
+        if (!empty($date_from)) {
+            $this->db->where('DATE(tm.created_at) >=', $date_from);
+        }
+        if (!empty($date_to)) {
+            $this->db->where('DATE(tm.created_at) <=', $date_to);
+        }
+        
         $this->db->group_by('tm.id');
         $this->db->order_by('tm.id', 'ASC');
         $this->db->limit($limit, $offset);
@@ -138,19 +146,30 @@ class Training_model extends CI_Model
         return $results;
     }
 
-    public function count_all_trainings($search = null)
+    public function count_all_trainings($search = null, $date_from = null, $date_to = null)
     {
-        if (!empty($search)) {
+        if (!empty($search) || !empty($date_from) || !empty($date_to)) {
             $this->db->select('COUNT(DISTINCT tm.id) as count');
             $this->db->from('tbl_training_manual tm');
             $this->db->join('tbl_training_manual_file tmf', 'tm.id = tmf.manual_id', 'left');
             $this->db->join('tbl_training_manual_notes tmn', 'tm.id = tmn.manual_id', 'left');
             
-            $this->db->group_start();
-            $this->db->like('tm.title', $search);
-            $this->db->or_like('tmn.note', $search);
-            $this->db->or_like('tmf.file_name', $search);
-            $this->db->group_end();
+            // Add search functionality
+            if (!empty($search)) {
+                $this->db->group_start();
+                $this->db->like('tm.title', $search);
+                $this->db->or_like('tmn.note', $search);
+                $this->db->or_like('tmf.file_name', $search);
+                $this->db->group_end();
+            }
+            
+            // Add date filtering
+            if (!empty($date_from)) {
+                $this->db->where('DATE(tm.created_at) >=', $date_from);
+            }
+            if (!empty($date_to)) {
+                $this->db->where('DATE(tm.created_at) <=', $date_to);
+            }
             
             $query = $this->db->get();
             $result = $query->row_array();
