@@ -10,15 +10,14 @@ class Pages extends CI_Controller
             show_404();
         }
 
+        // for every form submission
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (empty($_POST) && empty($_FILES) && $_SERVER['CONTENT_LENGTH'] > 0) {
-                $displayMaxSize = ini_get('post_max_size');
-                $errors['file'] = "File size exceeds the maximum allowed size of {$displayMaxSize}.";
-            }
 
-            if (empty(trim($_POST['title']))) {
-                $errors['title'] = 'Please provide a title.';
-            }
+            $validateContentLength = $this->form->validate_content_length();
+            $validateTitle = $this->form->validate_title();
+
+            // merge all errors
+            $errors = array_merge($validateContentLength, $validateTitle);
 
             $has_current_files = !empty($_FILES['file']['name'][0]);
             $has_temp_files = !empty($this->session->userdata('temp_files'));

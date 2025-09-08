@@ -25,7 +25,7 @@
         <div class="<?= isset($errors['file']) ? 'upload-box error' : 'upload-box' ?>" id="dropArea">
             <div id="fileList" class="d-flex flex-wrap gap-3"></div>
             <div id="drop-area-placeholder">
-                <i class="fas fa-cloud-upload-alt"></i>
+                <i class="fas fa-cloud-upload-alt fs-1"></i>
                 <p>Drag and Drop files here</p>
                 <p class="text-muted">or click to select a file</p>
             </div>
