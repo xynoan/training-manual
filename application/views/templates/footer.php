@@ -9,10 +9,9 @@
     const maxSizeMB = 100;
     const allowedTypes = ["pdf", "ppt", "pptx"];
 
-    // Track files for removal functionality
-    let currentFiles = []; // Array to hold current File objects
-    let existingFiles = []; // Array to hold existing file names
-    let removedExistingFiles = []; // Array to track removed existing files
+    let currentFiles = []; 
+    let existingFiles = []; 
+    let removedExistingFiles = []; 
 
     dropArea.addEventListener("click", () => fileInput.click());
 
@@ -44,14 +43,12 @@
 
     function removeFile(index, isNewFile) {
         if (isNewFile) {
-            // Remove from current files array
             const actualIndex = index - existingFiles.length;
             if (actualIndex >= 0 && actualIndex < currentFiles.length) {
                 currentFiles.splice(actualIndex, 1);
                 updateFileInput();
             }
         } else {
-            // Mark existing file for removal
             const fileName = existingFiles[index];
             if (fileName && !removedExistingFiles.includes(fileName)) {
                 removedExistingFiles.push(fileName);
@@ -60,10 +57,8 @@
             existingFiles.splice(index, 1);
         }
         
-        // Re-render the file list
         renderFileList();
         
-        // Show placeholder if no files
         if (currentFiles.length === 0 && existingFiles.length === 0) {
             dropAreaPlaceholder.classList.remove("d-none");
         }
@@ -77,7 +72,6 @@
     }
 
     function updateFileInput() {
-        // Create a new DataTransfer object to update the file input
         const dt = new DataTransfer();
         currentFiles.forEach(file => {
             dt.items.add(file);
@@ -89,7 +83,6 @@
         fileList.innerHTML = "";
         let index = 0;
         
-        // Render existing files first
         existingFiles.forEach((fileName, i) => {
             if (fileName && fileName.trim()) {
                 const box = createFileBox(fileName.trim(), index, false);
@@ -98,7 +91,6 @@
             }
         });
         
-        // Render current new files
         currentFiles.forEach((file, i) => {
             const box = createFileBox(file, index, true);
             fileList.appendChild(box);
@@ -110,12 +102,10 @@
         const box = document.createElement("div");
         box.className = "position-relative";
         
-        // Check if file is a File object or just a filename string
         const isFileObject = isNewFile !== null ? isNewFile : (file && typeof file === 'object' && file.name);
         const fileName = isFileObject ? file.name : file;
         
         const fileBox = document.createElement("div");
-        // Set different styling for existing files vs new files
         fileBox.className = isFileObject ? 
             "file-box border rounded-3 p-3 text-center shadow-sm" :
             "file-box border rounded-3 p-3 text-center shadow-sm bg-light";
@@ -123,7 +113,6 @@
         const ext = fileName.split('.').pop().toUpperCase();
         const nameOnly = fileName.substring(0, fileName.lastIndexOf('.')) || fileName;
 
-        // Create remove button
         const removeBtn = document.createElement("button");
         removeBtn.type = "button";
         removeBtn.className = "btn btn-sm btn-danger position-absolute top-0 start-100 translate-middle rounded-circle p-1";
@@ -134,14 +123,12 @@
             </svg>
         `;
         
-        // Add click event to remove button
         removeBtn.addEventListener("click", (e) => {
             e.stopPropagation();
             removeFile(index, isFileObject);
         });
 
         if (isFileObject) {
-            // Handle File object (new uploads)
             let sizeText;
             if (file.size < 1024 * 1024) {
                 sizeText = (file.size / 1024).toFixed(1) + " KB";
@@ -170,7 +157,6 @@
             fileBox.appendChild(sizeEl);
             fileBox.appendChild(nameEl);
         } else {
-            // Handle filename string (existing files)
             fileBox.innerHTML = `
                 <div class="d-flex flex-column align-items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-file-earmark-text text-primary mb-2" viewBox="0 0 16 16">
@@ -193,7 +179,6 @@
 
 
     function handleFiles(files) {
-        // Check total files including existing ones
         const totalFiles = files.length + existingFiles.length;
         if (totalFiles > maxFiles) {
             alert(`You can only upload a maximum of ${maxFiles} files total.`);
@@ -215,10 +200,8 @@
         }
         /* end of error handlers */
 
-        // Update current files array
         currentFiles = Array.from(files);
         
-        // Re-render the file list
         renderFileList();
         
         if (dropArea.classList.contains("error")) {
@@ -229,36 +212,27 @@
     }
 
     function restoreUploadedFiles() {
-        // Initialize arrays
         existingFiles = [];
         currentFiles = [];
         removedExistingFiles = [];
         
-        // Load removed files information (for validation error scenarios)
         if (window.removedFilesData && window.removedFilesData.length > 0) {
             removedExistingFiles = window.removedFilesData.map(fileName => fileName.trim());
         }
         
-        // Load existing files from database (for edit mode)
         if (window.existingFilesData && window.existingFilesData.length > 0) {
-            // Filter out files that were marked for removal
             existingFiles = window.existingFilesData.filter(fileName => {
                 const trimmedName = fileName && fileName.trim();
                 return trimmedName && !removedExistingFiles.includes(trimmedName);
             });
         }
         
-        // Load newly uploaded files from session (if any)
         if (window.uploadedFilesData && window.uploadedFilesData.length > 0) {
-            // Note: uploadedFilesData might contain file info, not File objects
-            // This would need to be handled based on your backend implementation
             currentFiles = window.uploadedFilesData || [];
         }
         
-        // Update the hidden input for removed files
         updateRemovedFilesInput();
         
-        // Render the file list
         renderFileList();
         
         const hasFiles = existingFiles.length > 0 || currentFiles.length > 0;

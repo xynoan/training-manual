@@ -12,7 +12,6 @@
 </div>
 <div class="mb-4">
     <form method="GET" action="<?= base_url() ?>" class="d-flex justify-content-start gap-3 flex-wrap align-items-end">
-        <!-- Date Range Filters -->
         <div>
             <label for="date_from" class="form-label small text-muted mb-1">From Date</label>
             <input type="date" class="form-control" id="date_from" name="date_from"
@@ -25,13 +24,11 @@
                 title="Filter up to this date"
                 value="<?= isset($date_to) ? htmlspecialchars($date_to) : '' ?>">
         </div>
-        <!-- Search Input -->
         <div class="input-group w-25">
             <input type="text" class="form-control" id="search" name="search"
                 placeholder="Search by title, notes, or filename..."
                 value="<?= isset($search) ? htmlspecialchars($search) : '' ?>">
         </div>
-        <!-- Action Buttons -->
         <div>
             <label class="form-label small text-muted mb-1">&nbsp;</label>
             <div class="d-flex gap-2">

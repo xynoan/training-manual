@@ -6,8 +6,6 @@ class Training_model extends CI_Model
         $this->load->database();
     }
 
-    // operations: insert, update, delete, get
-
     public function insert_training($data)
     {
         $training_data = array(
@@ -113,7 +111,6 @@ class Training_model extends CI_Model
         $this->db->join('tbl_training_manual_file tmf', 'tm.id = tmf.manual_id', 'left');
         $this->db->join('tbl_training_manual_notes tmn', 'tm.id = tmn.manual_id', 'left');
         
-        // Add search functionality
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('tm.title', $search);
@@ -122,7 +119,6 @@ class Training_model extends CI_Model
             $this->db->group_end();
         }
         
-        // Add date filtering
         if (!empty($date_from)) {
             $this->db->where('DATE(tm.created_at) >=', $date_from);
         }
@@ -154,7 +150,6 @@ class Training_model extends CI_Model
             $this->db->join('tbl_training_manual_file tmf', 'tm.id = tmf.manual_id', 'left');
             $this->db->join('tbl_training_manual_notes tmn', 'tm.id = tmn.manual_id', 'left');
             
-            // Add search functionality
             if (!empty($search)) {
                 $this->db->group_start();
                 $this->db->like('tm.title', $search);
@@ -163,7 +158,6 @@ class Training_model extends CI_Model
                 $this->db->group_end();
             }
             
-            // Add date filtering
             if (!empty($date_from)) {
                 $this->db->where('DATE(tm.created_at) >=', $date_from);
             }

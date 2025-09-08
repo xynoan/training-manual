@@ -1,6 +1,5 @@
 <?php require 'partials/floating-alert.php' ?>
 <form action="<?= base_url('pages/view/edit?id=' . $training['id']) ?>" method="post" enctype="multipart/form-data">
-    <!-- Add this hidden input for removed files -->
     <input type="hidden" id="removedFiles" name="removedFiles" value="[]">
     <div class="d-flex gap-2">
         <button type="submit" class="btn btn-success d-flex align-items-center gap-1" onclick="showFloatingAlert()">

@@ -125,29 +125,23 @@ class Pages extends CI_Controller
                 }
 
                 if ($page === 'edit' && isset($_GET['id'])) {
-                    // Get current training data to work with existing files
                     $current_training = $this->Training_model->get_training_by_id($_GET['id']);
                     $existing_files = $current_training['file_names'] ?: [];
                     
-                    // Handle removed files
                     $removed_files = [];
                     if (!empty($_POST['removedFiles']) && $_POST['removedFiles'] !== '[]') {
                         $removed_files_data = json_decode(trim($_POST['removedFiles']), true);
                         if (is_array($removed_files_data)) {
-                            // Trim each removed filename
                             $removed_files = array_map('trim', $removed_files_data);
                         }
                     }
                     
-                    // Filter out removed files from existing files
                     $remaining_existing_files = array_filter($existing_files, function($file) use ($removed_files) {
                         return !in_array(trim($file), $removed_files);
                     });
                     
-                    // Combine remaining existing files with new files
                     $final_files = array_merge($remaining_existing_files, $files_to_save);
                     
-                    // Validate that at least one file remains
                     if (empty($final_files)) {
                         $errors['file'] = 'At least one file is required';
                     }
@@ -156,7 +150,7 @@ class Pages extends CI_Controller
                         $update_data = [
                             'title' => $this->input->post('title'),
                             'note' => $this->input->post('notes'),
-                            'name' => $final_files  // Always update with the final file list
+                            'name' => $final_files
                         ];
                         
                         $this->Training_model->update_training($_GET['id'], $update_data);
@@ -170,8 +164,6 @@ class Pages extends CI_Controller
                             window.location.href = "/";
                         </script>';
                     } else {
-                        // If there are errors, preserve the removed files information
-                        // so JavaScript can restore the correct state
                         $data['removed_files'] = $removed_files;
                     }
                 }
@@ -183,7 +175,6 @@ class Pages extends CI_Controller
             $this->session->unset_userdata('uploaded_files');
             $this->session->unset_userdata('temp_files');
             
-            // Get search and date parameters
             $search = $this->input->get('search') ?: $this->input->post('search');
             $date_from = $this->input->get('date_from') ?: $this->input->post('date_from');
             $date_to = $this->input->get('date_to') ?: $this->input->post('date_to');
@@ -193,7 +184,6 @@ class Pages extends CI_Controller
             $config['per_page'] = 10;
             $config['uri_segment'] = $uri_segment;
             
-            // Add search and date parameters to pagination base URL
             $query_params = [];
             if (!empty($search)) {
                 $query_params['search'] = $search;
