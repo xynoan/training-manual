@@ -88,7 +88,7 @@
                 </thead>
                 <tbody>
                     <?php foreach ($trainings as $training): ?>
-                        <?php $uploaded_at = date_format(date_create($training['created_at']), "m/d/Y") ?>
+                        <?php $uploaded_at = date_format(date_create($training['created_at']), "d/m/Y H:i") ?>
                         <tr>
                             <td><?= htmlspecialchars($training['title']) ?></td>
                             <td>
