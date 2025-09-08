@@ -1,4 +1,5 @@
 <?php
+// TODO: refactor
 class Pages extends CI_Controller
 {
 
