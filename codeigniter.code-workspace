@@ -1,0 +1,52 @@
+{
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "settings": {
+        "intelephense.environment.includePaths": [
+            "system/",
+            "application/",
+            "vendor/",
+            ".vscode/codeigniter-stubs.php"
+        ],
+        "intelephense.files.associations": [
+            "*.php"
+        ],
+        "intelephense.completion.triggerParameterHints": true,
+        "intelephense.completion.insertUseDeclaration": true,
+        "intelephense.completion.fullyQualifyGlobalConstantsAndFunctions": false,
+        "intelephense.diagnostics.enable": true,
+        "intelephense.diagnostics.run": "onType",
+        "intelephense.diagnostics.embeddedLanguages": true,
+        "intelephense.diagnostics.undefinedSymbols": false,
+        "intelephense.diagnostics.undefinedFunctions": false,
+        "intelephense.diagnostics.undefinedConstants": false,
+        "intelephense.diagnostics.undefinedClassConstants": false,
+        "intelephense.diagnostics.undefinedMethods": false,
+        "intelephense.diagnostics.undefinedProperties": false,
+        "intelephense.diagnostics.undefinedTypes": false,
+        "intelephense.diagnostics.undefinedVariables": false,
+        "intelephense.diagnostics.unusedSymbols": false,
+        "intelephense.diagnostics.typeErrors": false,
+        "intelephense.diagnostics.duplicateSymbols": true,
+        "intelephense.diagnostics.argumentCount": false,
+        "intelephense.trace.server": "off",
+        "php.suggest.basic": false,
+        "php.validate.enable": false,
+        "files.associations": {
+            "*.php": "php"
+        },
+        "emmet.includeLanguages": {
+            "php": "html"
+        }
+    },
+    "extensions": {
+        "recommendations": [
+            "bmewburn.vscode-intelephense-client",
+            "formulahendry.auto-rename-tag",
+            "bradlc.vscode-tailwindcss"
+        ]
+    }
+}
