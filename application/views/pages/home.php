@@ -171,14 +171,12 @@
             const downloadBtn = document.getElementById('downloadFileBtn');
             const modalTitle = document.getElementById('filePreviewModalLabel');
 
-            // Hover preview functionality
             const hoverPreviewTooltip = document.getElementById('hoverPreviewTooltip');
             const hoverPreviewContent = document.getElementById('hoverPreviewContent');
             const hoverPreviewTitle = document.getElementById('hoverPreviewTitle');
             let hoverTimeout;
             let isHovering = false;
 
-            // Function to position tooltip within viewport
             function positionTooltip(tooltip, mouseX, mouseY) {
                 const tooltipRect = tooltip.getBoundingClientRect();
                 const viewportWidth = window.innerWidth;
@@ -187,31 +185,25 @@
                 let left = mouseX + 15;
                 let top = mouseY + 15;
                 
-                // Adjust if tooltip goes beyond right edge
                 if (left + tooltipRect.width > viewportWidth) {
                     left = mouseX - tooltipRect.width - 15;
                 }
                 
-                // Adjust if tooltip goes beyond bottom edge
                 if (top + tooltipRect.height > viewportHeight) {
                     top = mouseY - tooltipRect.height - 15;
                 }
                 
-                // Ensure tooltip doesn't go beyond left edge
                 if (left < 10) left = 10;
                 
-                // Ensure tooltip doesn't go beyond top edge
                 if (top < 10) top = 10;
                 
                 tooltip.style.left = left + 'px';
                 tooltip.style.top = top + 'px';
             }
 
-            // Function to load preview content
             function loadPreviewContent(fileName, fileExtension, previewUrl) {
                 hoverPreviewTitle.textContent = fileName;
                 
-                // Reset content with loading spinner
                 hoverPreviewContent.innerHTML = `
                     <div class="d-flex justify-content-center align-items-center p-4">
                         <div class="spinner-border spinner-border-sm" role="status">
@@ -290,7 +282,6 @@
             }
 
             document.querySelectorAll('.file-preview-link').forEach(link => {
-                // Hover events for preview tooltip
                 link.addEventListener('mouseenter', function(e) {
                     isHovering = true;
                     const fileName = this.dataset.fileName;
@@ -304,7 +295,7 @@
                             hoverPreviewTooltip.classList.remove('d-none');
                             positionTooltip(hoverPreviewTooltip, e.clientX, e.clientY);
                         }
-                    }, 300); // 300ms delay before showing tooltip
+                    }, 300);
                 });
 
                 link.addEventListener('mouseleave', function() {
@@ -314,7 +305,7 @@
                         if (!isHovering) {
                             hoverPreviewTooltip.classList.add('d-none');
                         }
-                    }, 100); // Small delay to allow moving to tooltip
+                    }, 100);
                 });
 
                 link.addEventListener('mousemove', function(e) {
@@ -323,11 +314,9 @@
                     }
                 });
 
-                // Click event for modal (existing functionality)
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
                     
-                    // Hide hover tooltip when opening modal
                     hoverPreviewTooltip.classList.add('d-none');
                     isHovering = false;
                     clearTimeout(hoverTimeout);
@@ -401,7 +390,6 @@
                 });
             });
 
-            // Add hover events to the tooltip itself to prevent it from disappearing
             hoverPreviewTooltip.addEventListener('mouseenter', function() {
                 isHovering = true;
                 clearTimeout(hoverTimeout);
@@ -416,7 +404,6 @@
                 }, 100);
             });
 
-            // Hide tooltip when clicking anywhere else
             document.addEventListener('click', function(e) {
                 if (!hoverPreviewTooltip.contains(e.target)) {
                     hoverPreviewTooltip.classList.add('d-none');

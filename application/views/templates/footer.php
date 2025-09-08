@@ -177,6 +177,7 @@
 
 
     function handleFiles(files) {
+        /* error handlers */
         const totalFiles = files.length + existingFiles.length;
         if (totalFiles > maxFiles) {
             alert(`You can only upload a maximum of ${maxFiles} files total.`);
