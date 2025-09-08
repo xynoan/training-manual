@@ -104,7 +104,7 @@
                                     <?= $index < count($training['file_names']) - 1 ? ', ' : '' ?>
                                 <?php endforeach; ?>
                             </td>
-                            <td class="align-middle">nath</td>
+                            <td class="align-middle">Nath</td>
                             <td class="align-middle"><?= $uploaded_at ?></td>
                             <td class="align-middle"><?= isset($training['note']) ? htmlspecialchars($training['note']) : '' ?></td>
                             <td>
