@@ -156,6 +156,20 @@
     </div>
 
     <?php require 'partials/file-preview-modal.php' ?>
+    
+    <!-- Hover Preview Tooltip -->
+    <div id="hoverPreviewTooltip" class="position-absolute d-none" style="z-index: 1060; max-width: 400px; background: white; border: 1px solid #dee2e6; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); padding: 0; overflow: hidden;">
+        <div class="p-3 border-bottom bg-light">
+            <h6 class="mb-0" id="hoverPreviewTitle">File Preview</h6>
+        </div>
+        <div id="hoverPreviewContent" style="max-height: 300px; overflow: auto;">
+            <div class="d-flex justify-content-center align-items-center p-4">
+                <div class="spinner-border spinner-border-sm" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -183,9 +197,177 @@
             const downloadBtn = document.getElementById('downloadFileBtn');
             const modalTitle = document.getElementById('filePreviewModalLabel');
 
+            // Hover preview functionality
+            const hoverPreviewTooltip = document.getElementById('hoverPreviewTooltip');
+            const hoverPreviewContent = document.getElementById('hoverPreviewContent');
+            const hoverPreviewTitle = document.getElementById('hoverPreviewTitle');
+            let hoverTimeout;
+            let isHovering = false;
+
+            // Function to position tooltip within viewport
+            function positionTooltip(tooltip, mouseX, mouseY) {
+                const tooltipRect = tooltip.getBoundingClientRect();
+                const viewportWidth = window.innerWidth;
+                const viewportHeight = window.innerHeight;
+                
+                let left = mouseX + 15;
+                let top = mouseY + 15;
+                
+                // Adjust if tooltip goes beyond right edge
+                if (left + tooltipRect.width > viewportWidth) {
+                    left = mouseX - tooltipRect.width - 15;
+                }
+                
+                // Adjust if tooltip goes beyond bottom edge
+                if (top + tooltipRect.height > viewportHeight) {
+                    top = mouseY - tooltipRect.height - 15;
+                }
+                
+                // Ensure tooltip doesn't go beyond left edge
+                if (left < 10) left = 10;
+                
+                // Ensure tooltip doesn't go beyond top edge
+                if (top < 10) top = 10;
+                
+                tooltip.style.left = left + 'px';
+                tooltip.style.top = top + 'px';
+            }
+
+            // Function to load preview content
+            function loadPreviewContent(fileName, fileExtension, previewUrl) {
+                hoverPreviewTitle.textContent = fileName;
+                
+                // Reset content with loading spinner
+                hoverPreviewContent.innerHTML = `
+                    <div class="d-flex justify-content-center align-items-center p-4">
+                        <div class="spinner-border spinner-border-sm" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                `;
+
+                if (fileExtension === 'pdf') {
+                    hoverPreviewContent.innerHTML = `
+                        <div class="p-3">
+                            <div class="d-flex align-items-center mb-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-file-earmark-pdf text-danger me-2" viewBox="0 0 16 16">
+                                    <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/>
+                                    <path d="M4.603 14.087a.8.8 0 0 1-.438-.42c-.195-.388-.13-.776.08-1.102.198-.307.526-.568.897-.787a7.68 7.68 0 0 1 1.482-.645 19.697 19.697 0 0 0 1.062-2.227 7.269 7.269 0 0 1-.43-1.295c-.086-.4-.119-.796-.046-1.136.075-.354.274-.672.65-.823.192-.077.4-.12.602-.077a.7.7 0 0 1 .477.365c.088.164.12.356.127.538.007.188-.012.396-.047.614-.084.51-.27 1.134-.52 1.794a10.954 10.954 0 0 0 .98 1.686 5.753 5.753 0 0 1 1.334.05c.364.066.734.195.96.465.12.144.193.32.2.518.007.192-.047.382-.138.563a1.04 1.04 0 0 1-.354.416.856.856 0 0 1-.51.138c-.331-.014-.654-.196-.933-.417a5.712 5.712 0 0 1-.911-.95 11.651 11.651 0 0 0-1.997.406 11.307 11.307 0 0 1-1.02 1.51c-.292.35-.609.656-.927.787a.793.793 0 0 1-.58.029zm1.379-1.901c-.166.076-.32.156-.459.238-.328.194-.541.383-.647.547-.094.145-.096.25-.04.361.01.022.02.036.026.044a.266.266 0 0 0 .035-.012c.137-.056.355-.235.635-.572a8.18 8.18 0 0 0 .45-.606zm1.64-1.33a12.71 12.71 0 0 1 1.01-.193 11.744 11.744 0 0 1-.51-.858 20.801 20.801 0 0 1-.5 1.05zm2.446.45c.15.163.296.3.435.41.24.19.407.253.498.256a.107.107 0 0 0 .07-.015.307.307 0 0 0 .094-.125.436.436 0 0 0 .059-.2.095.095 0 0 0-.026-.063c-.052-.062-.2-.152-.518-.209a3.876 3.876 0 0 0-.612-.053zM8.078 7.8a6.7 6.7 0 0 0 .2-.828c.031-.188.043-.343.038-.465a.613.613 0 0 0-.032-.198.517.517 0 0 0-.145.04c-.087.035-.158.106-.196.283-.04.192-.03.469.135.968z"/>
+                                </svg>
+                                <strong>PDF Document</strong>
+                            </div>
+                            <p class="text-muted mb-2">Click to view full PDF in modal</p>
+                            <small class="text-secondary">File: ${fileName}</small>
+                        </div>
+                    `;
+                } else if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(fileExtension)) {
+                    hoverPreviewContent.innerHTML = `
+                        <div class="p-2">
+                            <img src="${previewUrl}" 
+                                 class="img-fluid rounded" 
+                                 alt="${fileName}"
+                                 style="max-height: 250px; width: 100%; object-fit: contain;"
+                                 onerror="this.parentElement.innerHTML='<div class=\\"p-3 text-center\\"><div class=\\"text-muted\\">Image preview not available</div><small>${fileName}</small></div>'">
+                        </div>
+                    `;
+                } else if (fileExtension === 'txt') {
+                    fetch(previewUrl)
+                        .then(response => response.text())
+                        .then(text => {
+                            const truncatedText = text.length > 500 ? text.substring(0, 500) + '...' : text;
+                            hoverPreviewContent.innerHTML = `
+                                <div class="p-3">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-file-text me-2" viewBox="0 0 16 16">
+                                            <path d="M5 4a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1zm-.5 2.5A.5.5 0 0 1 5 6h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5M5 8a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1z"/>
+                                            <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"/>
+                                        </svg>
+                                        <strong>Text File</strong>
+                                    </div>
+                                    <pre style="white-space: pre-wrap; word-wrap: break-word; font-size: 0.875rem; margin: 0; max-height: 200px; overflow-y: auto; background-color: #f8f9fa; padding: 0.75rem; border-radius: 0.375rem;">${truncatedText}</pre>
+                                </div>
+                            `;
+                        })
+                        .catch(error => {
+                            hoverPreviewContent.innerHTML = `
+                                <div class="p-3 text-center">
+                                    <div class="text-muted">Text preview not available</div>
+                                    <small>${fileName}</small>
+                                </div>
+                            `;
+                        });
+                } else if (['ppt', 'pptx'].includes(fileExtension)) {
+                    hoverPreviewContent.innerHTML = `
+                        <div class="p-3">
+                            <div class="d-flex align-items-center mb-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-file-earmark-ppt text-warning me-2" viewBox="0 0 16 16">
+                                    <path d="M7 5.5a1 1 0 0 0-1 1V13a.5.5 0 0 0 1 0v-2h1.188a2.75 2.75 0 0 0 0-5.5zm0 1h1.188a1.75 1.75 0 1 1 0 3.5H7z"/>
+                                    <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/>
+                                </svg>
+                                <strong>PowerPoint Presentation</strong>
+                            </div>
+                            <p class="text-muted mb-2">Click to download and view presentation</p>
+                            <small class="text-secondary">File: ${fileName}</small>
+                        </div>
+                    `;
+                } else {
+                    hoverPreviewContent.innerHTML = `
+                        <div class="p-3">
+                            <div class="d-flex align-items-center mb-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-file-earmark me-2" viewBox="0 0 16 16">
+                                    <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/>
+                                </svg>
+                                <strong>${fileExtension.toUpperCase()} File</strong>
+                            </div>
+                            <p class="text-muted mb-2">Preview not available for this file type</p>
+                            <small class="text-secondary">File: ${fileName}</small>
+                        </div>
+                    `;
+                }
+            }
+
             document.querySelectorAll('.file-preview-link').forEach(link => {
+                // Hover events for preview tooltip
+                link.addEventListener('mouseenter', function(e) {
+                    isHovering = true;
+                    const fileName = this.dataset.fileName;
+                    const fileExtension = this.dataset.fileExtension;
+                    const previewUrl = this.href;
+
+                    clearTimeout(hoverTimeout);
+                    hoverTimeout = setTimeout(() => {
+                        if (isHovering) {
+                            loadPreviewContent(fileName, fileExtension, previewUrl);
+                            hoverPreviewTooltip.classList.remove('d-none');
+                            positionTooltip(hoverPreviewTooltip, e.clientX, e.clientY);
+                        }
+                    }, 300); // 300ms delay before showing tooltip
+                });
+
+                link.addEventListener('mouseleave', function() {
+                    isHovering = false;
+                    clearTimeout(hoverTimeout);
+                    hoverTimeout = setTimeout(() => {
+                        if (!isHovering) {
+                            hoverPreviewTooltip.classList.add('d-none');
+                        }
+                    }, 100); // Small delay to allow moving to tooltip
+                });
+
+                link.addEventListener('mousemove', function(e) {
+                    if (!hoverPreviewTooltip.classList.contains('d-none')) {
+                        positionTooltip(hoverPreviewTooltip, e.clientX, e.clientY);
+                    }
+                });
+
+                // Click event for modal (existing functionality)
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
+                    
+                    // Hide hover tooltip when opening modal
+                    hoverPreviewTooltip.classList.add('d-none');
+                    isHovering = false;
+                    clearTimeout(hoverTimeout);
 
                     const fileName = this.dataset.fileName;
                     const fileExtension = this.dataset.fileExtension;
@@ -254,6 +436,30 @@
                 `;
                     }
                 });
+            });
+
+            // Add hover events to the tooltip itself to prevent it from disappearing
+            hoverPreviewTooltip.addEventListener('mouseenter', function() {
+                isHovering = true;
+                clearTimeout(hoverTimeout);
+            });
+
+            hoverPreviewTooltip.addEventListener('mouseleave', function() {
+                isHovering = false;
+                hoverTimeout = setTimeout(() => {
+                    if (!isHovering) {
+                        hoverPreviewTooltip.classList.add('d-none');
+                    }
+                }, 100);
+            });
+
+            // Hide tooltip when clicking anywhere else
+            document.addEventListener('click', function(e) {
+                if (!hoverPreviewTooltip.contains(e.target)) {
+                    hoverPreviewTooltip.classList.add('d-none');
+                    isHovering = false;
+                    clearTimeout(hoverTimeout);
+                }
             });
         });
     </script>
