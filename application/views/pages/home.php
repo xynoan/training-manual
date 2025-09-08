@@ -11,54 +11,46 @@
 </a>
 </div>
 <div class="mb-4">
-    <form method="GET" action="<?= base_url() ?>" class="d-flex justify-content-between gap-3 flex-wrap align-items-end">
+    <form method="GET" action="<?= base_url() ?>" class="d-flex justify-content-start gap-3 flex-wrap align-items-end">
         <!-- Date Range Filters -->
-        <div class="d-flex gap-3 flex-wrap">
-            <div>
-                <label for="date_from" class="form-label small text-muted mb-1">From Date</label>
-                <input type="date" class="form-control" id="date_from" name="date_from"
-                    title="Filter from this date"
-                    value="<?= isset($date_from) ? htmlspecialchars($date_from) : '' ?>">
-            </div>
-            <div>
-                <label for="date_to" class="form-label small text-muted mb-1">To Date</label>
-                <input type="date" class="form-control" id="date_to" name="date_to"
-                    title="Filter up to this date"
-                    value="<?= isset($date_to) ? htmlspecialchars($date_to) : '' ?>">
-            </div>
-
-            <!-- Action Buttons -->
-            <div>
-                <label class="form-label small text-muted mb-1">&nbsp;</label>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-primary" type="submit">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-funnel" viewBox="0 0 16 16">
-                            <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2z" />
-                        </svg>
-                        Filter
-                    </button>
-                    <?php if (!empty($search) || !empty($date_from) || !empty($date_to)): ?>
-                        <a href="<?= base_url() ?>" class="btn btn-outline-danger d-flex justify-content-center align-items-center gap-1" title="Clear all filters">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
-                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
-                                <path d="m4.646 4.646.708.708L8 8l2.646-2.646.708-.708L8.707 8l2.647 2.646-.708.708L8 8.707l-2.646 2.647-.708-.708L7.293 8z" />
-                            </svg>
-                            Clear
-                        </a>
-                    <?php endif; ?>
-                </div>
-            </div>
+        <div>
+            <label for="date_from" class="form-label small text-muted mb-1">From Date</label>
+            <input type="date" class="form-control" id="date_from" name="date_from"
+                title="Filter from this date"
+                value="<?= isset($date_from) ? htmlspecialchars($date_from) : '' ?>">
+        </div>
+        <div>
+            <label for="date_to" class="form-label small text-muted mb-1">To Date</label>
+            <input type="date" class="form-control" id="date_to" name="date_to"
+                title="Filter up to this date"
+                value="<?= isset($date_to) ? htmlspecialchars($date_to) : '' ?>">
         </div>
         <!-- Search Input -->
         <div class="input-group w-25">
             <input type="text" class="form-control" id="search" name="search"
                 placeholder="Search by title, notes, or filename..."
                 value="<?= isset($search) ? htmlspecialchars($search) : '' ?>">
-            <span class="input-group-text">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
-                </svg>
-            </span>
+        </div>
+        <!-- Action Buttons -->
+        <div>
+            <label class="form-label small text-muted mb-1">&nbsp;</label>
+            <div class="d-flex gap-2">
+                <button class="btn btn-primary" type="submit">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-funnel" viewBox="0 0 16 16">
+                        <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2z" />
+                    </svg>
+                    Filter
+                </button>
+                <?php if (!empty($search) || !empty($date_from) || !empty($date_to)): ?>
+                    <a href="<?= base_url() ?>" class="btn btn-outline-danger d-flex justify-content-center align-items-center gap-1" title="Clear all filters">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
+                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                            <path d="m4.646 4.646.708.708L8 8l2.646-2.646.708-.708L8.707 8l2.647 2.646-.708.708L8 8.707l-2.646 2.647-.708-.708L7.293 8z" />
+                        </svg>
+                        Clear
+                    </a>
+                <?php endif; ?>
+            </div>
         </div>
     </form>
 </div>
