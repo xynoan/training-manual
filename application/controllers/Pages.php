@@ -178,12 +178,10 @@ class Pages extends CI_Controller
             $search = $this->input->get('search') ?: $this->input->post('search');
             $dates = $this->input->get('dates') ?: $this->input->post('dates');
             
-            // Parse date range from daterangepicker format
             $date_from = null;
             $date_to = null;
             
             if (!empty($dates)) {
-                // Handle daterangepicker format: "MM/DD/YYYY - MM/DD/YYYY"
                 if (strpos($dates, ' - ') !== false) {
                     $date_parts = explode(' - ', $dates);
                     if (count($date_parts) == 2) {
@@ -191,7 +189,6 @@ class Pages extends CI_Controller
                         $date_to = date('Y-m-d', strtotime(trim($date_parts[1])));
                     }
                 } else {
-                    // Single date
                     $date_from = date('Y-m-d', strtotime($dates));
                     $date_to = $date_from;
                 }
