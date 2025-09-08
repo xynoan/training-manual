@@ -78,7 +78,7 @@
             <table class="table table-bordered">
                 <thead>
                     <tr>
-                        <th scope="col">Title</th>
+                        <th scope="col" style="width: 15%;">Title</th>
                         <th scope="col">Files</th>
                         <th scope="col">Uploaded by</th>
                         <th scope="col">Uploaded at</th>
@@ -90,7 +90,7 @@
                     <?php foreach ($trainings as $training): ?>
                         <?php $uploaded_at = date_format(date_create($training['created_at']), "d/m/Y H:i") ?>
                         <tr>
-                            <td><?= htmlspecialchars($training['title']) ?></td>
+                            <td class="align-middle"><?= htmlspecialchars($training['title']) ?></td>
                             <td>
                                 <?php foreach ($training['file_names'] as $index => $file_name): ?>
                                     <a class="link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover file-preview-link"
@@ -104,9 +104,9 @@
                                     <?= $index < count($training['file_names']) - 1 ? ', ' : '' ?>
                                 <?php endforeach; ?>
                             </td>
-                            <td>nath</td>
-                            <td><?= $uploaded_at ?></td>
-                            <td><?= isset($training['note']) ? htmlspecialchars($training['note']) : '' ?></td>
+                            <td class="align-middle">nath</td>
+                            <td class="align-middle"><?= $uploaded_at ?></td>
+                            <td class="align-middle"><?= isset($training['note']) ? htmlspecialchars($training['note']) : '' ?></td>
                             <td>
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
@@ -165,11 +165,11 @@
                     cancelLabel: 'Clear'
                 }
             });
-            
+
             $('input[name="dates"]').on('apply.daterangepicker', function(ev, picker) {
                 $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
             });
-            
+
             $('input[name="dates"]').on('cancel.daterangepicker', function(ev, picker) {
                 $(this).val('');
             });
