@@ -176,8 +176,26 @@ class Pages extends CI_Controller
             $this->session->unset_userdata('temp_files');
             
             $search = $this->input->get('search') ?: $this->input->post('search');
-            $date_from = $this->input->get('date_from') ?: $this->input->post('date_from');
-            $date_to = $this->input->get('date_to') ?: $this->input->post('date_to');
+            $dates = $this->input->get('dates') ?: $this->input->post('dates');
+            
+            // Parse date range from daterangepicker format
+            $date_from = null;
+            $date_to = null;
+            
+            if (!empty($dates)) {
+                // Handle daterangepicker format: "MM/DD/YYYY - MM/DD/YYYY"
+                if (strpos($dates, ' - ') !== false) {
+                    $date_parts = explode(' - ', $dates);
+                    if (count($date_parts) == 2) {
+                        $date_from = date('Y-m-d', strtotime(trim($date_parts[0])));
+                        $date_to = date('Y-m-d', strtotime(trim($date_parts[1])));
+                    }
+                } else {
+                    // Single date
+                    $date_from = date('Y-m-d', strtotime($dates));
+                    $date_to = $date_from;
+                }
+            }
             
             $uri_segment = 1;
             $config['total_rows'] = $this->Training_model->count_all_trainings($search, $date_from, $date_to);
@@ -188,11 +206,8 @@ class Pages extends CI_Controller
             if (!empty($search)) {
                 $query_params['search'] = $search;
             }
-            if (!empty($date_from)) {
-                $query_params['date_from'] = $date_from;
-            }
-            if (!empty($date_to)) {
-                $query_params['date_to'] = $date_to;
+            if (!empty($dates)) {
+                $query_params['dates'] = $dates;
             }
             
             if (!empty($query_params)) {
@@ -211,6 +226,7 @@ class Pages extends CI_Controller
             $data['trainings'] = $this->Training_model->get_all_trainings_paginated($config['per_page'], $offset, $search, $date_from, $date_to);
             $data['pagination'] = $this->pagination->create_links();
             $data['search'] = $search;
+            $data['dates'] = $dates;
             $data['date_from'] = $date_from;
             $data['date_to'] = $date_to;
         }
