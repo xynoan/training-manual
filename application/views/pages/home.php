@@ -11,55 +11,54 @@
 </a>
 </div>
 <div class="mb-4">
-    <form method="GET" action="<?= base_url() ?>" class="row g-3">
-        <!-- Search Input -->
-        <div class="col-md-6">
-            <div class="input-group">
-                <input type="text" class="form-control" id="search" name="search" 
-                       placeholder="Search by title, notes, or filename..." 
-                       value="<?= isset($search) ? htmlspecialchars($search) : '' ?>">
-                <span class="input-group-text">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
-                    </svg>
-                </span>
-            </div>
-        </div>
-        
+    <form method="GET" action="<?= base_url() ?>" class="d-flex justify-content-between gap-3 flex-wrap align-items-end">
         <!-- Date Range Filters -->
-        <div class="col-md-2">
-            <label for="date_from" class="form-label small text-muted mb-1">From Date</label>
-            <input type="date" class="form-control" id="date_from" name="date_from" 
-                   title="Filter from this date"
-                   value="<?= isset($date_from) ? htmlspecialchars($date_from) : '' ?>">
-        </div>
-        <div class="col-md-2">
-            <label for="date_to" class="form-label small text-muted mb-1">To Date</label>
-            <input type="date" class="form-control" id="date_to" name="date_to" 
-                   title="Filter up to this date"
-                   value="<?= isset($date_to) ? htmlspecialchars($date_to) : '' ?>">
-        </div>
-        
-        <!-- Action Buttons -->
-        <div class="col-md-2">
-            <label class="form-label small text-muted mb-1">&nbsp;</label>
-            <div class="d-flex gap-2">
-                <button class="btn btn-primary" type="submit">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-funnel" viewBox="0 0 16 16">
-                        <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2z"/>
-                    </svg>
-                    Filter
-                </button>
-                <?php if (!empty($search) || !empty($date_from) || !empty($date_to)): ?>
-                    <a href="<?= base_url() ?>" class="btn btn-outline-danger d-flex justify-content-center align-items-center gap-1" title="Clear all filters">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
-                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
-                            <path d="m4.646 4.646.708.708L8 8l2.646-2.646.708-.708L8.707 8l2.647 2.646-.708.708L8 8.707l-2.646 2.647-.708-.708L7.293 8z"/>
-                        </svg>
-                        Clear
-                    </a>
-                <?php endif; ?>
+        <div class="d-flex gap-3 flex-wrap">
+            <div>
+                <label for="date_from" class="form-label small text-muted mb-1">From Date</label>
+                <input type="date" class="form-control" id="date_from" name="date_from"
+                    title="Filter from this date"
+                    value="<?= isset($date_from) ? htmlspecialchars($date_from) : '' ?>">
             </div>
+            <div>
+                <label for="date_to" class="form-label small text-muted mb-1">To Date</label>
+                <input type="date" class="form-control" id="date_to" name="date_to"
+                    title="Filter up to this date"
+                    value="<?= isset($date_to) ? htmlspecialchars($date_to) : '' ?>">
+            </div>
+
+            <!-- Action Buttons -->
+            <div>
+                <label class="form-label small text-muted mb-1">&nbsp;</label>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-primary" type="submit">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-funnel" viewBox="0 0 16 16">
+                            <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2z" />
+                        </svg>
+                        Filter
+                    </button>
+                    <?php if (!empty($search) || !empty($date_from) || !empty($date_to)): ?>
+                        <a href="<?= base_url() ?>" class="btn btn-outline-danger d-flex justify-content-center align-items-center gap-1" title="Clear all filters">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
+                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                                <path d="m4.646 4.646.708.708L8 8l2.646-2.646.708-.708L8.707 8l2.647 2.646-.708.708L8 8.707l-2.646 2.647-.708-.708L7.293 8z" />
+                            </svg>
+                            Clear
+                        </a>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+        <!-- Search Input -->
+        <div class="input-group w-25">
+            <input type="text" class="form-control" id="search" name="search"
+                placeholder="Search by title, notes, or filename..."
+                value="<?= isset($search) ? htmlspecialchars($search) : '' ?>">
+            <span class="input-group-text">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+                </svg>
+            </span>
         </div>
     </form>
 </div>
@@ -72,7 +71,7 @@
         <?php endif; ?>
         <?php if (!empty($date_from) || !empty($date_to)): ?>
             <?php if (!empty($search)): ?> | <?php endif; ?>
-            Date Range: 
+            Date Range:
             <?php if (!empty($date_from)): ?>
                 From <?= date('M j, Y', strtotime($date_from)) ?>
             <?php endif; ?>
@@ -81,7 +80,7 @@
                 <?php if (empty($date_from)): ?>Up to <?php endif; ?><?= date('M j, Y', strtotime($date_to)) ?>
             <?php endif; ?>
         <?php endif; ?>
-        
+
         <?php if (!empty($trainings)): ?>
             <br><small>Found <?= count($trainings) ?> result(s)</small>
         <?php else: ?>
@@ -111,12 +110,12 @@
                         <td><?= htmlspecialchars($training['title']) ?></td>
                         <td>
                             <?php foreach ($training['file_names'] as $index => $file_name): ?>
-                                <a class="link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover file-preview-link" 
-                                   href="/pages/preview_file/<?= $training['id'] ?>/<?= $index ?>"
-                                   data-training-id="<?= $training['id'] ?>"
-                                   data-file-index="<?= $index ?>"
-                                   data-file-name="<?= htmlspecialchars($file_name) ?>"
-                                   data-file-extension="<?= strtolower(pathinfo($file_name, PATHINFO_EXTENSION)) ?>">
+                                <a class="link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover file-preview-link"
+                                    href="/pages/preview_file/<?= $training['id'] ?>/<?= $index ?>"
+                                    data-training-id="<?= $training['id'] ?>"
+                                    data-file-index="<?= $index ?>"
+                                    data-file-name="<?= htmlspecialchars($file_name) ?>"
+                                    data-file-extension="<?= strtolower(pathinfo($file_name, PATHINFO_EXTENSION)) ?>">
                                     <?= $file_name ?>
                                 </a>
                                 <?= $index < count($training['file_names']) - 1 ? ', ' : '' ?>
@@ -176,36 +175,36 @@
 <?php require 'partials/file-preview-modal.php' ?>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const filePreviewModal = new bootstrap.Modal(document.getElementById('filePreviewModal'));
-    const filePreviewContent = document.getElementById('filePreviewContent');
-    const downloadBtn = document.getElementById('downloadFileBtn');
-    const modalTitle = document.getElementById('filePreviewModalLabel');
+    document.addEventListener('DOMContentLoaded', function() {
+        const filePreviewModal = new bootstrap.Modal(document.getElementById('filePreviewModal'));
+        const filePreviewContent = document.getElementById('filePreviewContent');
+        const downloadBtn = document.getElementById('downloadFileBtn');
+        const modalTitle = document.getElementById('filePreviewModalLabel');
 
-    document.querySelectorAll('.file-preview-link').forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            const fileName = this.dataset.fileName;
-            const fileExtension = this.dataset.fileExtension;
-            const previewUrl = this.href;
-            
-            modalTitle.textContent = `Preview: ${fileName}`;
-            downloadBtn.href = previewUrl;
-            downloadBtn.download = fileName;
-            
-            filePreviewContent.innerHTML = `
+        document.querySelectorAll('.file-preview-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                const fileName = this.dataset.fileName;
+                const fileExtension = this.dataset.fileExtension;
+                const previewUrl = this.href;
+
+                modalTitle.textContent = `Preview: ${fileName}`;
+                downloadBtn.href = previewUrl;
+                downloadBtn.download = fileName;
+
+                filePreviewContent.innerHTML = `
                 <div class="d-flex justify-content-center align-items-center h-100">
                     <div class="spinner-border" role="status">
                         <span class="visually-hidden">Loading...</span>
                     </div>
                 </div>
             `;
-            
-            filePreviewModal.show();
-            
-            if (fileExtension === 'pdf') {
-                filePreviewContent.innerHTML = `
+
+                filePreviewModal.show();
+
+                if (fileExtension === 'pdf') {
+                    filePreviewContent.innerHTML = `
                     <iframe src="${previewUrl}" 
                             width="100%" 
                             height="100%" 
@@ -215,8 +214,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         </p>
                     </iframe>
                 `;
-            } else if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
-                filePreviewContent.innerHTML = `
+                } else if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
+                    filePreviewContent.innerHTML = `
                     <div class="text-center">
                         <img src="${previewUrl}" 
                              class="img-fluid" 
@@ -224,24 +223,24 @@ document.addEventListener('DOMContentLoaded', function() {
                              style="max-height: 100%; max-width: 100%;">
                     </div>
                 `;
-            } else if (fileExtension === 'txt') {
-                fetch(previewUrl)
-                    .then(response => response.text())
-                    .then(text => {
-                        filePreviewContent.innerHTML = `
+                } else if (fileExtension === 'txt') {
+                    fetch(previewUrl)
+                        .then(response => response.text())
+                        .then(text => {
+                            filePreviewContent.innerHTML = `
                             <pre style="white-space: pre-wrap; word-wrap: break-word; height: 100%; overflow-y: auto; padding: 1rem; background-color: #f8f9fa; border-radius: 0.375rem;">${text}</pre>
                         `;
-                    })
-                    .catch(error => {
-                        filePreviewContent.innerHTML = `
+                        })
+                        .catch(error => {
+                            filePreviewContent.innerHTML = `
                             <div class="alert alert-warning">
                                 <h5>Preview not available</h5>
                                 <p>Cannot preview this file type. You can download it using the button below.</p>
                             </div>
                         `;
-                    });
-            } else {
-                filePreviewContent.innerHTML = `
+                        });
+                } else {
+                    filePreviewContent.innerHTML = `
                     <div class="alert alert-info">
                         <h5>Preview not available</h5>
                         <p>This file type (${fileExtension.toUpperCase()}) cannot be previewed in the browser. You can download it using the button below.</p>
@@ -251,8 +250,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                     </div>
                 `;
-            }
+                }
+            });
         });
     });
-});
 </script>
