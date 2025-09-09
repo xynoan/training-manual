@@ -4,7 +4,6 @@ class Pages extends CI_Controller
 {
     public function index()
     {
-        // Clean up any temporary files when visiting home
         _cleanup_temp_files($this);
         $this->session->unset_userdata('uploaded_files');
         $this->session->unset_userdata('temp_files');
@@ -74,9 +73,8 @@ class Pages extends CI_Controller
     {
         $errors = [];
 
-        // Handle POST requests (form submissions)
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $errors = $this->_handle_add_form_submission();
+            $errors = handleAddFormSubmission($this);
         }
 
         $data = [
@@ -103,7 +101,6 @@ class Pages extends CI_Controller
 
         $errors = [];
 
-        // Handle POST requests (form submissions)
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $errors = $this->_handle_edit_form_submission($_GET['id']);
         }
@@ -122,186 +119,6 @@ class Pages extends CI_Controller
         $this->load->view('templates/header', $data);
         $this->load->view('pages/edit', array_merge($data, ['errors' => $errors]));
         $this->load->view('templates/footer', $data);
-    }
-
-    private function _handle_add_form_submission()
-    {
-        $validateContentLength = $this->form->validate_content_length();
-        $validateTitle = $this->form->validate_title();
-        $errors = array_merge($validateContentLength, $validateTitle);
-
-        $has_current_files = !empty($_FILES['file']['name'][0]);
-        $has_temp_files = !empty($this->session->userdata('temp_files'));
-
-        if (!$has_current_files && !$has_temp_files) {
-            $errors['file'] = 'File is required';
-        }
-
-        if (!empty($errors)) {
-            if ($has_current_files) {
-                $this->_handle_file_upload_for_validation();
-            }
-            return $errors;
-        }
-
-        // No errors, process the form
-        $files_to_save = $this->_process_file_uploads($has_current_files, $has_temp_files);
-
-        $this->Training_model->insert_training([
-            'title' => $this->input->post('title'),
-            'note' => $this->input->post('notes'),
-            'name' => $files_to_save
-        ]);
-
-        $this->_cleanup_session_data();
-
-        // Redirect to home page after successful submission
-        redirect(base_url());
-    }
-
-    private function _handle_edit_form_submission($id)
-    {
-        $validateContentLength = $this->form->validate_content_length();
-        $validateTitle = $this->form->validate_title();
-        $errors = array_merge($validateContentLength, $validateTitle);
-
-        $has_current_files = !empty($_FILES['file']['name'][0]);
-        $has_temp_files = !empty($this->session->userdata('temp_files'));
-
-        if (!$has_current_files && !$has_temp_files) {
-            $training = $this->Training_model->get_training_by_id($id);
-            if (!$training || empty($training['file_names'])) {
-                $errors['file'] = 'File is required';
-            }
-        }
-
-        if (!empty($errors)) {
-            if ($has_current_files) {
-                $this->_handle_file_upload_for_validation();
-            }
-            return $errors;
-        }
-
-        // No errors, process the form
-        $files_to_save = $this->_process_file_uploads($has_current_files, $has_temp_files);
-
-        $current_training = $this->Training_model->get_training_by_id($id);
-        $existing_files = $current_training['file_names'] ?: [];
-
-        $removed_files = [];
-        if (!empty($_POST['removedFiles']) && $_POST['removedFiles'] !== '[]') {
-            $removed_files_data = json_decode(trim($_POST['removedFiles']), true);
-            if (is_array($removed_files_data)) {
-                $removed_files = array_map('trim', $removed_files_data);
-            }
-        }
-
-        $remaining_existing_files = array_filter($existing_files, function ($file) use ($removed_files) {
-            return !in_array(trim($file), $removed_files);
-        });
-
-        $final_files = array_merge($remaining_existing_files, $files_to_save);
-
-        if (empty($final_files)) {
-            return ['file' => 'At least one file is required', 'removed_files' => $removed_files];
-        }
-
-        $update_data = [
-            'title' => $this->input->post('title'),
-            'note' => $this->input->post('notes'),
-            'name' => $final_files
-        ];
-
-        $this->Training_model->update_training($id, $update_data);
-        $this->_cleanup_session_data();
-
-        // Redirect to home page after successful submission
-        redirect(base_url());
-    }
-
-    private function _handle_file_upload_for_validation()
-    {
-        $uploaded_files = [];
-        $temp_files = [];
-
-        for ($i = 0; $i < count($_FILES['file']['name']); $i++) {
-            if (!empty($_FILES['file']['name'][$i]) && $_FILES['file']['error'][$i] === UPLOAD_ERR_OK) {
-                $uploaded_files[] = [
-                    'name' => $_FILES['file']['name'][$i],
-                    'size' => $_FILES['file']['size'][$i],
-                    'type' => $_FILES['file']['type'][$i]
-                ];
-
-                $temp_filename = uniqid() . '_' . $_FILES['file']['name'][$i];
-                $temp_path = sys_get_temp_dir() . '/' . $temp_filename;
-
-                if (move_uploaded_file($_FILES['file']['tmp_name'][$i], $temp_path)) {
-                    $temp_files[] = [
-                        'original_name' => $_FILES['file']['name'][$i],
-                        'temp_path' => $temp_path,
-                        'temp_filename' => $temp_filename,
-                        'size' => $_FILES['file']['size'][$i],
-                        'type' => $_FILES['file']['type'][$i]
-                    ];
-                }
-            }
-        }
-
-        _cleanup_temp_files($this);
-        $this->session->set_userdata('uploaded_files', $uploaded_files);
-        $this->session->set_userdata('temp_files', $temp_files);
-    }
-
-    private function _process_file_uploads($has_current_files, $has_temp_files)
-    {
-        $files_to_save = [];
-        $upload_dir = APPPATH . '../uploads/';
-
-        if (!is_dir($upload_dir)) {
-            mkdir($upload_dir, 0755, true);
-        }
-
-        if ($has_current_files) {
-            $base_timestamp = time();
-            for ($i = 0; $i < count($_FILES['file']['name']); $i++) {
-                if (!empty($_FILES['file']['name'][$i]) && $_FILES['file']['error'][$i] === UPLOAD_ERR_OK) {
-                    $timestamp = $base_timestamp . sprintf('%03d', $i);
-                    $filename = $timestamp . '_' . $_FILES['file']['name'][$i];
-                    $filepath = $upload_dir . $filename;
-
-                    if (move_uploaded_file($_FILES['file']['tmp_name'][$i], $filepath)) {
-                        $files_to_save[] = $_FILES['file']['name'][$i];
-                    }
-                }
-            }
-        } else if ($has_temp_files) {
-            $temp_files = $this->session->userdata('temp_files');
-            if ($temp_files) {
-                $base_timestamp = time();
-                $index = 0;
-                foreach ($temp_files as $temp_file) {
-                    if (file_exists($temp_file['temp_path'])) {
-                        $timestamp = $base_timestamp . sprintf('%03d', $index);
-                        $filename = $timestamp . '_' . $temp_file['original_name'];
-                        $filepath = $upload_dir . $filename;
-
-                        if (copy($temp_file['temp_path'], $filepath)) {
-                            $files_to_save[] = $temp_file['original_name'];
-                        }
-                        $index++;
-                    }
-                }
-            }
-        }
-
-        return $files_to_save;
-    }
-
-    private function _cleanup_session_data()
-    {
-        _cleanup_temp_files($this);
-        $this->session->unset_userdata('uploaded_files');
-        $this->session->unset_userdata('temp_files');
     }
 
     public function delete($id = null)
