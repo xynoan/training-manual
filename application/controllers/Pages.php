@@ -102,7 +102,7 @@ class Pages extends CI_Controller
         $errors = [];
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $errors = $this->_handle_edit_form_submission($_GET['id']);
+            $errors = handleEditFormSubmission($this, $_GET['id']);
         }
 
         $data = [
@@ -246,7 +246,7 @@ class Pages extends CI_Controller
         $trainings = $this->Training_model->get_all_trainings_paginated($config['per_page'], $offset, $search, $date_from, $date_to);
 
         $total_pages = ceil($config['total_rows'] / $config['per_page']);
-        $pagination = $this->generate_ajax_pagination($page, $total_pages);
+        $pagination = generate_ajax_pagination($page, $total_pages);
 
         $this->output
             ->set_content_type('application/json')

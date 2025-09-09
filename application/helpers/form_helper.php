@@ -15,12 +15,12 @@ function handleAddFormSubmission($obj)
 
     if (!empty($errors)) {
         if ($has_current_files) {
-            $obj->_handle_file_upload_for_validation();
+            handleFileUploadValidation($obj);
         }
         return $errors;
     }
 
-    $files_to_save = $obj->_process_file_uploads($has_current_files, $has_temp_files);
+    $files_to_save = processFileUploads($has_current_files, $has_temp_files, $obj);
 
     $obj->Training_model->insert_training([
         'title' => $obj->input->post('title'),
@@ -28,12 +28,12 @@ function handleAddFormSubmission($obj)
         'name' => $files_to_save
     ]);
 
-    $obj->_cleanup_session_data();
+    _cleanup_session_data($obj);
 
     redirect(base_url());
 }
 
-function handleEditFormSubmission($obj)
+function handleEditFormSubmission($obj, $id)
 {
     $validateContentLength = $obj->form->validate_content_length();
     $validateTitle = $obj->form->validate_title();
@@ -51,12 +51,12 @@ function handleEditFormSubmission($obj)
 
     if (!empty($errors)) {
         if ($has_current_files) {
-            $obj->_handle_file_upload_for_validation();
+            handleFileUploadValidation($obj);
         }
         return $errors;
     }
 
-    $files_to_save = $obj->_process_file_uploads($has_current_files, $has_temp_files);
+    $files_to_save = processFileUploads($has_current_files, $has_temp_files, $obj);
 
     $current_training = $obj->Training_model->get_training_by_id($id);
     $existing_files = $current_training['file_names'] ?: [];
@@ -86,7 +86,7 @@ function handleEditFormSubmission($obj)
     ];
 
     $obj->Training_model->update_training($id, $update_data);
-    $obj->_cleanup_session_data();
+    _cleanup_session_data($obj);
 
     redirect(base_url());
 }
