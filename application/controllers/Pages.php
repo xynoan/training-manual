@@ -287,47 +287,6 @@ class Pages extends CI_Controller
             ]));
     }
 
-    private function generate_ajax_pagination($current_page, $total_pages)
-    {
-        if ($total_pages <= 1) return '';
-
-        $pagination = '<nav aria-label="Page navigation"><ul class="pagination">';
-
-        if ($current_page > 1) {
-            $pagination .= '<li class="page-item"><a class="page-link ajax-page" href="#" data-page="' . ($current_page - 1) . '">&laquo; Previous</a></li>';
-        }
-
-        $start = max(1, $current_page - 2);
-        $end = min($total_pages, $current_page + 2);
-
-        if ($start > 1) {
-            $pagination .= '<li class="page-item"><a class="page-link ajax-page" href="#" data-page="1">1</a></li>';
-            if ($start > 2) {
-                $pagination .= '<li class="page-item disabled"><span class="page-link">...</span></li>';
-            }
-        }
-
-        for ($i = $start; $i <= $end; $i++) {
-            $active = ($i == $current_page) ? ' active' : '';
-            $pagination .= '<li class="page-item' . $active . '"><a class="page-link ajax-page" href="#" data-page="' . $i . '">' . $i . '</a></li>';
-        }
-
-        if ($end < $total_pages) {
-            if ($end < $total_pages - 1) {
-                $pagination .= '<li class="page-item disabled"><span class="page-link">...</span></li>';
-            }
-            $pagination .= '<li class="page-item"><a class="page-link ajax-page" href="#" data-page="' . $total_pages . '">' . $total_pages . '</a></li>';
-        }
-
-        if ($current_page < $total_pages) {
-            $pagination .= '<li class="page-item"><a class="page-link ajax-page" href="#" data-page="' . ($current_page + 1) . '">Next &raquo;</a></li>';
-        }
-
-        $pagination .= '</ul></nav>';
-
-        return $pagination;
-    }
-
     public function ajax_add()
     {
         if (!$this->input->is_ajax_request()) {
