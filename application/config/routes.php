@@ -49,12 +49,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | Examples:	my-controller/index	-> my_controller/index
 |		my-controller/my-method	-> my_controller/my_method
 */
-// AJAX routes
-$route['ajax/search'] = 'ajax/ajax_search';
-$route['ajax/delete'] = 'ajax/ajax_delete';
-$route['ajax/add'] = 'ajax/ajax_add';
-$route['ajax/edit'] = 'ajax/ajax_edit';
-
 // File routes
 $route['file/preview/(:num)/(:num)'] = 'file/preview_file/$1/$2';
 

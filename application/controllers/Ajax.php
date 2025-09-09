@@ -2,7 +2,7 @@
 
 class Ajax extends CI_Controller
 {
-    public function ajax_search()
+    public function search()
     {
         if (!$this->input->is_ajax_request()) {
             show_404();
@@ -49,7 +49,7 @@ class Ajax extends CI_Controller
             ]));
     }
 
-    public function ajax_delete()
+    public function delete()
     {
         if (!$this->input->is_ajax_request()) {
             show_404();
@@ -76,7 +76,7 @@ class Ajax extends CI_Controller
             ]));
     }
 
-    public function ajax_add()
+    public function add()
     {
         if (!$this->input->is_ajax_request()) {
             show_404();
@@ -196,7 +196,7 @@ class Ajax extends CI_Controller
             ]));
     }
 
-    public function ajax_edit()
+    public function edit()
     {
         if (!$this->input->is_ajax_request()) {
             show_404();
