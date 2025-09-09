@@ -129,6 +129,18 @@
             removeFile(index, isFileObject);
         });
 
+        if (isFileObject && file.uploading) {
+            const progressBar = document.createElement("div");
+            progressBar.className = "progress mt-2";
+            progressBar.style.height = "4px";
+            progressBar.innerHTML = `
+                <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                     role="progressbar" style="width: 0%" 
+                     aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+            `;
+            fileBox.appendChild(progressBar);
+        }
+
         if (isFileObject) {
             let sizeText;
             if (file.size < 1024 * 1024) {
@@ -253,6 +265,7 @@
 
         setTimeout(() => {
             alert.classList.remove('show');
+            window.open(base_url(), '_self');
         }, 4000);
     }
 </script>
