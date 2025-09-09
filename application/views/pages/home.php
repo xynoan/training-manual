@@ -23,7 +23,7 @@
                         <i class="fas fa-filter"></i>
                         Filter
                     </button>
-                    <button class="btn btn-outline-danger d-flex justify-content-center align-items-center gap-1" 
+                    <button class="btn btn-outline-danger d-flex justify-content-center align-items-center gap-1 d-none" 
                             type="button" id="clearBtn" title="Clear all filters">
                         <i class="fas fa-times-circle"></i>
                         Clear
@@ -149,11 +149,13 @@
 
             $('input[name="dates"]').on('apply.daterangepicker', function(ev, picker) {
                 $(this).val(picker.startDate.format(dateFormat) + ' - ' + picker.endDate.format(dateFormat));
+                toggleClearButton();
                 performSearch();
             });
 
             $('input[name="dates"]').on('cancel.daterangepicker', function(ev, picker) {
                 $(this).val('');
+                toggleClearButton();
                 performSearch();
             });
 
@@ -162,8 +164,26 @@
             const searchForm = document.getElementById('searchForm');
             const clearBtn = document.getElementById('clearBtn');
 
+            function toggleClearButton() {
+                const hasSearchContent = searchInput.value.trim().length > 0;
+                const datesInput = document.getElementById('dates');
+                const hasDatesContent = datesInput.value.trim().length > 0;
+                
+                if (hasSearchContent || hasDatesContent) {
+                    clearBtn.classList.remove('d-none');
+                    clearBtn.classList.add('d-flex');
+                } else {
+                    clearBtn.classList.add('d-none');
+                    clearBtn.classList.remove('d-flex');
+                }
+            }
+
+            // Initial check on page load
+            toggleClearButton();
+
             searchInput.addEventListener('input', function() {
                 clearTimeout(searchTimeout);
+                toggleClearButton();
                 searchTimeout = setTimeout(performSearch, 500);
             });
 
@@ -175,6 +195,7 @@
             clearBtn.addEventListener('click', function() {
                 searchInput.value = '';
                 document.getElementById('dates').value = '';
+                toggleClearButton();
                 performSearch();
             });
 
