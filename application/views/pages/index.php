@@ -72,7 +72,7 @@
                                     <div class="d-flex flex-wrap gap-2 align-items-center">
                                         <?php foreach ($training['file_names'] as $index => $file_name): ?>
                                             <a class="link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover file-preview-link d-inline-flex align-items-center"
-                                                href="<?= base_url('pages/preview_file/' . $training['id'] . '/' . $index) ?>"
+                                                href="<?= base_url('file/preview/' . $training['id'] . '/' . $index) ?>"
                                                 data-training-id="<?= $training['id'] ?>"
                                                 data-file-index="<?= $index ?>"
                                                 data-file-name="<?= htmlspecialchars($file_name) ?>"
@@ -211,7 +211,7 @@
                 formData.append('dates', datesValue);
                 formData.append('page', page);
 
-                fetch('<?= base_url('pages/ajax_search') ?>', {
+                fetch('<?= base_url('ajax/search') ?>', {
                     method: 'POST',
                     body: formData,
                     headers: {
@@ -272,7 +272,7 @@
                         if (training.file_names) {
                             training.file_names.forEach((fileName, index) => {
                                 const ext = fileName.split('.').pop().toLowerCase();
-                                html += `<a class="file-preview-link" href="<?= base_url('pages/preview_file/') ?>${training.id}/${index}" data-training-id="${training.id}" data-file-index="${index}" data-file-name="${fileName}" data-file-extension="${ext}" title="${fileName}" style="font-size: 1.25rem;">${getFileIcon(ext)}</a>`;
+                                html += `<a class="file-preview-link" href="<?= base_url('file/preview/') ?>${training.id}/${index}" data-training-id="${training.id}" data-file-index="${index}" data-file-name="${fileName}" data-file-extension="${ext}" title="${fileName}" style="font-size: 1.25rem;">${getFileIcon(ext)}</a>`;
                             });
                         }
                         
@@ -348,7 +348,7 @@
                 const formData = new FormData();
                 formData.append('id', id);
 
-                fetch('<?= base_url('pages/ajax_delete') ?>', {
+                fetch('<?= base_url('ajax/delete') ?>', {
                     method: 'POST',
                     body: formData,
                     headers: {'X-Requested-With': 'XMLHttpRequest'}

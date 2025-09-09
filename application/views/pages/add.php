@@ -126,7 +126,7 @@
             document.getElementById('submitBtn').disabled = false;
         });
         
-        xhr.open('POST', '<?= base_url('pages/ajax_add') ?>');
+        xhr.open('POST', '<?= base_url('ajax/add') ?>');
         xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
         xhr.send(formData);
     });
