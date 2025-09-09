@@ -66,7 +66,7 @@ class Pages extends CI_Controller
         ];
 
         $this->load->view('templates/header', $data);
-        $this->load->view('pages/home', $data);
+        $this->load->view('pages/index', $data);
         $this->load->view('templates/footer', $data);
     }
 
