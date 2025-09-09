@@ -4,11 +4,6 @@ class Pages extends CI_Controller
 {
     public function index()
     {
-        $this->home();
-    }
-
-    public function home()
-    {
         // Clean up any temporary files when visiting home
         _cleanup_temp_files($this);
         $this->session->unset_userdata('uploaded_files');

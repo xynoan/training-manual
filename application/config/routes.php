@@ -51,6 +51,5 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 */
 $route['add'] = 'pages/add';
 $route['edit'] = 'pages/edit';
-$route['home'] = 'pages/home';
-$route['(:num)'] = 'pages/home/$1';
-$route['default_controller'] = 'pages/home';
+$route['(:num)'] = 'pages/index/$1';
+$route['default_controller'] = 'pages/';
