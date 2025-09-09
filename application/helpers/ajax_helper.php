@@ -1,6 +1,6 @@
 <?php
 
-function generate_ajax_pagination($current_page, $total_pages)
+function generateAjaxPagination($current_page, $total_pages)
 {
     if ($total_pages <= 1) return '';
 

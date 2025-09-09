@@ -35,7 +35,7 @@ class Ajax extends CI_Controller
         $trainings = $this->Training_model->get_all_trainings_paginated($config['per_page'], $offset, $search, $date_from, $date_to);
 
         $total_pages = ceil($config['total_rows'] / $config['per_page']);
-        $pagination = generate_ajax_pagination($page, $total_pages);
+        $pagination = generateAjaxPagination($page, $total_pages);
 
         $this->output
             ->set_content_type('application/json')
