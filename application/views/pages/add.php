@@ -44,7 +44,6 @@
         </div>
         <input type="file" id="fileInput" name="file[]" accept=".pdf, .pptx, .ppt" multiple />
     </div>
-    <div id="fileError" class="text-danger mt-2" style="display: none;"></div>
     <?php if (isset($errors['file'])) : ?>
         <p class="text-danger mt-2"><?= $errors['file'] ?></p>
     <?php endif; ?>
@@ -134,7 +133,6 @@
     
     function clearErrors() {
         document.getElementById('titleError').style.display = 'none';
-        document.getElementById('fileError').style.display = 'none';
         document.getElementById('notesError').style.display = 'none';
         
         document.getElementById('title').classList.remove('is-invalid');
@@ -150,8 +148,6 @@
         }
         
         if (errors.file) {
-            document.getElementById('fileError').textContent = errors.file;
-            document.getElementById('fileError').style.display = 'block';
             document.getElementById('dropArea').classList.add('error');
         }
         
