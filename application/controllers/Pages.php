@@ -116,14 +116,6 @@ class Pages extends CI_Controller
                     _cleanup_temp_files($this);
                     $this->session->unset_userdata('uploaded_files');
                     $this->session->unset_userdata('temp_files');
-
-                    //                         window.location.href = "' . base_url() . '";
-
-
-                    echo
-                    '<script>
-                        alert("Training manual added successfully!");
-                    </script>';
                 }
 
                 if ($page === 'edit' && isset($_GET['id'])) {
@@ -159,12 +151,6 @@ class Pages extends CI_Controller
                         _cleanup_temp_files($this);
                         $this->session->unset_userdata('uploaded_files');
                         $this->session->unset_userdata('temp_files');
-                        
-                        echo
-                        '<script>
-                            alert("Training manual updated successfully!");
-                            window.location.href = "' . base_url() . '";
-                        </script>';
                     } else {
                         $data['removed_files'] = $removed_files;
                     }

@@ -56,7 +56,7 @@
                     <thead>
                         <tr>
                             <th scope="col" style="width: 15%;">Title</th>
-                            <th scope="col">Files</th>
+                            <th scope="col">File(s)</th>
                             <th scope="col">Uploaded by</th>
                             <th scope="col">Uploaded at</th>
                             <th scope="col">Notes</th>
