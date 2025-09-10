@@ -12,12 +12,10 @@
         background-color: white;
     }
 
-    /* Common styles for forms */
     textarea::placeholder {
         opacity: 0.7 !important;
     }
 
-    /* Floating Success Alert */
     .success-alert-floating {
         position: fixed;
         top: 20px;
@@ -49,7 +47,6 @@
         animation: pulse 2s infinite;
     }
 
-    /* Upload box styles */
     .upload-box {
         border: 2px dashed #d3d3d3;
         border-radius: 20px;
@@ -112,7 +109,6 @@
         background: #f8f9fa;
     }
 
-    /* File icon styles */
     .file-preview-link {
         text-decoration: none !important;
         display: inline-block;
