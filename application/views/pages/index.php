@@ -130,112 +130,72 @@
     }
 </style>
 
-<body class="container mt-5">
-    <form id="editForm" enctype="multipart/form-data" onsubmit="return false;">
-        <input type="hidden" name="id" value="">
-        <input type="hidden" id="removedFiles" name="removedFiles" value="[]">
-        <div class="d-flex gap-2">
-            <button type="button" class="btn btn-success d-flex align-items-center gap-1" id="submitBtn" disabled>
-                <i class="fas fa-save"></i>
-                Update
-            </button>
-            <a href="#" class="btn btn-danger d-flex align-items-center gap-1">
-                <i class="fas fa-arrow-left"></i>
-                Main Menu
-            </a>
-        </div>
-        </div>
-        <label for="title">
-            <p class="fs-4 ">Title</p>
-        </label>
-        <div class="w-50">
-            <input type="text" class="form-control" id="title" name="title"
-                value="<?= isset($_POST['title']) ? $_POST['title'] : '' ?>" readonly>
-        </div>
-        <div id="titleError" class="text-danger mt-2" style="display: none;"></div>
-        <?php if (isset($errors['title'])) : ?>
-            <p class="text-danger mt-2"><?= $errors['title'] ?></p>
-        <?php endif; ?>
-        <div class="w-50 my-3">
-            <label class="form-label fs-4  mb-3">Upload File</label>
-            <div class="<?= isset($errors['file']) ? 'upload-box error' : 'upload-box' ?>" id="dropArea" style="pointer-events: none; opacity: 0.7;">
-                <div id="fileList" class="d-flex flex-wrap gap-3"></div>
-                <div id="drop-area-placeholder">
-                    <i class="fas fa-cloud-upload-alt fs-1"></i>
-                    <p>Drag and Drop files here</p>
-                    <p class="text-muted">or click to select a file</p>
+<body>
+    <div class="container mt-5">
+        <!-- Form Section (Hidden by default) -->
+        <div id="formSection" style="display: none;">
+            <form id="mainForm" enctype="multipart/form-data" onsubmit="return false;">
+                <input type="hidden" name="id" value="">
+                <input type="hidden" id="removedFiles" name="removedFiles" value="[]">
+                
+                <div class="d-flex gap-2 mb-4">
+                    <button type="button" class="btn btn-primary d-flex align-items-center gap-1" id="submitBtn" disabled>
+                        <i class="fas fa-save"></i>
+                        <span id="submitBtnText">Submit</span>
+                    </button>
+                    <button type="button" class="btn btn-danger d-flex align-items-center gap-1" id="mainMenuBtn">
+                        <i class="fas fa-arrow-left"></i>
+                        Main Menu
+                    </button>
                 </div>
-            </div>
-            <input type="file" id="fileInput" name="file[]" accept=".pdf, .pptx, .ppt" multiple disabled />
-        </div>
-        <div id="fileError" class="text-danger mt-2" style="display: none;"></div>
-        <?php if (isset($errors['file'])) : ?>
-            <p class="text-danger mt-2"><?= $errors['file'] ?></p>
-        <?php endif; ?>
-
-        <label for="notes">
-            <p class="fs-4 ">Notes</p>
-        </label>
-        <div class="w-50">
-            <textarea class="form-control" id="notes" name="notes" placeholder="Optional" readonly><?= isset($_POST['notes']) ? $_POST['notes'] : '' ?></textarea>
-        </div>
-        <div id="notesError" class="text-danger mt-2" style="display: none;"></div>
-    </form>
-    <form id="addForm" enctype="multipart/form-data" onsubmit="return false;">
-        <div class="d-flex gap-2">
-            <button type="button" class="btn btn-primary d-flex align-items-center gap-1" id="submitBtn" disabled>
-                <i class="fas fa-save"></i>
-                Submit
-            </button>
-            <a href="#" class="btn btn-danger d-flex align-items-center gap-1">
-                <i class="fas fa-arrow-left"></i>
-                Main Menu
-            </a>
-        </div>
-        </div>
-        <label for="title">
-            <p class="fs-4 ">Title</p>
-        </label>
-        <div class="w-50">
-            <input type="text" class="form-control" id="title" name="title" value="<?= isset($_POST['title']) ? $_POST['title'] : '' ?>" readonly>
-        </div>
-        <div id="titleError" class="text-danger mt-2" style="display: none;"></div>
-        <?php if (isset($errors['title'])) : ?>
-            <p class="text-danger mt-2"><?= $errors['title'] ?></p>
-        <?php endif; ?>
-        <div class="w-50 my-3">
-            <label class="form-label fs-4  mb-3">Upload File</label>
-            <div class="<?= isset($errors['file']) ? 'upload-box error' : 'upload-box' ?>" id="dropArea" style="pointer-events: none; opacity: 0.7;">
-                <div id="fileList" class="d-flex flex-wrap gap-3"></div>
-                <div id="drop-area-placeholder">
-                    <i class="fas fa-cloud-upload-alt fs-1"></i>
-                    <p>Drag and Drop files here</p>
-                    <p class="text-muted">or click to select a file</p>
+                
+                <label for="title">
+                    <p class="fs-4">Title</p>
+                </label>
+                <div class="w-50">
+                    <input type="text" class="form-control" id="title" name="title" value="<?= isset($_POST['title']) ? $_POST['title'] : '' ?>" readonly>
                 </div>
+                <div id="titleError" class="text-danger mt-2" style="display: none;"></div>
+                <?php if (isset($errors['title'])) : ?>
+                    <p class="text-danger mt-2"><?= $errors['title'] ?></p>
+                <?php endif; ?>
+                
+                <div class="w-50 my-3">
+                    <label class="form-label fs-4 mb-3">Upload File</label>
+                    <div class="<?= isset($errors['file']) ? 'upload-box error' : 'upload-box' ?>" id="dropArea" style="pointer-events: none; opacity: 0.7;">
+                        <div id="fileList" class="d-flex flex-wrap gap-3"></div>
+                        <div id="drop-area-placeholder">
+                            <i class="fas fa-cloud-upload-alt fs-1"></i>
+                            <p>Drag and Drop files here</p>
+                            <p class="text-muted">or click to select a file</p>
+                        </div>
+                    </div>
+                    <input type="file" id="fileInput" name="file[]" accept=".pdf, .pptx, .ppt" multiple disabled />
+                </div>
+                <div id="fileError" class="text-danger mt-2" style="display: none;"></div>
+                <?php if (isset($errors['file'])) : ?>
+                    <p class="text-danger mt-2"><?= $errors['file'] ?></p>
+                <?php endif; ?>
+
+                <label for="notes">
+                    <p class="fs-4">Notes</p>
+                </label>
+                <div class="w-50">
+                    <textarea class="form-control" id="notes" name="notes" placeholder="Optional" readonly><?= isset($_POST['notes']) ? $_POST['notes'] : '' ?></textarea>
+                </div>
+                <div id="notesError" class="text-danger mt-2" style="display: none;"></div>
+            </form>
+        </div>
+
+        <!-- Dashboard Section (Shown by default) -->
+        <div id="dashboardSection">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h1 class="fw-bold"><?php echo isset($title) ? $title : 'Training Manual'; ?></h1>
+                <button type="button" class="btn btn-danger d-flex align-items-center gap-2" id="addBtn">
+                    <i class="fas fa-plus-circle"></i>
+                    Add
+                </button>
             </div>
-            <input type="file" id="fileInput" name="file[]" accept=".pdf, .pptx, .ppt" multiple disabled />
-        </div>
-        <?php if (isset($errors['file'])) : ?>
-            <p class="text-danger mt-2"><?= $errors['file'] ?></p>
-        <?php endif; ?>
-
-        <label for="notes">
-            <p class="fs-4 ">Notes</p>
-        </label>
-        <div class="w-50">
-            <textarea class="form-control" id="notes" name="notes" placeholder="Optional" readonly><?= isset($_POST['notes']) ? $_POST['notes'] : '' ?></textarea>
-        </div>
-        <div id="notesError" class="text-danger mt-2" style="display: none;"></div>
-
-        <input type="hidden" id="removedFiles" name="removed_files" value="">
-    </form>
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h1 class="fw-bold"><?php echo isset($title) ? $title : 'Training Manual'; ?></h1>
-        <a href="#" class="btn btn-danger d-flex align-items-center gap-2">
-            <i class="fas fa-plus-circle"></i>
-            Add
-        </a>
-    </div>
     <div class="mb-4">
         <form id="searchForm" class="d-flex justify-content-start gap-3 flex-wrap align-items-end" onsubmit="return false;">
             <div>
@@ -360,15 +320,16 @@
         <?php endif; ?>
     </div>
 
-    <div id="paginationContainer">
-        <?= isset($pagination) ? $pagination : '' ?>
-    </div>
+            <div id="paginationContainer">
+                <?= isset($pagination) ? $pagination : '' ?>
+            </div>
+        </div>
 
-    <?php require 'partials/file-preview-modal.php' ?>
+        <?php require 'partials/file-preview-modal.php' ?>
 
-    <?php require 'partials/hover-preview-tooltip.php' ?>
+        <?php require 'partials/hover-preview-tooltip.php' ?>
 
-    <?php require 'partials/confirmation-modal.php' ?>
+        <?php require 'partials/confirmation-modal.php' ?>
 
     <script>
         /* COMMENTED OUT FOR DESIGN-ONLY VERSION
@@ -1231,8 +1192,80 @@
                 window.location.href = '<?= isset($base_url) ? $base_url : '/' ?>';
             }, 4000);
         }
-    </script>
 
+        // Toggle functionality for dashboard and form
+        document.addEventListener('DOMContentLoaded', function() {
+            const dashboardSection = document.getElementById('dashboardSection');
+            const formSection = document.getElementById('formSection');
+            const addBtn = document.getElementById('addBtn');
+            const mainMenuBtn = document.getElementById('mainMenuBtn');
+            const submitBtn = document.getElementById('submitBtn');
+            const submitBtnText = document.getElementById('submitBtnText');
+            const mainForm = document.getElementById('mainForm');
+
+            // Show form when Add button is clicked
+            addBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Reset form for add mode
+                mainForm.reset();
+                document.querySelector('input[name="id"]').value = '';
+                submitBtnText.textContent = 'Submit';
+                submitBtn.className = 'btn btn-primary d-flex align-items-center gap-1';
+                
+                // Clear any existing errors
+                clearFormErrors();
+                
+                // Toggle sections
+                dashboardSection.style.display = 'none';
+                formSection.style.display = 'block';
+            });
+
+            // Show dashboard when Main Menu button is clicked
+            mainMenuBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Toggle sections
+                formSection.style.display = 'none';
+                dashboardSection.style.display = 'block';
+            });
+
+            // Handle edit button clicks (for existing training items)
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.dropdown-item') && e.target.closest('.dropdown-item').textContent.includes('Edit')) {
+                    e.preventDefault();
+                    
+                    // Set form to edit mode
+                    submitBtnText.textContent = 'Update';
+                    submitBtn.className = 'btn btn-success d-flex align-items-center gap-1';
+                    
+                    // You would populate form fields here with existing data
+                    // This is just the UI toggle for now
+                    
+                    // Clear any existing errors
+                    clearFormErrors();
+                    
+                    // Toggle sections
+                    dashboardSection.style.display = 'none';
+                    formSection.style.display = 'block';
+                }
+            });
+
+            function clearFormErrors() {
+                const errorElements = document.querySelectorAll('#titleError, #fileError, #notesError');
+                errorElements.forEach(el => el.style.display = 'none');
+                
+                const inputElements = document.querySelectorAll('#title, #notes');
+                inputElements.forEach(el => el.classList.remove('is-invalid'));
+                
+                const dropArea = document.getElementById('dropArea');
+                if (dropArea) {
+                    dropArea.classList.remove('error');
+                }
+            }
+        });
+    </script>
+    </div>
 
 </body>
 
