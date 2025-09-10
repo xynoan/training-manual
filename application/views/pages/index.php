@@ -355,16 +355,8 @@
                     renderFileList();
                 }
 
-                const dropArea = document.getElementById("dropArea");
-                const dropAreaPlaceholder = document.getElementById("drop-area-placeholder");
-
-                if (dropArea && dropArea.classList.contains("error")) {
-                    dropArea.classList.remove("error");
-                }
-
-                if (dropAreaPlaceholder) {
-                    dropAreaPlaceholder.classList.add("d-none");
-                }
+                $('#dropArea').removeClass('error');
+                $('#drop-area-placeholder').addClass('d-none');
             }
 
             function restoreUploadedFiles() {
@@ -401,82 +393,62 @@
 
                 const hasFiles = existingFiles.length > 0 || currentFiles.length > 0;
                 if (hasFiles) {
-                    if (dropArea.classList.contains("error")) {
-                        dropArea.classList.remove("error");
-                    }
-                    dropAreaPlaceholder.classList.add("d-none");
+                    $('#dropArea').removeClass('error');
+                    $('#drop-area-placeholder').addClass('d-none');
                 }
             }
 
-            document.addEventListener("DOMContentLoaded", function() {
+            $(document).ready(function() {
                 restoreUploadedFiles();
             });
 
             function showFloatingAlert() {
-                const alert = document.getElementById('floatingAlert');
-                alert.classList.add('show');
+                $('#floatingAlert').addClass('show');
 
                 setTimeout(() => {
-                    alert.classList.remove('show');
+                    $('#floatingAlert').removeClass('show');
                     window.location.href = '<?= isset($base_url) ? $base_url : '/' ?>';
                 }, 4000);
             }
 
-            document.addEventListener('DOMContentLoaded', function() {
-                const dashboardSection = document.getElementById('dashboardSection');
-                const formSection = document.getElementById('formSection');
-                const addBtn = document.getElementById('addBtn');
-                const mainMenuBtn = document.getElementById('mainMenuBtn');
-                const submitBtn = document.getElementById('submitBtn');
-                const submitBtnText = document.getElementById('submitBtnText');
-                const mainForm = document.getElementById('mainForm');
-
-                addBtn.addEventListener('click', function(e) {
+            $(document).ready(function() {
+                $('#addBtn').on('click', function(e) {
                     e.preventDefault();
 
-                    mainForm.reset();
-                    document.querySelector('input[name="id"]').value = '';
-                    submitBtnText.textContent = 'Save';
-                    submitBtn.className = 'btn btn-primary d-flex align-items-center gap-1';
+                    $('#mainForm')[0].reset();
+                    $('input[name="id"]').val('');
+                    $('#submitBtnText').text('Save');
+                    $('#submitBtn').removeClass().addClass('btn btn-primary d-flex align-items-center gap-1');
 
                     clearFormErrors();
 
-                    dashboardSection.style.display = 'none';
-                    formSection.style.display = 'block';
+                    $('#dashboardSection').hide();
+                    $('#formSection').show();
                 });
 
-                mainMenuBtn.addEventListener('click', function(e) {
+                $('#mainMenuBtn').on('click', function(e) {
                     e.preventDefault();
 
-                    formSection.style.display = 'none';
-                    dashboardSection.style.display = 'block';
+                    $('#formSection').hide();
+                    $('#dashboardSection').show();
                 });
 
-                document.addEventListener('click', function(e) {
-                    if (e.target.closest('.dropdown-item') && e.target.closest('.dropdown-item').textContent.includes('Edit')) {
-                        e.preventDefault();
+                $(document).on('click', '.dropdown-item:contains("Edit")', function(e) {
+                    e.preventDefault();
 
-                        submitBtnText.textContent = 'Update';
-                        submitBtn.className = 'btn btn-success d-flex align-items-center gap-1';
+                    $('#submitBtnText').text('Update');
+                    $('#submitBtn').removeClass().addClass('btn btn-success d-flex align-items-center gap-1');
 
-                        clearFormErrors();
+                    clearFormErrors();
 
-                        dashboardSection.style.display = 'none';
-                        formSection.style.display = 'block';
-                    }
+                    $('#dashboardSection').hide();
+                    $('#formSection').show();
                 });
 
                 function clearFormErrors() {
-                    const errorElements = document.querySelectorAll('#titleError, #fileError, #notesError');
-                    errorElements.forEach(el => el.style.display = 'none');
-
-                    const inputElements = document.querySelectorAll('#title, #notes');
-                    inputElements.forEach(el => el.classList.remove('is-invalid'));
-
-                    const dropArea = document.getElementById('dropArea');
-                    if (dropArea) {
-                        dropArea.classList.remove('error');
-                    }
+                    $('#titleError, #fileError, #notesError').hide();
+                    $('#title, #notes').removeClass('is-invalid');
+                    $('#dropArea').removeClass('error');
                 }
             });
         </script>
