@@ -3,6 +3,51 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <script>
+    $(document).ready(function() {
+        restoreUploadedFiles();
+
+        $('#addBtn').on('click', function(e) {
+            e.preventDefault();
+
+            $('#mainForm')[0].reset();
+            $('input[name="id"]').val('');
+            $('#submitBtnText').text('Save');
+            $('#submitBtn').removeClass().addClass('btn btn-primary d-flex align-items-center gap-1');
+
+            clearFormErrors();
+
+            $('#dashboardSection').hide();
+            $('#formSection').show();
+        });
+
+        $('#mainMenuBtn').on('click', function(e) {
+            e.preventDefault();
+
+            $('#formSection').hide();
+            $('#dashboardSection').show();
+        });
+
+        $(document).on('click', '.dropdown-item:contains("Edit")', function(e) {
+            e.preventDefault();
+
+            $('#submitBtnText').text('Update');
+            $('#submitBtn').removeClass().addClass('btn btn-success d-flex align-items-center gap-1');
+
+            clearFormErrors();
+
+            $('#dashboardSection').hide();
+            $('#formSection').show();
+        });
+
+
+    });
+
+    function clearFormErrors() {
+        $('#titleError, #fileError, #notesError').hide();
+        $('#title, #notes').removeClass('is-invalid');
+        $('#dropArea').removeClass('error');
+    }
+
     function handleFiles(files) {
         /* error handlers */
         if (typeof existingFiles === 'undefined') existingFiles = [];
@@ -79,10 +124,6 @@
         }
     }
 
-    $(document).ready(function() {
-        restoreUploadedFiles();
-    });
-
     function showFloatingAlert() {
         $('#floatingAlert').addClass('show');
 
@@ -91,47 +132,6 @@
             window.location.href = '<?= isset($base_url) ? $base_url : '/' ?>';
         }, 4000);
     }
-
-    $(document).ready(function() {
-        $('#addBtn').on('click', function(e) {
-            e.preventDefault();
-
-            $('#mainForm')[0].reset();
-            $('input[name="id"]').val('');
-            $('#submitBtnText').text('Save');
-            $('#submitBtn').removeClass().addClass('btn btn-primary d-flex align-items-center gap-1');
-
-            clearFormErrors();
-
-            $('#dashboardSection').hide();
-            $('#formSection').show();
-        });
-
-        $('#mainMenuBtn').on('click', function(e) {
-            e.preventDefault();
-
-            $('#formSection').hide();
-            $('#dashboardSection').show();
-        });
-
-        $(document).on('click', '.dropdown-item:contains("Edit")', function(e) {
-            e.preventDefault();
-
-            $('#submitBtnText').text('Update');
-            $('#submitBtn').removeClass().addClass('btn btn-success d-flex align-items-center gap-1');
-
-            clearFormErrors();
-
-            $('#dashboardSection').hide();
-            $('#formSection').show();
-        });
-
-        function clearFormErrors() {
-            $('#titleError, #fileError, #notesError').hide();
-            $('#title, #notes').removeClass('is-invalid');
-            $('#dropArea').removeClass('error');
-        }
-    });
 </script>
 </div>
 
