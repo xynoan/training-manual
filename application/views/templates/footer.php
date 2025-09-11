@@ -8,34 +8,17 @@
         restoreUploadedFiles();
 
         $('#addBtn').on('click', function(e) {
-            e.preventDefault();
-
-            $('#mainForm')[0].reset();
-            $('input[name="id"]').val('');
-            $('#submitBtnText').text('Save');
-            $('#submitBtn').removeClass().addClass('btn btn-primary d-flex align-items-center gap-1');
-
-            clearFormErrors();
-
             $('#dashboardSection').hide();
             $('#formSection').show();
         });
 
         $('#mainMenuBtn').on('click', function(e) {
-            e.preventDefault();
-
             $('#formSection').hide();
             $('#dashboardSection').show();
         });
 
         $(document).on('click', '.dropdown-item:contains("Edit")', function(e) {
-            e.preventDefault();
-
             $('#submitBtnText').text('Update');
-            $('#submitBtn').removeClass().addClass('btn btn-success d-flex align-items-center gap-1');
-
-            clearFormErrors();
-
             $('#dashboardSection').hide();
             $('#formSection').show();
         });

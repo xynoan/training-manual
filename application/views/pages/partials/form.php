@@ -2,16 +2,18 @@
     <form id="mainForm" enctype="multipart/form-data" onsubmit="return false;">
         <input type="hidden" name="id" value="">
         <input type="hidden" id="removedFiles" name="removedFiles" value="[]">
-
-        <div class="d-flex justify-content-end gap-2 mb-4">
-            <button type="button" class="btn btn-primary d-flex align-items-center gap-1" id="submitBtn" disabled>
-                <i class="fas fa-save"></i>
-                <span id="submitBtnText">Save</span>
-            </button>
-            <button type="button" class="btn btn-danger d-flex align-items-center gap-1" id="mainMenuBtn">
-                <i class="fas fa-arrow-left"></i>
-                Main Menu
-            </button>
+        <div class="row mb-5">
+            <h1 class="fw-bold col-6"><?php echo isset($title) ? $title : 'Training Manual'; ?></h1>
+            <div class="gap-2 col-6 d-flex align-items-center justify-content-end">
+                <button type="button" class="btn btn-primary gap-1" id="submitBtn" disabled>
+                    <i class="fas fa-save"></i>
+                    <span id="submitBtnText">Save</span>
+                </button>
+                <button type="button" class="btn btn-danger gap-1" id="mainMenuBtn">
+                    <i class="fas fa-arrow-left"></i>
+                    Main Menu
+                </button>
+            </div>
         </div>
 
         <label for="title">
