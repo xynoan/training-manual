@@ -1,44 +1,42 @@
 <?php require 'partials/form.php' ?>
 
 <div id="dashboardSection">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h1 class="fw-bold"><?php echo isset($title) ? $title : 'Training Manual'; ?></h1>
+    <div class="d-flex flex-sm-row flex-column justify-content-between align-items-center mb-3">
+        <h1 class="fw-bold text-center mb-3"><?php echo isset($title) ? $title : 'Training Manual'; ?></h1>
         <button type="button" class="btn btn-danger d-flex align-items-center gap-2" id="addBtn">
             <i class="fas fa-plus-circle"></i>
             Add
         </button>
     </div>
-    <div class="mb-4">
-        <form id="searchForm" class="d-flex justify-content-start gap-3 flex-wrap align-items-end" onsubmit="return false;">
-            <div>
-                <label for="dates" class="form-label small text-muted mb-1">Date Range</label>
-                <input type="text" class="form-control" id="dates" name="dates"
-                    title="Filter from this date"
-                    placeholder="Select date range"
-                    value="<?= isset($dates) ? htmlspecialchars($dates) : '' ?>" readonly>
+    <form id="searchForm" class="d-flex flex-column flex-sm-row justify-content-center justify-content-sm-start gap-3 flex-wrap align-items-center align-items-sm-end mb-4" onsubmit="return false;">
+        <div>
+            <label for="dates" class="form-label small text-muted mb-1">Date Range</label>
+            <input type="text" class="form-control" id="dates" name="dates"
+                title="Filter from this date"
+                placeholder="Select date range"
+                value="<?= isset($dates) ? htmlspecialchars($dates) : '' ?>" readonly>
+        </div>
+        <div>
+            <label for="search" class="form-label small text-muted mb-1">Search</label>
+            <input type="text" class="form-control" id="search" name="search"
+                placeholder="Search by title, notes, or filename..."
+                value="<?= isset($search) ? htmlspecialchars($search) : '' ?>" readonly>
+        </div>
+        <div class="d-block">
+            <label class="form-label small text-muted mb-1">&nbsp;</label>
+            <div class="d-flex gap-2">
+                <button class="btn btn-primary" type="button" id="filterBtn" disabled>
+                    <i class="fas fa-filter"></i>
+                    Filter
+                </button>
+                <button class="btn btn-outline-danger d-flex justify-content-center align-items-center gap-1 d-none"
+                    type="button" id="clearBtn" title="Clear all filters" disabled>
+                    <i class="fas fa-times-circle"></i>
+                    Clear
+                </button>
             </div>
-            <div>
-                <label for="search" class="form-label small text-muted mb-1">Search</label>
-                <input type="text" class="form-control" id="search" name="search"
-                    placeholder="Search by title, notes, or filename..."
-                    value="<?= isset($search) ? htmlspecialchars($search) : '' ?>" readonly>
-            </div>
-            <div>
-                <label class="form-label small text-muted mb-1">&nbsp;</label>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-primary" type="button" id="filterBtn" disabled>
-                        <i class="fas fa-filter"></i>
-                        Filter
-                    </button>
-                    <button class="btn btn-outline-danger d-flex justify-content-center align-items-center gap-1 d-none"
-                        type="button" id="clearBtn" title="Clear all filters" disabled>
-                        <i class="fas fa-times-circle"></i>
-                        Clear
-                    </button>
-                </div>
-            </div>
-        </form>
-    </div>
+        </div>
+    </form>
 
     <?php require 'partials/loading-indicator.php' ?>
 
@@ -46,7 +44,7 @@
 
     <div id="mainContent">
         <?php if (isset($trainings) && !empty($trainings)): ?>
-            <div>
+            <div class="table-responsive-sm">
                 <table class="table table-bordered">
                     <thead>
                         <tr>
