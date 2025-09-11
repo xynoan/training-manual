@@ -49,6 +49,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | Examples:	my-controller/index	-> my_controller/index
 |		my-controller/my-method	-> my_controller/my_method
 */
+$route['assets/(:any)'] = 'assets/$1';
 // File routes
 $route['file/preview/(:num)/(:num)'] = 'file/preview_file/$1/$2';
 
