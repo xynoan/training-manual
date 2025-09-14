@@ -3,33 +3,33 @@
 <div id="dashboardSection">
     <div class="d-flex flex-sm-row flex-column justify-content-between align-items-center mb-3">
         <h1 class="fw-bold text-center mb-3"><?php echo isset($title) ? $title : 'Training Manual'; ?></h1>
-        <button type="button" class="btn btn-danger d-flex align-items-center gap-2" id="addBtn">
+        <button type="button" class="btn btn-danger d-flex align-items-center justify-content-center gap-2 w-100" id="addBtn">
             <i class="fas fa-plus-circle"></i>
             Add
         </button>
     </div>
-    <form id="searchForm" class="d-flex flex-column flex-sm-row justify-content-center justify-content-sm-start gap-3 flex-wrap align-items-center align-items-sm-end mb-4" onsubmit="return false;">
-        <div>
+    <form id="searchForm" class="d-flex flex-column flex-sm-row justify-content-center justify-content-sm-start gap-3 flex-wrap align-items-center align-items-sm-end mb-md-4" onsubmit="return false;">
+        <div class="w-100">
             <label for="dates" class="form-label small text-muted mb-1">Date Range</label>
             <input type="text" class="form-control" id="dates" name="dates"
                 title="Filter from this date"
                 placeholder="Select date range"
                 value="<?= isset($dates) ? htmlspecialchars($dates) : '' ?>" readonly>
         </div>
-        <div>
+        <div class="w-100">
             <label for="search" class="form-label small text-muted mb-1">Search</label>
             <input type="text" class="form-control" id="search" name="search"
                 placeholder="Search by title, notes, or filename..."
                 value="<?= isset($search) ? htmlspecialchars($search) : '' ?>" readonly>
         </div>
-        <div class="d-block">
-            <label class="form-label small text-muted mb-1">&nbsp;</label>
-            <div class="d-flex gap-2">
+        <div class="d-block w-100">
+            <label class="form-label small text-muted mb-1 d-none">&nbsp;</label>
+            <div class="d-flex gap-2 flex-column">
                 <button class="btn btn-primary" type="button" id="filterBtn" disabled>
                     <i class="fas fa-filter"></i>
                     Filter
                 </button>
-                <button class="btn btn-outline-danger d-flex justify-content-center align-items-center gap-1 d-none"
+                <button class="btn btn-outline-danger d-flex justify-content-center align-items-center gap-1"
                     type="button" id="clearBtn" title="Clear all filters" disabled>
                     <i class="fas fa-times-circle"></i>
                     Clear
