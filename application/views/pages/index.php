@@ -3,7 +3,7 @@
 <div id="dashboardSection">
     <div class="d-flex flex-sm-row flex-column justify-content-between align-items-center mb-3">
         <h1 class="fw-bold text-center mb-3"><?php echo isset($title) ? $title : 'Training Manual'; ?></h1>
-        <button type="button" class="btn btn-danger d-flex align-items-center justify-content-center gap-2 w-100" id="addBtn">
+        <button type="button" class="btn btn-danger d-flex align-items-center justify-content-center gap-2" id="addBtn">
             <i class="fas fa-plus-circle"></i>
             Add
         </button>
