@@ -116,6 +116,10 @@ textarea::placeholder {
 }
 
 @media (max-width: 576px) {
+    .responsiveFormGroup {
+        width: 100%;
+    }
+
     #addBtn {
         width: 100%;
     }
