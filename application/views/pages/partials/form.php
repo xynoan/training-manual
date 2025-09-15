@@ -2,14 +2,14 @@
     <form id="mainForm" enctype="multipart/form-data" onsubmit="return false;">
         <input type="hidden" name="id" value="">
         <input type="hidden" id="removedFiles" name="removedFiles" value="[]">
-        <div class="row mb-5">
-            <h1 class="fw-bold col-6"><?php echo isset($title) ? $title : 'Training Manual'; ?></h1>
-            <div class="gap-2 col-6 d-flex align-items-center justify-content-end">
-                <button type="button" class="btn btn-primary gap-1" id="submitBtn" disabled>
+        <div class="row mb-3">
+            <h1 class="fw-bold text-center text-sm-start col-12 col-sm-6"><?php echo isset($title) ? $title : 'Training Manual'; ?></h1>
+            <div class="gap-2 col-12 col-sm-6 d-md-flex justify-content-sm-end align-items-sm-center">
+                <button type="button" class="btn btn-primary gap-1 responsiveFormGroup" id="submitBtn" disabled>
                     <i class="fas fa-save"></i>
                     <span id="submitBtnText">Save</span>
                 </button>
-                <button type="button" class="btn btn-danger gap-1" id="mainMenuBtn">
+                <button type="button" class="btn btn-danger gap-1 responsiveFormGroup" id="mainMenuBtn">
                     <i class="fas fa-arrow-left"></i>
                     Main Menu
                 </button>
@@ -19,7 +19,7 @@
         <label for="title">
             <p class="fs-4">Title</p>
         </label>
-        <div class="w-50">
+        <div class="responsiveFormGroup" id="titleGroup">
             <input type="text" class="form-control" id="title" name="title" value="<?= isset($_POST['title']) ? $_POST['title'] : '' ?>" readonly>
         </div>
         <div id="titleError" class="text-danger mt-2" style="display: none;"></div>
@@ -27,7 +27,7 @@
             <p class="text-danger mt-2"><?= $errors['title'] ?></p>
         <?php endif; ?>
 
-        <div class="w-50 my-3">
+        <div class="my-3 responsiveFormGroup" id="fileGroup">
             <label class="form-label fs-4 mb-3">Upload File</label>
             <div class="<?= isset($errors['file']) ? 'upload-box error' : 'upload-box' ?>" id="dropArea" style="pointer-events: none; opacity: 0.7;">
                 <div id="fileList" class="d-flex flex-wrap gap-3"></div>
@@ -47,7 +47,7 @@
         <label for="notes">
             <p class="fs-4">Notes</p>
         </label>
-        <div class="w-50">
+        <div class="responsiveFormGroup" id="notesGroup">
             <textarea class="form-control" id="notes" name="notes" placeholder="Optional" readonly><?= isset($_POST['notes']) ? $_POST['notes'] : '' ?></textarea>
         </div>
         <div id="notesError" class="text-danger mt-2" style="display: none;"></div>
