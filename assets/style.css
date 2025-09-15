@@ -131,7 +131,7 @@ textarea::placeholder {
     }
 }
 
-@media (min-width: 577px) {
+@media (min-width: 768px) {
     #titleGroup,
     #fileGroup,
     #notesGroup {

@@ -3,9 +3,9 @@
         <input type="hidden" name="id" value="">
         <input type="hidden" id="removedFiles" name="removedFiles" value="[]">
         <div class="row mb-3">
-            <h1 class="fw-bold text-center text-sm-start col-12 col-sm-6"><?php echo isset($title) ? $title : 'Training Manual'; ?></h1>
-            <div class="gap-2 col-12 col-sm-6 d-md-flex justify-content-sm-end align-items-sm-center">
-                <button type="button" class="btn btn-primary gap-1 responsiveFormGroup" id="submitBtn" disabled>
+            <h1 class="fw-bold text-center text-sm-start col-12 col-sm-8 col-lg-6"><?php echo isset($title) ? $title : 'Training Manual'; ?></h1>
+            <div class="gap-2 col-12 col-sm-4 col-lg-6 d-sm-flex justify-content-sm-end align-items-sm-initial align-items-md-center">
+                <button type="button" class="btn btn-primary gap-1 responsiveFormGroup w-md-auto" id="submitBtn" disabled>
                     <i class="fas fa-save"></i>
                     <span id="submitBtnText">Save</span>
                 </button>
