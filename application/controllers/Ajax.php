@@ -177,15 +177,22 @@ class Ajax extends CI_Controller
             }
         }
 
+        // Get notes from POST or session (if saved temporarily)
+        $notes = $this->input->post('notes');
+        if (empty($notes)) {
+            $notes = $this->session->userdata('temp_notes');
+        }
+
         $training_id = $this->Training_model->insert_training([
             'title' => $this->input->post('title'),
-            'note' => $this->input->post('notes'),
+            'note' => $notes,
             'name' => $files_to_save
         ]);
 
         _cleanup_temp_files($this);
         $this->session->unset_userdata('uploaded_files');
         $this->session->unset_userdata('temp_files');
+        $this->session->unset_userdata('temp_notes');
 
         $this->output
             ->set_content_type('application/json')
@@ -193,6 +200,54 @@ class Ajax extends CI_Controller
                 'success' => true,
                 'message' => 'Training manual added successfully!',
                 'training_id' => $training_id
+            ]));
+    }
+
+    public function save_notes()
+    {
+        if (!$this->input->is_ajax_request()) {
+            show_404();
+        }
+
+        $id = $this->input->post('id');
+        $notes = $this->input->post('notes');
+
+        // If no ID is provided, store notes in session for new entries
+        if (!$id) {
+            $this->session->set_userdata('temp_notes', $notes);
+            $this->output
+                ->set_content_type('application/json')
+                ->set_output(json_encode([
+                    'success' => true,
+                    'message' => 'Notes saved temporarily'
+                ]));
+            return;
+        }
+
+        // Validate that the training exists
+        $training = $this->Training_model->get_training_by_id($id);
+        if (!$training) {
+            $this->output
+                ->set_content_type('application/json')
+                ->set_output(json_encode([
+                    'success' => false,
+                    'message' => 'Training manual not found'
+                ]));
+            return;
+        }
+
+        // Update only the notes for existing training
+        $update_data = [
+            'note' => $notes
+        ];
+
+        $this->Training_model->update_training($id, $update_data);
+
+        $this->output
+            ->set_content_type('application/json')
+            ->set_output(json_encode([
+                'success' => true,
+                'message' => 'Notes saved successfully!'
             ]));
     }
 
@@ -311,6 +366,7 @@ class Ajax extends CI_Controller
         _cleanup_temp_files($this);
         $this->session->unset_userdata('uploaded_files');
         $this->session->unset_userdata('temp_files');
+        $this->session->unset_userdata('temp_notes');
 
         $this->output
             ->set_content_type('application/json')
