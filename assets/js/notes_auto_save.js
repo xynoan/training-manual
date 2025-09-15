@@ -152,13 +152,6 @@ let notesAutoSave = {
         }
     },
 
-    manualSave: function() {
-        if (this.saveTimeout) {
-            clearTimeout(this.saveTimeout);
-        }
-        this.saveNotes();
-    },
-
     loadTempNotes: function() {
         if (typeof quill !== 'undefined') {
             if (window.existingNotes) {
