@@ -177,7 +177,6 @@ class Ajax extends CI_Controller
             }
         }
 
-        // Get notes from POST or session (if saved temporarily)
         $notes = $this->input->post('notes');
         if (empty($notes)) {
             $notes = $this->session->userdata('temp_notes');
@@ -212,7 +211,6 @@ class Ajax extends CI_Controller
         $id = $this->input->post('id');
         $notes = $this->input->post('notes');
 
-        // If no ID is provided, store notes in session for new entries
         if (!$id) {
             $this->session->set_userdata('temp_notes', $notes);
             $this->output
@@ -224,7 +222,6 @@ class Ajax extends CI_Controller
             return;
         }
 
-        // Validate that the training exists
         $training = $this->Training_model->get_training_by_id($id);
         if (!$training) {
             $this->output
@@ -236,7 +233,6 @@ class Ajax extends CI_Controller
             return;
         }
 
-        // Update only the notes for existing training
         $update_data = [
             'note' => $notes
         ];
