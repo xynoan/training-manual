@@ -1,42 +1,39 @@
-.dropdown-menu a:active {
-    background-color: white;
-}
+/* ============================================================================
+   TRAINING MANUAL 2 - STYLESHEET
+   ============================================================================ */
 
+/* ============================================================================
+   TABLE OF CONTENTS
+   ============================================================================
+   1. Base Styles & Form Elements
+   2. File Upload Components
+   3. Alert & Notification Components
+   4. File Display & Management
+   5. Animations & Keyframes
+   6. Media Queries & Responsive Design
+   ============================================================================ */
+
+
+/* ============================================================================
+   1. BASE STYLES & FORM ELEMENTS
+   ============================================================================ */
+
+/* Form placeholder styling */
 textarea::placeholder {
     opacity: 0.7 !important;
 }
 
-.success-alert-floating {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: linear-gradient(135deg, #00b09b, #96c93d);
-    color: white;
-    padding: 20px 25px;
-    border-radius: 15px;
-    box-shadow: 0 15px 35px rgba(0, 176, 155, 0.3);
-    transform: translateX(400px);
-    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    z-index: 1000;
-    max-width: 350px;
+/* Dropdown menu active state */
+.dropdown-menu a:active {
+    background-color: white;
 }
 
-.success-alert-floating.show {
-    transform: translateX(0);
-}
 
-.success-alert-floating .success-icon {
-    width: 50px;
-    height: 50px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 15px;
-    animation: pulse 2s infinite;
-}
+/* ============================================================================
+   2. FILE UPLOAD COMPONENTS
+   ============================================================================ */
 
+/* Main upload box */
 .upload-box {
     border: 2px dashed #d3d3d3;
     border-radius: 20px;
@@ -48,6 +45,7 @@ textarea::placeholder {
     position: relative;
 }
 
+/* Upload box states */
 .upload-box.error {
     border: 2px dashed #e74c3c;
     border-radius: 20px;
@@ -96,6 +94,26 @@ textarea::placeholder {
     padding: 20px;
 }
 
+/* Upload box content styling */
+.upload-box svg {
+    width: 50px;
+    height: 50px;
+    fill: #adb5bd;
+}
+
+.upload-box svg.removeFile {
+    width: 25px;
+    height: 25px;
+    fill: white;
+}
+
+.upload-box p {
+    margin-top: 10px;
+    color: #adb5bd;
+    font-weight: 500;
+}
+
+/* Upload progress indicator */
 .upload-progress-indicator {
     position: absolute;
     top: 50%;
@@ -126,227 +144,49 @@ textarea::placeholder {
     animation: spin 0.8s linear infinite;
 }
 
-.file-upload-success {
-    animation: fileUploadSuccess 0.6s ease-out;
-    border-left-color: #28a745 !important;
-}
-
-@keyframes pulse-upload {
-    0% { opacity: 0.3; }
-    50% { opacity: 0.6; }
-    100% { opacity: 0.3; }
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-@keyframes fileUploadSuccess {
-    0% { 
-        transform: scale(1);
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    }
-    50% { 
-        transform: scale(1.05);
-        box-shadow: 0 4px 20px rgba(40, 167, 69, 0.3);
-    }
-    100% { 
-        transform: scale(1);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    }
-}
-
-@keyframes slideInDown {
-    0% {
-        transform: translateY(-20px);
-        opacity: 0;
-    }
-    100% {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-@keyframes slideInUp {
-    0% {
-        transform: translateY(20px);
-        opacity: 0;
-    }
-    100% {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-@keyframes slideOutRight {
-    0% {
-        transform: translateX(0);
-        opacity: 1;
-    }
-    100% {
-        transform: translateX(100px);
-        opacity: 0;
-    }
-}
-
-.file-alert {
-    border-radius: 8px;
-    font-size: 14px;
-    padding: 10px 15px;
-}
-
-.upload-box svg {
-    width: 50px;
-    height: 50px;
-    fill: #adb5bd;
-}
-
-.upload-box svg.removeFile {
-    width: 25px;
-    height: 25px;
-    fill: white;
-}
-
-.upload-box p {
-    margin-top: 10px;
-    color: #adb5bd;
-    font-weight: 500;
-}
-
+/* File input styling */
 #fileInput {
     display: none;
 }
 
-#fileList {
-    width: 100%;
-    margin-bottom: 20px;
-    text-align: left;
+
+/* ============================================================================
+   3. ALERT & NOTIFICATION COMPONENTS
+   ============================================================================ */
+
+/* Success alert - floating style */
+.success-alert-floating {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #00b09b, #96c93d);
+    color: white;
+    padding: 20px 25px;
+    border-radius: 15px;
+    box-shadow: 0 15px 35px rgba(0, 176, 155, 0.3);
+    transform: translateX(400px);
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    z-index: 1000;
+    max-width: 350px;
 }
 
-#fileList .file-box {
-    width: 150px;
-    word-break: break-word;
-    background: #f8f9fa;
+.success-alert-floating.show {
+    transform: translateX(0);
 }
 
-.file-preview-link {
-    text-decoration: none !important;
-    display: inline-block;
-    margin-right: 8px;
-    font-size: 18px;
-    transition: transform 0.2s ease;
-}
-
-.file-preview-link:hover {
-    transform: scale(1.1);
-}
-
-.file-preview-link i {
-    font-size: 20px;
-}
-
-/* File upload display cards */
-.file-card {
-    display: flex;
-    align-items: center;
-    background: white;
-    border: 1px solid #e9ecef;
-    border-radius: 8px;
-    padding: 12px;
-    margin-bottom: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    transition: all 0.2s ease;
-    max-width: 100%;
-    width: 100%;
-    position: relative;
-}
-
-.file-card:hover {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    transform: translateY(-1px);
-}
-
-.file-card.new-file {
-    border-left: 4px solid #28a745;
-    background: linear-gradient(to right, #f8fff9, white);
-    border-color: #d4edda;
-}
-
-.file-card.existing-file {
-    border-left: 4px solid #6c757d;
-    background: linear-gradient(to right, #f8f9fa, white);
-}
-
-.file-card .file-icon {
-    margin-right: 12px;
-    font-size: 24px;
-    min-width: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.file-card .file-info {
-    flex: 1;
-    min-width: 0;
-}
-
-.file-card .file-name {
-    font-weight: 600;
-    font-size: 14px;
-    color: #333;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-bottom: 2px;
-    line-height: 1.2;
-}
-
-.file-card .file-size {
-    font-size: 12px;
-    color: #6c757d !important;
-    font-weight: 500;
-}
-
-.file-card .remove-file {
-    margin-left: 8px;
-    width: 28px;
-    height: 28px;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.success-alert-floating .success-icon {
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.2);
     border-radius: 50%;
-    opacity: 0.7;
-    transition: opacity 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+    animation: pulse 2s infinite;
 }
 
-.file-card .remove-file:hover {
-    opacity: 1;
-}
-
-.file-card .remove-file i {
-    font-size: 12px;
-}
-
-
-
-@media (max-width: 576px) {
-    .responsiveFormGroup {
-        width: 100% !important;
-    }
-
-    #addBtn {
-        width: 100%;
-    }
-
-    #submitBtn {
-        margin-bottom: 0.5em;
-    }
-}
-
-/* Beautiful Success Alert Styles */
+/* Beautiful success alert - enhanced version */
 .beautiful-success-alert {
     position: fixed;
     top: 20px;
@@ -435,37 +275,252 @@ textarea::placeholder {
     transform: scale(1.1);
 }
 
+/* File alert styling */
+.file-alert {
+    border-radius: 8px;
+    font-size: 14px;
+    padding: 10px 15px;
+}
+
+
+/* ============================================================================
+   4. FILE DISPLAY & MANAGEMENT
+   ============================================================================ */
+
+/* File list container */
+#fileList {
+    width: 100%;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+#fileList .file-box {
+    width: 150px;
+    word-break: break-word;
+    background: #f8f9fa;
+}
+
+/* File preview links */
+.file-preview-link {
+    text-decoration: none !important;
+    display: inline-block;
+    margin-right: 8px;
+    font-size: 18px;
+    transition: transform 0.2s ease;
+}
+
+.file-preview-link:hover {
+    transform: scale(1.1);
+}
+
+.file-preview-link i {
+    font-size: 20px;
+}
+
+/* File display cards */
+.file-card {
+    display: flex;
+    align-items: center;
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+    max-width: 100%;
+    width: 100%;
+    position: relative;
+}
+
+.file-card:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+}
+
+.file-card.new-file {
+    border-left: 4px solid #28a745;
+    background: linear-gradient(to right, #f8fff9, white);
+    border-color: #d4edda;
+}
+
+.file-card.existing-file {
+    border-left: 4px solid #6c757d;
+    background: linear-gradient(to right, #f8f9fa, white);
+}
+
+.file-card.file-upload-success {
+    animation: fileUploadSuccess 0.6s ease-out;
+    border-left-color: #28a745 !important;
+}
+
+/* File card elements */
+.file-card .file-icon {
+    margin-right: 12px;
+    font-size: 24px;
+    min-width: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.file-card .file-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.file-card .file-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 2px;
+    line-height: 1.2;
+}
+
+.file-card .file-size {
+    font-size: 12px;
+    color: #6c757d !important;
+    font-weight: 500;
+}
+
+.file-card .remove-file {
+    margin-left: 8px;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.file-card .remove-file:hover {
+    opacity: 1;
+}
+
+.file-card .remove-file i {
+    font-size: 12px;
+}
+
+
+/* ============================================================================
+   5. ANIMATIONS & KEYFRAMES
+   ============================================================================ */
+
+/* Upload animations */
+@keyframes pulse-upload {
+    0% {
+        opacity: 0.3;
+    }
+    50% {
+        opacity: 0.6;
+    }
+    100% {
+        opacity: 0.3;
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* File upload success animation */
+@keyframes fileUploadSuccess {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 4px 20px rgba(40, 167, 69, 0.3);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+}
+
+/* Slide animations */
+@keyframes slideInDown {
+    0% {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideInUp {
+    0% {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutRight {
+    0% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(100px);
+        opacity: 0;
+    }
+}
+
+/* Success alert pulse animations */
 @keyframes successPulse {
-    0% { 
+    0% {
         transform: scale(1);
         box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4);
     }
-    50% { 
+    50% {
         transform: scale(1.05);
         box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.1);
     }
-    100% { 
+    100% {
         transform: scale(1);
         box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
     }
 }
 
 @keyframes pulse {
-    0% { 
+    0% {
         transform: scale(1);
         box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4);
     }
-    50% { 
+    50% {
         transform: scale(1.05);
         box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.1);
     }
-    100% { 
+    100% {
         transform: scale(1);
         box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
     }
 }
 
-/* Responsive adjustments for mobile */
+
+/* ============================================================================
+   6. MEDIA QUERIES & RESPONSIVE DESIGN
+   ============================================================================ */
+
+/* Mobile devices (max-width: 480px) */
 @media (max-width: 480px) {
     .beautiful-success-alert {
         right: 10px;
@@ -474,12 +529,28 @@ textarea::placeholder {
         min-width: auto;
         transform: translateY(-100px) scale(0.9);
     }
-    
+
     .beautiful-success-alert.show {
         transform: translateY(0) scale(1);
     }
 }
 
+/* Small devices (max-width: 576px) */
+@media (max-width: 576px) {
+    .responsiveFormGroup {
+        width: 100% !important;
+    }
+
+    #addBtn {
+        width: 100%;
+    }
+
+    #submitBtn {
+        margin-bottom: 0.5em;
+    }
+}
+
+/* Medium devices and up (min-width: 768px) */
 @media (min-width: 768px) {
     #titleGroup,
     #fileGroup,
