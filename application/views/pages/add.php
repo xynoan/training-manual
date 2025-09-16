@@ -1,14 +1,6 @@
+<?php $loadingLabel = 'Saving' ?>
 <?php require 'partials/floating-alert.php' ?>
-
-<!-- Loading overlay -->
-<div id="loadingOverlay" class="d-none position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 d-flex justify-content-center align-items-center" style="z-index: 9999;">
-    <div class="bg-white p-4 rounded text-center">
-        <div class="spinner-border text-primary mb-3" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
-        <p class="mb-0">Saving training manual...</p>
-    </div>
-</div>
+<?php require 'partials/loading-overlay.php' ?>
 
 <form id="addForm" enctype="multipart/form-data">
     <div class="d-flex gap-2">
