@@ -118,3 +118,16 @@ textarea::placeholder {
 .file-preview-link i {
     font-size: 20px;
 }
+
+/* quill styling */
+#quill-editor.is-invalid .ql-container {
+    border-color: #dc3545;
+}
+
+#quill-editor.is-invalid .ql-toolbar {
+    border-color: #dc3545;
+}
+
+.ql-editor {
+    min-height: 150px;
+}

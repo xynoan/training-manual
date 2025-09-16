@@ -1,22 +1,5 @@
 <?php require 'partials/floating-alert.php' ?>
 
-<!-- Quill.js CSS -->
-<link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
-
-<style>
-    #quill-editor.is-invalid .ql-container {
-        border-color: #dc3545;
-    }
-    
-    #quill-editor.is-invalid .ql-toolbar {
-        border-color: #dc3545;
-    }
-    
-    .ql-editor {
-        min-height: 150px;
-    }
-</style>
-
 <!-- Loading overlay -->
 <div id="loadingOverlay" class="d-none position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 d-flex justify-content-center align-items-center" style="z-index: 9999;">
     <div class="bg-white p-4 rounded text-center">
