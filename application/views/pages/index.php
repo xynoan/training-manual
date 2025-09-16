@@ -81,7 +81,7 @@
                                 </td>
                                 <td class="align-middle">Nath</td>
                                 <td class="align-middle"><?= isset($uploaded_at) ? $uploaded_at : '' ?></td>
-                                <td class="align-middle"><?= isset($training['note']) ? htmlspecialchars($training['note']) : '' ?></td>
+                                <td class="align-middle"><?= isset($training['note']) ? $training['note'] : '' ?></td>
                                 <td class="align-middle">
                                     <div class="btn-group">
                                         <button type="button" class="btn btn-danger btn-sm dropdown-toggle rounded" disabled>
