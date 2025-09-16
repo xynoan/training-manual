@@ -80,6 +80,29 @@ function restoreUploadedFiles() {
     }
 }
 
+function clearUploadedFiles() {
+    // Clear all file-related variables
+    if (typeof existingFiles !== 'undefined') existingFiles = [];
+    if (typeof currentFiles !== 'undefined') currentFiles = [];
+    if (typeof removedExistingFiles !== 'undefined') removedExistingFiles = [];
+    
+    // Clear file input
+    $('#fileInput').val('');
+    
+    // Reset removed files input
+    $('#removedFiles').val('[]');
+    
+    // Clear file list display
+    $('#fileList').empty();
+    
+    // Show the drop area placeholder again
+    $('#drop-area-placeholder').removeClass('d-none');
+    
+    // Remove any error states
+    $('#dropArea').removeClass('error');
+    $('#fileError').hide();
+}
+
 function showFloatingAlert() {
     $('#floatingAlert').addClass('show');
 
