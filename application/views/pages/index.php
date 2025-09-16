@@ -35,22 +35,10 @@
         </form>
     </div>
 
-    <!-- Loading indicator -->
-    <div id="loadingIndicator" class="text-center d-none mb-3">
-        <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
-        <p class="mt-2">Loading training manuals...</p>
-    </div>
+    <?php require 'partials/loading-indicator.php' ?>
 
-    <!-- Filter info -->
-    <div id="filterInfo" class="alert alert-info mb-3" style="display: none;">
-        <strong>Filters Applied:</strong>
-        <span id="filterDetails"></span>
-        <br><small id="resultCount"></small>
-    </div>
+    <?php require 'partials/filter-info.php' ?>
 
-    <!-- Main content container -->
     <div id="mainContent">
         <?php if (!empty($trainings)): ?>
             <div>
@@ -138,6 +126,12 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const dateFormat = 'MM/DD/YYYY HH:mm';
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const mainContent = document.getElementById('mainContent');
+            const paginationContainer = document.getElementById('paginationContainer');
+            const filterInfo = document.getElementById('filterInfo');
+            const filterDetails = document.getElementById('filterDetails');
+            const resultCount = document.getElementById('resultCount');
             
             $('input[name="dates"]').daterangepicker({
                 autoUpdateInput: false,
@@ -180,7 +174,6 @@
                 }
             }
 
-            // Initial check on page load
             toggleClearButton();
 
             searchInput.addEventListener('input', function() {
@@ -205,8 +198,8 @@
                 const searchValue = searchInput.value.trim();
                 const datesValue = document.getElementById('dates').value.trim();
 
-                document.getElementById('loadingIndicator').classList.remove('d-none');
-                document.getElementById('mainContent').style.opacity = '0.5';
+                loadingIndicator.classList.remove('d-none');
+                mainContent.style.opacity = '0.5';
 
                 const formData = new FormData();
                 formData.append('search', searchValue);

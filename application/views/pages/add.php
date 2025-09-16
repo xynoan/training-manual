@@ -52,13 +52,11 @@
     <input type="hidden" id="removedFiles" name="removed_files" value="">
 </form>
 
-<!-- Quill.js JavaScript -->
 <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
 
 <script>
     window.uploadedFilesData = <?= json_encode($uploaded_files) ?>;
 
-    // Initialize Quill editor
     var quill = new Quill('#quill-editor', {
         theme: 'snow',
         placeholder: 'Enter notes (optional)...',
@@ -74,13 +72,11 @@
         }
     });
 
-    // Set initial content from the hidden textarea
     var initialContent = document.getElementById('notes').value;
     if (initialContent) {
         quill.root.innerHTML = initialContent;
     }
 
-    // Update hidden textarea when Quill content changes
     quill.on('text-change', function() {
         document.getElementById('notes').value = quill.root.innerHTML;
     });
@@ -88,7 +84,6 @@
     document.getElementById('addForm').addEventListener('submit', function(e) {
         e.preventDefault();
         
-        // Sync Quill content to hidden textarea before submitting
         document.getElementById('notes').value = quill.root.innerHTML;
         
         clearErrors();

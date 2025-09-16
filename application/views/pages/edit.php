@@ -54,7 +54,6 @@
     <div id="notesError" class="text-danger mt-2" style="display: none;"></div>
 </form>
 
-<!-- Quill.js JavaScript -->
 <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
 
 <script>
@@ -62,7 +61,6 @@
     window.existingFilesData = <?= json_encode($training['file_names']) ?>;
     window.removedFilesData = <?= json_encode(isset($removed_files) ? $removed_files : []) ?>;
 
-    // Initialize Quill editor
     var quill = new Quill('#quill-editor', {
         theme: 'snow',
         placeholder: 'Enter notes (optional)...',
@@ -78,13 +76,11 @@
         }
     });
 
-    // Set initial content from the hidden textarea
     var initialContent = document.getElementById('notes').value;
     if (initialContent) {
         quill.root.innerHTML = initialContent;
     }
 
-    // Update hidden textarea when Quill content changes
     quill.on('text-change', function() {
         document.getElementById('notes').value = quill.root.innerHTML;
     });
@@ -92,7 +88,6 @@
     document.getElementById('editForm').addEventListener('submit', function(e) {
         e.preventDefault();
         
-        // Sync Quill content to hidden textarea before submitting
         document.getElementById('notes').value = quill.root.innerHTML;
         
         clearErrors();
