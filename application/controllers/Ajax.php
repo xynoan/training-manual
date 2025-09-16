@@ -232,6 +232,23 @@ class Ajax extends CI_Controller
             ]));
     }
 
+    public function validate_title()
+    {
+        if (!$this->input->is_ajax_request()) {
+            show_404();
+        }
+
+        $title = $this->input->post('title');
+        $errors = $this->form->validate_title($title);
+
+        $this->output
+            ->set_content_type('application/json')
+            ->set_output(json_encode([
+                'success' => empty($errors),
+                'errors' => $errors
+            ]));
+    }
+
     public function edit()
     {
         if (!$this->input->is_ajax_request()) {

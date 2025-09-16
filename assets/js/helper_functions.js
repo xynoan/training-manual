@@ -1,5 +1,5 @@
 function clearFormErrors() {
-    $('#titleError, #fileError, #notesError').hide();
+    $('#titleError, #fileError, #notesError').hide().empty();
     $('#title, #notes').removeClass('is-invalid');
     $('#dropArea').removeClass('error');
 }
@@ -181,4 +181,55 @@ function showFileAlert(message, type = 'info') {
             $(this).remove();
         });
     }, 4000);
+}
+
+function validateTitleAjax(title) {
+    // Clear existing title errors immediately when user starts typing
+    $('#titleError').hide().empty();
+    $('#title').removeClass('is-invalid');
+    
+    // Don't validate if title is empty (let the form validation handle required field)
+    if (!title || title.trim() === '') {
+        return;
+    }
+    
+    // Use base URL from window.appConfig if available, otherwise fallback
+    const baseUrl = window.appConfig ? window.appConfig.baseUrl : '';
+    const ajaxUrl = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + 'ajax/validate_title';
+    
+    $.ajax({
+        url: ajaxUrl,
+        type: 'POST',
+        data: { title: title },
+        dataType: 'json',
+        success: function(response) {
+            if (!response.success && response.errors && response.errors.title) {
+                $('#titleError').text(response.errors.title).show();
+                $('#title').addClass('is-invalid');
+            }
+        },
+        error: function(xhr, status, error) {
+            console.log('Title validation error:', error);
+        }
+    });
+}
+
+function initializeTitleValidation() {
+    let titleTimeout;
+    
+    $('#title').on('input', function() {
+        const title = $(this).val();
+        
+        // Clear any existing timeout
+        clearTimeout(titleTimeout);
+        
+        // Clear errors immediately when user starts typing
+        $('#titleError').hide().empty();
+        $('#title').removeClass('is-invalid');
+        
+        // Set a new timeout for validation (debounce)
+        titleTimeout = setTimeout(function() {
+            validateTitleAjax(title);
+        }, 500); // Wait 500ms after user stops typing
+    });
 }

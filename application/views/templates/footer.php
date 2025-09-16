@@ -21,6 +21,11 @@
     
     $(document).ready(function() {
         restoreUploadedFiles();
+        
+        // Initialize title validation for real-time error removal
+        if (typeof initializeTitleValidation === 'function') {
+            initializeTitleValidation();
+        }
 
         $('#addBtn').on('click', function(e) {
             $('#dashboardSection').hide();
