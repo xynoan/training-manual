@@ -9,9 +9,11 @@
                 <label for="dates" class="form-label small text-muted mb-1">Date Range</label>
                 <input type="text" class="form-control" id="dates" name="dates"
                     title="Filter from this date"
+                    placeholder="Select date range"
                     value="<?= isset($dates) ? htmlspecialchars($dates) : '' ?>">
             </div>
-            <div class="input-group w-25">
+            <div>
+                <label for="search" class="form-label small text-muted mb-1">Search</label>
                 <input type="text" class="form-control" id="search" name="search"
                     placeholder="Search by title, notes, or filename..."
                     value="<?= isset($search) ? htmlspecialchars($search) : '' ?>">
