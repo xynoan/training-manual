@@ -477,6 +477,10 @@
             }
         }
 
+        // Expose functions globally for use in external helpers
+        window.renderFileList = renderFileList;
+        window.updateRemovedFilesInput = updateRemovedFilesInput;
+
     });
 </script>
 </div>
