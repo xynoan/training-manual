@@ -281,7 +281,7 @@
                         html += '</div></td>';
                         html += '<td class="align-middle">Nath</td>';
                         html += `<td class="align-middle">${uploadedAt}</td>`;
-                        html += `<td class="align-middle">${training.note ? escapeHtml(training.note) : ''}</td>`;
+                        html += `<td class="align-middle">${training.note ? training.note : ''}</td>`;
                         html += `<td class="align-middle">
                             <div class="btn-group">
                                 <button type="button" class="btn btn-danger btn-sm dropdown-toggle rounded" data-bs-toggle="dropdown">Actions</button>
