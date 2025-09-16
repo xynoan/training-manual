@@ -36,14 +36,13 @@
                     <p>Drag and Drop files here</p>
                     <p class="text-muted">or click to select a file</p>
                 </div>
+                <div id="uploadProgressIndicator" class="upload-progress-indicator">
+                    <div class="upload-spinner"></div>
+                    <p class="mb-0 text-primary fw-bold">Processing files...</p>
+                </div>
             </div>
             <input type="file" id="fileInput" name="file[]" accept=".pdf, .pptx, .ppt" multiple/>
         </div>
-        <div id="fileError" class="text-danger mt-2" style="display: none;"></div>
-        <?php if (isset($errors['file'])) : ?>
-            <p class="text-danger mt-2"><?= $errors['file'] ?></p>
-        <?php endif; ?>
-
         <label for="notes">
             <p class="fs-4">Notes</p>
         </label>

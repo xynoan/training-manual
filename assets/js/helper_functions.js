@@ -12,7 +12,7 @@ function handleFiles(files) {
     const allowedTypes = ["pdf", "ppt", "pptx"];
     const totalFiles = files.length + existingFiles.length;
     if (totalFiles > maxFiles) {
-        alert(`You can only upload a maximum of ${maxFiles} files total.`);
+        showFileAlert(`You can only upload a maximum of ${maxFiles} files total.`, 'error');
         return;
     }
 
@@ -20,25 +20,47 @@ function handleFiles(files) {
         const ext = file.name.split('.').pop().toLowerCase();
 
         if (!allowedTypes.includes(ext)) {
-            alert(`Invalid file type: "${file.name}". Only PDF and PPT files are allowed.`);
+            showFileAlert(`Invalid file type: "${file.name}". Only PDF and PPT files are allowed.`, 'error');
             return;
         }
 
         if (file.size > maxSizeMB * 1024 * 1024) {
-            alert(`File "${file.name}" exceeds ${maxSizeMB} MB.`);
+            showFileAlert(`File "${file.name}" exceeds ${maxSizeMB} MB.`, 'error');
             return;
         }
     }
     /* end of error handlers */
 
-    currentFiles = Array.from(files);
+    // Show upload progress indicator
+    showUploadProgress();
 
-    if (typeof renderFileList === 'function') {
-        renderFileList();
-    }
+    // Simulate processing time for better UX
+    setTimeout(() => {
+        // Convert FileList to Array and store
+        currentFiles = Array.from(files);
 
-    $('#dropArea').removeClass('error');
-    $('#drop-area-placeholder').addClass('d-none');
+        // Update the file input to reflect the current files
+        const dt = new DataTransfer();
+        currentFiles.forEach(file => dt.items.add(file));
+        document.getElementById('fileInput').files = dt.files;
+
+        // Hide upload progress indicator
+        hideUploadProgress();
+
+        // Render the file list with visual feedback
+        if (typeof renderFileList === 'function') {
+            renderFileList();
+        }
+
+        // Update UI state
+        $('#dropArea').removeClass('error dragover uploading');
+        $('#drop-area-placeholder').addClass('d-none');
+
+        // Show success message
+        const fileCount = files.length;
+        const fileText = fileCount === 1 ? 'file' : 'files';
+        showFileAlert(`Successfully added ${fileCount} ${fileText}`, 'success');
+    }, 800); // Small delay to show the processing animation
 }
 
 function restoreUploadedFiles() {
@@ -75,8 +97,11 @@ function restoreUploadedFiles() {
 
     const hasFiles = existingFiles.length > 0 || currentFiles.length > 0;
     if (hasFiles) {
-        $('#dropArea').removeClass('error');
+        $('#dropArea').removeClass('error').addClass('has-files');
         $('#drop-area-placeholder').addClass('d-none');
+    } else {
+        $('#dropArea').removeClass('has-files');
+        $('#drop-area-placeholder').removeClass('d-none');
     }
 }
 
@@ -92,15 +117,23 @@ function clearUploadedFiles() {
     // Reset removed files input
     $('#removedFiles').val('[]');
     
-    // Clear file list display
-    $('#fileList').empty();
+    // Clear file list display with animation
+    $('.file-card').each(function(index) {
+        $(this).css('animation', `slideOutRight 0.3s ease-in ${index * 0.05}s forwards`);
+    });
     
-    // Show the drop area placeholder again
-    $('#drop-area-placeholder').removeClass('d-none');
-    
-    // Remove any error states
-    $('#dropArea').removeClass('error');
-    $('#fileError').hide();
+    setTimeout(() => {
+        $('#fileList').empty();
+        
+        // Show the drop area placeholder again
+        $('#drop-area-placeholder').removeClass('d-none');
+        
+        // Remove any states
+        $('#dropArea').removeClass('error uploading dragover has-files');
+        $('#fileError').hide();
+        $('.file-alert').remove();
+        $('#uploadProgressIndicator').removeClass('show');
+    }, 500);
 }
 
 function showFloatingAlert() {
@@ -109,5 +142,45 @@ function showFloatingAlert() {
     setTimeout(() => {
         $('#floatingAlert').removeClass('show');
         window.location.href = window.appConfig ? window.appConfig.baseUrl : '/';
+    }, 4000);
+}
+
+function showUploadProgress() {
+    console.log('Showing upload progress indicator...');
+    $('#dropArea').addClass('uploading');
+    $('#uploadProgressIndicator').addClass('show');
+    $('#drop-area-placeholder').addClass('d-none');
+}
+
+function hideUploadProgress() {
+    console.log('Hiding upload progress indicator...');
+    $('#dropArea').removeClass('uploading');
+    $('#uploadProgressIndicator').removeClass('show');
+}
+
+function showFileAlert(message, type = 'info') {
+    console.log('Showing file alert:', message, type);
+    // Remove any existing file alerts
+    $('.file-alert').remove();
+    
+    const alertClass = type === 'success' ? 'alert-success' : 
+                      type === 'error' ? 'alert-danger' : 'alert-info';
+    const iconClass = type === 'success' ? 'fa-check-circle' : 
+                      type === 'error' ? 'fa-exclamation-triangle' : 'fa-info-circle';
+    
+    const alertHtml = `
+        <div class="alert ${alertClass} file-alert d-flex align-items-center gap-2 mt-2" style="animation: slideInDown 0.3s ease-out;">
+            <i class="fas ${iconClass}"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    $('#fileGroup').append(alertHtml);
+    
+    // Auto-remove alert after 4 seconds
+    setTimeout(() => {
+        $('.file-alert').fadeOut(300, function() {
+            $(this).remove();
+        });
     }, 4000);
 }

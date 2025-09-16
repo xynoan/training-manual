@@ -289,33 +289,193 @@
         $('#fileInput').on('change', function(e) {
             const files = e.target.files;
             if (files.length > 0) {
+                // Show immediate feedback that files were selected
+                const fileCount = files.length;
+                const fileText = fileCount === 1 ? 'file' : 'files';
+                showFileAlert(`Processing ${fileCount} ${fileText}...`, 'info');
                 handleFiles(files);
             }
         });
 
-        // Drag and drop handlers
+        // Drag and drop handlers with enhanced visual feedback
+        let dragCounter = 0;
+        
+        $('#dropArea').on('dragenter', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dragCounter++;
+            $(this).addClass('dragover');
+            $('#drop-area-placeholder p').first().text('Drop files here to upload');
+            $('#drop-area-placeholder .text-muted').text('Release to add files');
+        });
+
         $('#dropArea').on('dragover', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            $(this).addClass('dragover');
         });
 
         $('#dropArea').on('dragleave', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            $(this).removeClass('dragover');
+            dragCounter--;
+            if (dragCounter === 0) {
+                $(this).removeClass('dragover');
+                $('#drop-area-placeholder p').first().text('Drag and Drop files here');
+                $('#drop-area-placeholder .text-muted').text('or click to select a file');
+            }
         });
 
         $('#dropArea').on('drop', function(e) {
             e.preventDefault();
             e.stopPropagation();
+            dragCounter = 0;
             $(this).removeClass('dragover');
+            $('#drop-area-placeholder p').first().text('Drag and Drop files here');
+            $('#drop-area-placeholder .text-muted').text('or click to select a file');
             
             const files = e.originalEvent.dataTransfer.files;
             if (files.length > 0) {
+                // Show immediate feedback that files were dropped
+                const fileCount = files.length;
+                const fileText = fileCount === 1 ? 'file' : 'files';
+                showFileAlert(`Processing ${fileCount} ${fileText}...`, 'info');
                 handleFiles(files);
             }
         });
+
+        // Function to format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Function to get file icon based on extension
+        function getFileIcon(extension) {
+            switch (extension.toLowerCase()) {
+                case 'pdf':
+                    return '<i class="fas fa-file-pdf text-danger"></i>';
+                case 'ppt':
+                case 'pptx':
+                    return '<i class="fas fa-file-powerpoint text-warning"></i>';
+                default:
+                    return '<i class="fas fa-file"></i>';
+            }
+        }
+
+        // Function to render the file list with visual feedback
+        function renderFileList() {
+            const fileListContainer = $('#fileList');
+            fileListContainer.empty();
+            
+            // Add has-files class to upload-box when files are present
+            const totalFiles = (existingFiles ? existingFiles.length : 0) + (currentFiles ? currentFiles.length : 0);
+            if (totalFiles > 0) {
+                $('#dropArea').addClass('has-files');
+            } else {
+                $('#dropArea').removeClass('has-files');
+            }
+
+            // Render existing files (if any)
+            if (typeof existingFiles !== 'undefined' && existingFiles.length > 0) {
+                existingFiles.forEach((fileName, index) => {
+                    const extension = fileName.split('.').pop();
+                    const fileCard = `
+                        <div class="file-card existing-file" data-file-name="${fileName}" style="opacity: 0; animation: slideInUp 0.4s ease-out ${index * 0.1}s forwards;">
+                            <div class="file-icon">
+                                ${getFileIcon(extension)}
+                            </div>
+                            <div class="file-info">
+                                <div class="file-name" title="${fileName}">${fileName}</div>
+                                <div class="file-size text-muted">Existing file</div>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-danger remove-file" data-type="existing" data-index="${index}">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    `;
+                    fileListContainer.append(fileCard);
+                });
+            }
+
+            // Render newly uploaded files with success animation
+            if (typeof currentFiles !== 'undefined' && currentFiles.length > 0) {
+                currentFiles.forEach((file, index) => {
+                    const extension = file.name.split('.').pop();
+                    const delay = (existingFiles ? existingFiles.length : 0) * 0.1 + index * 0.1;
+                    const fileCard = `
+                        <div class="file-card new-file file-upload-success" data-file-name="${file.name}" style="opacity: 0; animation: slideInUp 0.4s ease-out ${delay}s forwards;">
+                            <div class="file-icon">
+                                ${getFileIcon(extension)}
+                            </div>
+                            <div class="file-info">
+                                <div class="file-name" title="${file.name}">${file.name}</div>
+                                <div class="file-size text-muted">${formatFileSize(file.size)}</div>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-danger remove-file" data-type="current" data-index="${index}">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    `;
+                    fileListContainer.append(fileCard);
+                });
+            }
+
+            // Handle file removal with animation
+            $('.remove-file').off('click').on('click', function() {
+                const $fileCard = $(this).closest('.file-card');
+                const fileName = $fileCard.data('file-name');
+                const type = $(this).data('type');
+                const index = $(this).data('index');
+                
+                // Animate removal
+                $fileCard.css('animation', 'slideOutRight 0.3s ease-in forwards');
+                
+                setTimeout(() => {
+                    if (type === 'existing') {
+                        // Move to removed files list
+                        if (typeof removedExistingFiles === 'undefined') removedExistingFiles = [];
+                        removedExistingFiles.push(existingFiles[index]);
+                        existingFiles.splice(index, 1);
+                        
+                        // Update hidden input
+                        if (typeof updateRemovedFilesInput === 'function') {
+                            updateRemovedFilesInput();
+                        }
+                        
+                        showFileAlert(`Removed "${fileName}" from existing files`, 'info');
+                    } else if (type === 'current') {
+                        // Remove from current files
+                        currentFiles.splice(index, 1);
+                        
+                        // Update file input
+                        const dt = new DataTransfer();
+                        currentFiles.forEach(file => dt.items.add(file));
+                        document.getElementById('fileInput').files = dt.files;
+                        
+                        showFileAlert(`Removed "${fileName}" from upload queue`, 'info');
+                    }
+                    
+                    // Re-render the file list
+                    renderFileList();
+                    
+                    // Show placeholder if no files
+                    const totalFiles = (existingFiles ? existingFiles.length : 0) + (currentFiles ? currentFiles.length : 0);
+                    if (totalFiles === 0) {
+                        $('#drop-area-placeholder').removeClass('d-none');
+                    }
+                }, 300); // Wait for animation to complete
+            });
+        }
+
+        // Function to update removed files input
+        function updateRemovedFilesInput() {
+            if (typeof removedExistingFiles !== 'undefined') {
+                $('#removedFiles').val(JSON.stringify(removedExistingFiles));
+            }
+        }
 
     });
 </script>
