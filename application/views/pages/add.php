@@ -14,7 +14,7 @@
     <div class="d-flex gap-2">
         <button type="submit" class="btn btn-primary d-flex align-items-center gap-1" id="submitBtn">
             <i class="fas fa-save"></i>
-            Submit
+            Save
         </button>
         <a href="<?= base_url() ?>" class="btn btn-danger d-flex align-items-center gap-1">
             <i class="fas fa-arrow-left"></i>
