@@ -16,7 +16,7 @@
                 <label for="search" class="form-label small text-muted mb-1">Search</label>
                 <input type="text" class="form-control" id="search" name="search"
                     placeholder="Search by title, notes, or filename..."
-                    value="<?= isset($search) ? htmlspecialchars($search) : '' ?>">
+                    value="<?= isset($search) ? $search : '' ?>">
             </div>
             <div>
                 <label class="form-label small text-muted mb-1">&nbsp;</label>

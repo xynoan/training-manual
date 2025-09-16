@@ -1,5 +1,22 @@
 <?php require 'partials/floating-alert.php' ?>
 
+<!-- Quill.js CSS -->
+<link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+
+<style>
+    #quill-editor.is-invalid .ql-container {
+        border-color: #dc3545;
+    }
+    
+    #quill-editor.is-invalid .ql-toolbar {
+        border-color: #dc3545;
+    }
+    
+    .ql-editor {
+        min-height: 150px;
+    }
+</style>
+
 <!-- Loading overlay -->
 <div id="loadingOverlay" class="d-none position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 d-flex justify-content-center align-items-center" style="z-index: 9999;">
     <div class="bg-white p-4 rounded text-center">
@@ -52,18 +69,52 @@
         <p class="fs-4 ">Notes</p>
     </label>
     <div class="w-50">
-        <textarea class="form-control" id="notes" name="notes" placeholder="Optional"><?= isset($_POST['notes']) ? $_POST['notes'] : '' ?></textarea>
+        <div id="quill-editor" style="height: 200px;"></div>
+        <textarea id="notes" name="notes" style="display: none;"><?= isset($_POST['notes']) ? $_POST['notes'] : '' ?></textarea>
     </div>
     <div id="notesError" class="text-danger mt-2" style="display: none;"></div>
     
     <input type="hidden" id="removedFiles" name="removed_files" value="">
 </form>
 
+<!-- Quill.js JavaScript -->
+<script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+
 <script>
     window.uploadedFilesData = <?= json_encode($uploaded_files) ?>;
 
+    // Initialize Quill editor
+    var quill = new Quill('#quill-editor', {
+        theme: 'snow',
+        placeholder: 'Enter notes (optional)...',
+        modules: {
+            toolbar: [
+                [{ 'header': [1, 2, 3, false] }],
+                ['bold', 'italic', 'underline', 'strike'],
+                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                [{ 'indent': '-1'}, { 'indent': '+1' }],
+                ['link'],
+                ['clean']
+            ]
+        }
+    });
+
+    // Set initial content from the hidden textarea
+    var initialContent = document.getElementById('notes').value;
+    if (initialContent) {
+        quill.root.innerHTML = initialContent;
+    }
+
+    // Update hidden textarea when Quill content changes
+    quill.on('text-change', function() {
+        document.getElementById('notes').value = quill.root.innerHTML;
+    });
+
     document.getElementById('addForm').addEventListener('submit', function(e) {
         e.preventDefault();
+        
+        // Sync Quill content to hidden textarea before submitting
+        document.getElementById('notes').value = quill.root.innerHTML;
         
         clearErrors();
         
@@ -137,7 +188,7 @@
         
         document.getElementById('title').classList.remove('is-invalid');
         document.getElementById('dropArea').classList.remove('error');
-        document.getElementById('notes').classList.remove('is-invalid');
+        document.getElementById('quill-editor').classList.remove('is-invalid');
     }
     
     function showErrors(errors) {
@@ -154,7 +205,7 @@
         if (errors.notes) {
             document.getElementById('notesError').textContent = errors.notes;
             document.getElementById('notesError').style.display = 'block';
-            document.getElementById('notes').classList.add('is-invalid');
+            document.getElementById('quill-editor').classList.add('is-invalid');
         }
     }
     
