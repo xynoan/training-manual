@@ -1,5 +1,27 @@
+# Memory and upload optimization for CodeIgniter training manual app
+# Increase memory limit for file processing
+php_value memory_limit 768M
+
+# Upload settings
+php_value upload_max_filesize 50M
+php_value post_max_size 250M
+php_value max_file_uploads 10
+
+# Execution time for large uploads
+php_value max_execution_time 300
+php_value max_input_time 300
+
+# Enable garbage collection
+php_value zend.enable_gc 1
+
+# Buffer settings
+php_value output_buffering 4096
+
+# Error reporting (remove in production)
+php_value display_errors Off
+php_value log_errors On
+
 RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.php?/$1 [L,QSA]
-RewriteCond $1 !^(index\.php|images|assets|robots\.txt)
+RewriteRule ^(.*)$ index.php/$1 [L]

@@ -11,8 +11,22 @@ function handleFiles(files) {
     const maxSizeMB = 100;
     const allowedTypes = ["pdf", "ppt", "pptx"];
     const totalFiles = files.length + existingFiles.length;
+    
     if (totalFiles > maxFiles) {
         showFileAlert(`You can only upload a maximum of ${maxFiles} files total.`, 'error');
+        return;
+    }
+
+    // Calculate total size for memory estimation
+    let totalSize = 0;
+    for (const file of files) {
+        totalSize += file.size;
+    }
+    
+    // Warn if total size is very large (might cause memory issues)
+    const totalSizeMB = totalSize / (1024 * 1024);
+    if (totalSizeMB > 200) {
+        showFileAlert(`Total upload size (${totalSizeMB.toFixed(1)} MB) is very large and may cause memory issues. Consider uploading fewer files.`, 'error');
         return;
     }
 
