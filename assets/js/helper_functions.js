@@ -17,13 +17,11 @@ function handleFiles(files) {
         return;
     }
 
-    // Calculate total size for memory estimation
     let totalSize = 0;
     for (const file of files) {
         totalSize += file.size;
     }
     
-    // Warn if total size is very large (might cause memory issues)
     const totalSizeMB = totalSize / (1024 * 1024);
     if (totalSizeMB > 200) {
         showFileAlert(`Total upload size (${totalSizeMB.toFixed(1)} MB) is very large and may cause memory issues. Consider uploading fewer files.`, 'error');
@@ -184,16 +182,13 @@ function showFileAlert(message, type = 'info') {
 }
 
 function validateTitleAjax(title) {
-    // Clear existing title errors immediately when user starts typing
     $('#titleError').hide().empty();
     $('#title').removeClass('is-invalid');
     
-    // Don't validate if title is empty (let the form validation handle required field)
     if (!title || title.trim() === '') {
         return;
     }
     
-    // Use base URL from window.appConfig if available, otherwise fallback
     const baseUrl = window.appConfig ? window.appConfig.baseUrl : '';
     const ajaxUrl = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + 'ajax/validate_title';
     
@@ -220,16 +215,13 @@ function initializeTitleValidation() {
     $('#title').on('input', function() {
         const title = $(this).val();
         
-        // Clear any existing timeout
         clearTimeout(titleTimeout);
         
-        // Clear errors immediately when user starts typing
         $('#titleError').hide().empty();
         $('#title').removeClass('is-invalid');
         
-        // Set a new timeout for validation (debounce)
         titleTimeout = setTimeout(function() {
             validateTitleAjax(title);
-        }, 500); // Wait 500ms after user stops typing
+        }, 500);
     });
 }

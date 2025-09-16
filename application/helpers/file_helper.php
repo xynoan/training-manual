@@ -81,7 +81,6 @@ function _cleanup_temp_files($obj)
 
 function handleFileUploadValidation($obj)
 {
-    // Check memory usage before processing
     $memory_limit = _get_memory_limit_bytes();
     $current_memory = memory_get_usage(true);
     
@@ -94,7 +93,6 @@ function handleFileUploadValidation($obj)
     $total_size = 0;
 
     for ($i = 0; $i < count($_FILES['file']['name']); $i++) {
-        // Check for upload errors first
         if (!empty($_FILES['file']['name'][$i])) {
             $upload_error = $_FILES['file']['error'][$i];
             
@@ -106,7 +104,6 @@ function handleFileUploadValidation($obj)
             $file_size = $_FILES['file']['size'][$i];
             $total_size += $file_size;
             
-            // Check if total size would exceed memory limit
             if ($memory_limit > 0 && ($current_memory + $total_size) > ($memory_limit * 0.9)) {
                 log_message('error', 'Upload would exceed memory limit. Current: ' . $current_memory . ', File size: ' . $file_size);
                 throw new Exception('Upload size too large for available memory');
@@ -131,7 +128,6 @@ function handleFileUploadValidation($obj)
                 ];
             }
             
-            // Force garbage collection after each file
             if (function_exists('gc_collect_cycles')) {
                 gc_collect_cycles();
             }
@@ -147,7 +143,6 @@ function handleFileUploadValidation($obj)
 
 function processFileUploads($has_current_files, $has_temp_files, $obj)
 {
-    // Monitor memory usage during processing
     $initial_memory = memory_get_usage(true);
     log_message('info', 'Starting file upload processing. Initial memory: ' . $initial_memory . ' bytes');
     
@@ -167,7 +162,6 @@ function processFileUploads($has_current_files, $has_temp_files, $obj)
         
         for ($i = 0; $i < $file_count; $i++) {
             if (!empty($_FILES['file']['name'][$i]) && $_FILES['file']['error'][$i] === UPLOAD_ERR_OK) {
-                // Check memory before processing each file
                 $current_memory = memory_get_usage(true);
                 $memory_limit = _get_memory_limit_bytes();
                 
@@ -186,7 +180,6 @@ function processFileUploads($has_current_files, $has_temp_files, $obj)
                     log_message('error', "Failed to move uploaded file: {$_FILES['file']['name'][$i]}");
                 }
                 
-                // Force garbage collection after each file
                 if (function_exists('gc_collect_cycles')) {
                     gc_collect_cycles();
                 }

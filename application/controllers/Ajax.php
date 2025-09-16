@@ -161,7 +161,6 @@ class Ajax extends CI_Controller
         $id = $this->input->post('id');
         $notes = $this->input->post('notes');
 
-        // Validate notes content - don't save if empty or only contains empty paragraphs
         if (empty($notes) || trim($notes) === '') {
             $this->output
                 ->set_content_type('application/json')
@@ -172,7 +171,6 @@ class Ajax extends CI_Controller
             return;
         }
 
-        // Remove HTML tags and check if there's actual text content
         $text_content = trim(strip_tags($notes));
         if (empty($text_content)) {
             $this->output
@@ -184,7 +182,6 @@ class Ajax extends CI_Controller
             return;
         }
 
-        // Check for content that's only empty paragraphs
         $clean_content = trim(preg_replace('/<p><br><\/p>/', '', $notes));
         if (empty($clean_content) || $clean_content === '<p></p>') {
             $this->output

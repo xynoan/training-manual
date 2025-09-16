@@ -22,7 +22,6 @@
     $(document).ready(function() {
         restoreUploadedFiles();
         
-        // Initialize title validation for real-time error removal
         if (typeof initializeTitleValidation === 'function') {
             initializeTitleValidation();
         }
