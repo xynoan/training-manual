@@ -71,7 +71,20 @@ let notesAutoSave = {
 
         const notesContent = quill.root.innerHTML;
         
-        if (!notesContent || notesContent.trim() === '<p><br></p>' || notesContent.trim() === '') {
+        // Check if content is empty or contains only empty paragraphs
+        if (!notesContent || notesContent.trim() === '') {
+            return;
+        }
+        
+        // Remove all HTML tags and check if there's actual text content
+        const textContent = notesContent.replace(/<[^>]*>/g, '').trim();
+        if (textContent === '') {
+            return;
+        }
+        
+        // Also check for content that's only empty paragraphs (multiple <p><br></p> tags)
+        const cleanContent = notesContent.replace(/<p><br><\/p>/g, '').trim();
+        if (cleanContent === '' || cleanContent === '<p></p>') {
             return;
         }
 
