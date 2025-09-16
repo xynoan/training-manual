@@ -73,7 +73,8 @@
                 dataType: 'json',
                 success: function(response) {
                     if (response.success) {
-                        alert(response.message);
+                        // Show beautiful success alert
+                        showBeautifulSuccessAlert(response.message, 'Training Saved Successfully!');
                         
                         $('#mainForm')[0].reset();
                         if (typeof quill !== 'undefined') {

@@ -346,6 +346,140 @@ textarea::placeholder {
     }
 }
 
+/* Beautiful Success Alert Styles */
+.beautiful-success-alert {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+    padding: 20px 25px;
+    border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(40, 167, 69, 0.3);
+    transform: translateX(400px) scale(0.8);
+    opacity: 0;
+    transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 9999;
+    max-width: 380px;
+    min-width: 300px;
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.beautiful-success-alert.show {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+}
+
+.beautiful-success-alert .success-icon-container {
+    flex-shrink: 0;
+}
+
+.beautiful-success-alert .success-icon {
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: successPulse 2s infinite;
+    backdrop-filter: blur(5px);
+}
+
+.beautiful-success-alert .success-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.beautiful-success-alert .success-title {
+    margin: 0 0 8px 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.beautiful-success-alert .success-message {
+    margin: 0;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.95);
+    line-height: 1.4;
+    font-weight: 500;
+}
+
+.beautiful-success-alert .success-close-btn {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+    margin-top: -2px;
+}
+
+.beautiful-success-alert .success-close-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    transform: scale(1.1);
+}
+
+@keyframes successPulse {
+    0% { 
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4);
+    }
+    50% { 
+        transform: scale(1.05);
+        box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.1);
+    }
+    100% { 
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+    }
+}
+
+@keyframes pulse {
+    0% { 
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4);
+    }
+    50% { 
+        transform: scale(1.05);
+        box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.1);
+    }
+    100% { 
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+    }
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 480px) {
+    .beautiful-success-alert {
+        right: 10px;
+        left: 10px;
+        max-width: none;
+        min-width: auto;
+        transform: translateY(-100px) scale(0.9);
+    }
+    
+    .beautiful-success-alert.show {
+        transform: translateY(0) scale(1);
+    }
+}
+
 @media (min-width: 768px) {
     #titleGroup,
     #fileGroup,
