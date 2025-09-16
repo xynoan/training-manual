@@ -31,36 +31,28 @@ function handleFiles(files) {
     }
     /* end of error handlers */
 
-    // Show upload progress indicator
     showUploadProgress();
 
-    // Simulate processing time for better UX
     setTimeout(() => {
-        // Convert FileList to Array and store
         currentFiles = Array.from(files);
 
-        // Update the file input to reflect the current files
         const dt = new DataTransfer();
         currentFiles.forEach(file => dt.items.add(file));
         document.getElementById('fileInput').files = dt.files;
 
-        // Hide upload progress indicator
         hideUploadProgress();
 
-        // Render the file list with visual feedback
         if (typeof renderFileList === 'function') {
             renderFileList();
         }
 
-        // Update UI state
         $('#dropArea').removeClass('error dragover uploading');
         $('#drop-area-placeholder').addClass('d-none');
 
-        // Show success message
         const fileCount = files.length;
         const fileText = fileCount === 1 ? 'file' : 'files';
         showFileAlert(`Successfully added ${fileCount} ${fileText}`, 'success');
-    }, 800); // Small delay to show the processing animation
+    }, 800);
 }
 
 function restoreUploadedFiles() {
@@ -106,18 +98,14 @@ function restoreUploadedFiles() {
 }
 
 function clearUploadedFiles() {
-    // Clear all file-related variables
     if (typeof existingFiles !== 'undefined') existingFiles = [];
     if (typeof currentFiles !== 'undefined') currentFiles = [];
     if (typeof removedExistingFiles !== 'undefined') removedExistingFiles = [];
     
-    // Clear file input
     $('#fileInput').val('');
     
-    // Reset removed files input
     $('#removedFiles').val('[]');
     
-    // Clear file list display with animation
     $('.file-card').each(function(index) {
         $(this).css('animation', `slideOutRight 0.3s ease-in ${index * 0.05}s forwards`);
     });
@@ -125,10 +113,8 @@ function clearUploadedFiles() {
     setTimeout(() => {
         $('#fileList').empty();
         
-        // Show the drop area placeholder again
         $('#drop-area-placeholder').removeClass('d-none');
         
-        // Remove any states
         $('#dropArea').removeClass('error uploading dragover has-files');
         $('#fileError').hide();
         $('.file-alert').remove();
@@ -160,7 +146,6 @@ function hideUploadProgress() {
 
 function showFileAlert(message, type = 'info') {
     console.log('Showing file alert:', message, type);
-    // Remove any existing file alerts
     $('.file-alert').remove();
     
     const alertClass = type === 'success' ? 'alert-success' : 
@@ -177,7 +162,6 @@ function showFileAlert(message, type = 'info') {
     
     $('#fileGroup').append(alertHtml);
     
-    // Auto-remove alert after 4 seconds
     setTimeout(() => {
         $('.file-alert').fadeOut(300, function() {
             $(this).remove();

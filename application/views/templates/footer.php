@@ -38,7 +38,6 @@
             $('#formSection').show();
         });
 
-        // Handle form submission
         $('#submitBtn').on('click', function(e) {
             e.preventDefault();
             
@@ -46,27 +45,21 @@
             const submitBtnText = $('#submitBtnText');
             const originalText = submitBtnText.text();
             
-            // Disable button and show loading state
             submitBtn.prop('disabled', true);
             submitBtnText.text('Saving...');
             
-            // Clear any previous errors
             clearFormErrors();
             
-            // Get form data
             const formData = new FormData($('#mainForm')[0]);
             
-            // Add notes content from Quill editor
             if (typeof quill !== 'undefined') {
                 formData.append('notes', quill.root.innerHTML);
             }
             
-            // Determine if this is an edit or add operation
             const trainingId = $('input[name="id"]').val();
             const isEdit = trainingId && trainingId.trim() !== '';
             const endpoint = isEdit ? 'ajax/edit' : 'ajax/add';
             
-            // Submit form via AJAX
             $.ajax({
                 url: window.appConfig.baseUrl + endpoint,
                 type: 'POST',
@@ -76,31 +69,24 @@
                 dataType: 'json',
                 success: function(response) {
                     if (response.success) {
-                        // Show success message
                         alert(response.message);
                         
-                        // Clear form
                         $('#mainForm')[0].reset();
                         if (typeof quill !== 'undefined') {
                             quill.setContents([]);
                         }
                         
-                        // Reset file uploads
                         if (typeof clearUploadedFiles === 'function') {
                             clearUploadedFiles();
                         }
                         
-                        // Refresh dashboard content
                         refreshDashboard();
                         
-                        // Switch back to dashboard view
                         $('#formSection').hide();
                         $('#dashboardSection').show();
                         
-                        // Reset button text for next use
                         $('#submitBtnText').text('Save');
                     } else {
-                        // Handle validation errors
                         if (response.errors) {
                             displayFormErrors(response.errors);
                         } else {
@@ -113,23 +99,19 @@
                     alert('An error occurred while saving. Please try again.');
                 },
                 complete: function() {
-                    // Re-enable button and restore text
                     submitBtn.prop('disabled', false);
                     submitBtnText.text(originalText);
                 }
             });
         });
 
-        // Function to refresh dashboard content
         function refreshDashboard() {
-            // Get current search parameters
             const searchParams = {
                 search: $('#search').val(),
                 dates: $('#dates').val(),
-                page: 1 // Reset to first page after adding/editing
+                page: 1 
             };
             
-            // Call the search function to refresh dashboard
             $.ajax({
                 url: window.appConfig.baseUrl + 'ajax/search',
                 type: 'POST',
@@ -142,13 +124,11 @@
                 },
                 error: function(xhr, status, error) {
                     console.error('Dashboard refresh error:', error);
-                    // Fallback: reload the page
                     window.location.reload();
                 }
             });
         }
         
-        // Function to update dashboard content
         function updateDashboardContent(response) {
             const mainContent = $('#mainContent');
             
@@ -254,15 +234,12 @@
                 `);
             }
             
-            // Update pagination
             if (response.pagination) {
                 $('#paginationContainer').html(response.pagination);
             }
         }
         
-        // Function to display form validation errors
         function displayFormErrors(errors) {
-            // Clear previous errors first
             clearFormErrors();
             
             for (const field in errors) {
@@ -271,7 +248,6 @@
                     errorElement.text(errors[field]).show();
                 }
                 
-                // Add error class to form groups
                 if (field === 'file') {
                     $('#dropArea').addClass('error');
                 } else {
@@ -280,7 +256,6 @@
             }
         }
 
-        // File upload event handlers
         $('#dropArea').on('click', function(e) {
             e.preventDefault();
             $('#fileInput').click();
@@ -289,7 +264,6 @@
         $('#fileInput').on('change', function(e) {
             const files = e.target.files;
             if (files.length > 0) {
-                // Show immediate feedback that files were selected
                 const fileCount = files.length;
                 const fileText = fileCount === 1 ? 'file' : 'files';
                 showFileAlert(`Processing ${fileCount} ${fileText}...`, 'info');
@@ -297,7 +271,6 @@
             }
         });
 
-        // Drag and drop handlers with enhanced visual feedback
         let dragCounter = 0;
         
         $('#dropArea').on('dragenter', function(e) {
@@ -335,7 +308,6 @@
             
             const files = e.originalEvent.dataTransfer.files;
             if (files.length > 0) {
-                // Show immediate feedback that files were dropped
                 const fileCount = files.length;
                 const fileText = fileCount === 1 ? 'file' : 'files';
                 showFileAlert(`Processing ${fileCount} ${fileText}...`, 'info');
@@ -343,7 +315,6 @@
             }
         });
 
-        // Function to format file size
         function formatFileSize(bytes) {
             if (bytes === 0) return '0 Bytes';
             const k = 1024;
@@ -352,7 +323,6 @@
             return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
         }
 
-        // Function to get file icon based on extension
         function getFileIcon(extension) {
             switch (extension.toLowerCase()) {
                 case 'pdf':
@@ -365,12 +335,10 @@
             }
         }
 
-        // Function to render the file list with visual feedback
         function renderFileList() {
             const fileListContainer = $('#fileList');
             fileListContainer.empty();
             
-            // Add has-files class to upload-box when files are present
             const totalFiles = (existingFiles ? existingFiles.length : 0) + (currentFiles ? currentFiles.length : 0);
             if (totalFiles > 0) {
                 $('#dropArea').addClass('has-files');
@@ -378,7 +346,6 @@
                 $('#dropArea').removeClass('has-files');
             }
 
-            // Render existing files (if any)
             if (typeof existingFiles !== 'undefined' && existingFiles.length > 0) {
                 existingFiles.forEach((fileName, index) => {
                     const extension = fileName.split('.').pop();
@@ -400,7 +367,6 @@
                 });
             }
 
-            // Render newly uploaded files with success animation
             if (typeof currentFiles !== 'undefined' && currentFiles.length > 0) {
                 currentFiles.forEach((file, index) => {
                     const extension = file.name.split('.').pop();
@@ -423,34 +389,28 @@
                 });
             }
 
-            // Handle file removal with animation
             $('.remove-file').off('click').on('click', function() {
                 const $fileCard = $(this).closest('.file-card');
                 const fileName = $fileCard.data('file-name');
                 const type = $(this).data('type');
                 const index = $(this).data('index');
                 
-                // Animate removal
                 $fileCard.css('animation', 'slideOutRight 0.3s ease-in forwards');
                 
                 setTimeout(() => {
                     if (type === 'existing') {
-                        // Move to removed files list
                         if (typeof removedExistingFiles === 'undefined') removedExistingFiles = [];
                         removedExistingFiles.push(existingFiles[index]);
                         existingFiles.splice(index, 1);
                         
-                        // Update hidden input
                         if (typeof updateRemovedFilesInput === 'function') {
                             updateRemovedFilesInput();
                         }
                         
                         showFileAlert(`Removed "${fileName}" from existing files`, 'info');
                     } else if (type === 'current') {
-                        // Remove from current files
                         currentFiles.splice(index, 1);
                         
-                        // Update file input
                         const dt = new DataTransfer();
                         currentFiles.forEach(file => dt.items.add(file));
                         document.getElementById('fileInput').files = dt.files;
@@ -458,26 +418,22 @@
                         showFileAlert(`Removed "${fileName}" from upload queue`, 'info');
                     }
                     
-                    // Re-render the file list
                     renderFileList();
                     
-                    // Show placeholder if no files
                     const totalFiles = (existingFiles ? existingFiles.length : 0) + (currentFiles ? currentFiles.length : 0);
                     if (totalFiles === 0) {
                         $('#drop-area-placeholder').removeClass('d-none');
                     }
-                }, 300); // Wait for animation to complete
+                }, 300);
             });
         }
 
-        // Function to update removed files input
         function updateRemovedFilesInput() {
             if (typeof removedExistingFiles !== 'undefined') {
                 $('#removedFiles').val(JSON.stringify(removedExistingFiles));
             }
         }
 
-        // Expose functions globally for use in external helpers
         window.renderFileList = renderFileList;
         window.updateRemovedFilesInput = updateRemovedFilesInput;
 
