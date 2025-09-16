@@ -389,7 +389,9 @@
                 });
             }
 
-            $('.remove-file').off('click').on('click', function() {
+            $('.remove-file').off('click').on('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
                 const $fileCard = $(this).closest('.file-card');
                 const fileName = $fileCard.data('file-name');
                 const type = $(this).data('type');
