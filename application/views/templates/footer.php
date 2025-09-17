@@ -1,4 +1,7 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
 <script type="text/javascript" src="<?php echo asset_url(); ?>js/initialize_quill.js"></script>
@@ -7,21 +10,32 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <script type="text/javascript" src="<?php echo asset_url(); ?>js/helper_functions.js"></script>
 <script>
+    $(function() {
+        $('input[name="datetimes"]').daterangepicker({
+            timePicker: true,
+            timePicker24Hour: true,
+            startDate: moment().startOf('hour'),
+            endDate: moment().startOf('hour').add(32, 'hour'),
+            locale: {
+                format: 'M/DD HH:mm'
+            }
+        });
+    });
     window.appConfig = {
         baseUrl: '<?php echo base_url(); ?>'
     };
-    
+
     <?php if (isset($training) && !empty($training['note'])): ?>
-    window.existingNotes = <?php echo json_encode($training['note']); ?>;
+        window.existingNotes = <?php echo json_encode($training['note']); ?>;
     <?php endif; ?>
-    
+
     <?php if ($this->session->userdata('temp_notes')): ?>
-    window.tempNotes = <?php echo json_encode($this->session->userdata('temp_notes')); ?>;
+        window.tempNotes = <?php echo json_encode($this->session->userdata('temp_notes')); ?>;
     <?php endif; ?>
-    
+
     $(document).ready(function() {
         restoreUploadedFiles();
-        
+
         if (typeof initializeTitleValidation === 'function') {
             initializeTitleValidation();
         }
@@ -29,7 +43,7 @@
         $('#addBtn').on('click', function(e) {
             $('#dashboardSection').hide();
             $('#formSection').show();
-            
+
             // Reinitialize drag and drop events when form becomes visible
             initializeDragDropEvents();
         });
@@ -43,33 +57,33 @@
             $('#submitBtnText').text('Update');
             $('#dashboardSection').hide();
             $('#formSection').show();
-            
+
             // Reinitialize drag and drop events when form becomes visible
             initializeDragDropEvents();
         });
 
         $('#submitBtn').on('click', function(e) {
             e.preventDefault();
-            
+
             const submitBtn = $(this);
             const submitBtnText = $('#submitBtnText');
             const originalText = submitBtnText.text();
-            
+
             submitBtn.prop('disabled', true);
             submitBtnText.text('Saving...');
-            
+
             clearFormErrors();
-            
+
             const formData = new FormData($('#mainForm')[0]);
-            
+
             if (typeof quill !== 'undefined') {
                 formData.append('notes', quill.root.innerHTML);
             }
-            
+
             const trainingId = $('input[name="id"]').val();
             const isEdit = trainingId && trainingId.trim() !== '';
             const endpoint = isEdit ? 'ajax/edit' : 'ajax/add';
-            
+
             $.ajax({
                 url: window.appConfig.baseUrl + endpoint,
                 type: 'POST',
@@ -81,21 +95,21 @@
                     if (response.success) {
                         // Show beautiful success alert
                         showBeautifulSuccessAlert(response.message, 'Training Saved Successfully!');
-                        
+
                         $('#mainForm')[0].reset();
                         if (typeof quill !== 'undefined') {
                             quill.setContents([]);
                         }
-                        
+
                         if (typeof clearUploadedFiles === 'function') {
                             clearUploadedFiles();
                         }
-                        
+
                         refreshDashboard();
-                        
+
                         $('#formSection').hide();
                         $('#dashboardSection').show();
-                        
+
                         $('#submitBtnText').text('Save');
                     } else {
                         if (response.errors) {
@@ -119,10 +133,10 @@
         function refreshDashboard() {
             const searchParams = {
                 search: $('#search').val(),
-                dates: $('#dates').val(),
-                page: 1 
+                datetimes: $('#datetimes').val(),
+                page: 1
             };
-            
+
             $.ajax({
                 url: window.appConfig.baseUrl + 'ajax/search',
                 type: 'POST',
@@ -139,10 +153,10 @@
                 }
             });
         }
-        
+
         function updateDashboardContent(response) {
             const mainContent = $('#mainContent');
-            
+
             if (response.trainings && response.trainings.length > 0) {
                 let tableHtml = `
                     <div class="table-responsive-sm">
@@ -158,17 +172,17 @@
                                 </tr>
                             </thead>
                             <tbody>`;
-                
+
                 response.trainings.forEach(function(training) {
-                    const uploadedAt = training.created_at ? 
+                    const uploadedAt = training.created_at ?
                         new Date(training.created_at).toLocaleDateString('en-GB', {
                             day: '2-digit',
-                            month: '2-digit', 
+                            month: '2-digit',
                             year: 'numeric',
                             hour: '2-digit',
                             minute: '2-digit'
                         }) : '';
-                    
+
                     let filesHtml = '';
                     if (training.file_names && training.file_names.length > 0) {
                         training.file_names.forEach(function(fileName, index) {
@@ -179,7 +193,7 @@
                             } else if (extension === 'ppt' || extension === 'pptx') {
                                 icon = '<i class="fas fa-file-powerpoint text-warning"></i>';
                             }
-                            
+
                             filesHtml += `
                                 <a class="link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover file-preview-link d-inline-flex align-items-center"
                                    href="#"
@@ -193,7 +207,7 @@
                                 </a>`;
                         });
                     }
-                    
+
                     tableHtml += `
                         <tr>
                             <td class="align-middle">${training.title || ''}</td>
@@ -229,12 +243,12 @@
                             </td>
                         </tr>`;
                 });
-                
+
                 tableHtml += `
                             </tbody>
                         </table>
                     </div>`;
-                
+
                 mainContent.html(tableHtml);
             } else {
                 mainContent.html(`
@@ -244,21 +258,21 @@
                     </div>
                 `);
             }
-            
+
             if (response.pagination) {
                 $('#paginationContainer').html(response.pagination);
             }
         }
-        
+
         function displayFormErrors(errors) {
             clearFormErrors();
-            
+
             for (const field in errors) {
                 const errorElement = $('#' + field + 'Error');
                 if (errorElement.length) {
                     errorElement.text(errors[field]).show();
                 }
-                
+
                 if (field === 'file') {
                     $('#dropArea').addClass('error');
                 } else {
@@ -272,11 +286,11 @@
 
         function initializeDragDropEvents() {
             console.log('Initializing drag and drop events...');
-            
+
             // Remove any existing event handlers to prevent duplicates
             $('#dropArea').off('click dragenter dragover dragleave drop');
             $('#fileInput').off('change');
-            
+
             $('#dropArea').on('click', function(e) {
                 console.log('Drop area clicked');
                 e.preventDefault();
@@ -296,12 +310,12 @@
 
             let dragCounter = 0;
             let isDragActive = false;
-            
+
             $('#dropArea').on('dragenter', function(e) {
                 console.log('Drag enter - counter:', dragCounter);
                 e.preventDefault();
                 e.stopPropagation();
-                
+
                 dragCounter++;
                 if (!isDragActive) {
                     isDragActive = true;
@@ -325,12 +339,12 @@
                 console.log('Drag leave - counter before:', dragCounter, 'target:', e.target, 'currentTarget:', e.currentTarget);
                 e.preventDefault();
                 e.stopPropagation();
-                
+
                 // Only decrement if the mouse actually leaves the drop area, not child elements
                 if (!$(this).is(e.relatedTarget) && !$(this).has(e.relatedTarget).length) {
                     dragCounter--;
                     console.log('Drag leave - counter after:', dragCounter);
-                    
+
                     if (dragCounter <= 0) {
                         dragCounter = 0;
                         isDragActive = false;
@@ -345,14 +359,14 @@
                 console.log('Drop event triggered');
                 e.preventDefault();
                 e.stopPropagation();
-                
+
                 // Reset drag state
                 dragCounter = 0;
                 isDragActive = false;
                 $(this).removeClass('dragover');
                 $('#drop-area-placeholder p').first().text('Drag and Drop files here');
                 $('#drop-area-placeholder .text-muted').text('or click to select a file');
-                
+
                 const files = e.originalEvent.dataTransfer.files;
                 console.log('Files dropped:', files.length);
                 if (files.length > 0) {
@@ -399,7 +413,7 @@
         function renderFileList() {
             const fileListContainer = $('#fileList');
             fileListContainer.empty();
-            
+
             const totalFiles = (existingFiles ? existingFiles.length : 0) + (currentFiles ? currentFiles.length : 0);
             if (totalFiles > 0) {
                 $('#dropArea').addClass('has-files');
@@ -457,32 +471,32 @@
                 const fileName = $fileCard.data('file-name');
                 const type = $(this).data('type');
                 const index = $(this).data('index');
-                
+
                 $fileCard.css('animation', 'slideOutRight 0.3s ease-in forwards');
-                
+
                 setTimeout(() => {
                     if (type === 'existing') {
                         if (typeof removedExistingFiles === 'undefined') removedExistingFiles = [];
                         removedExistingFiles.push(existingFiles[index]);
                         existingFiles.splice(index, 1);
-                        
+
                         if (typeof updateRemovedFilesInput === 'function') {
                             updateRemovedFilesInput();
                         }
-                        
+
                         showFileAlert(`Removed "${fileName}" from existing files`, 'info');
                     } else if (type === 'current') {
                         currentFiles.splice(index, 1);
-                        
+
                         const dt = new DataTransfer();
                         currentFiles.forEach(file => dt.items.add(file));
                         document.getElementById('fileInput').files = dt.files;
-                        
+
                         showFileAlert(`Removed "${fileName}" from upload queue`, 'info');
                     }
-                    
+
                     renderFileList();
-                    
+
                     const totalFiles = (existingFiles ? existingFiles.length : 0) + (currentFiles ? currentFiles.length : 0);
                     if (totalFiles === 0) {
                         $('#drop-area-placeholder').removeClass('d-none');
@@ -500,18 +514,18 @@
         // Pagination click handler for AJAX pagination
         $(document).on('click', '.ajax-page', function(e) {
             e.preventDefault();
-            
+
             const page = $(this).data('page');
             const searchParams = {
                 search: $('#search').val(),
-                dates: $('#dates').val(),
+                datetimes: $('#datetimes').val(),
                 page: page
             };
-            
+
             // Show loading indicator
             $('#loadingIndicator').show();
             $('#mainContent').hide();
-            
+
             $.ajax({
                 url: window.appConfig.baseUrl + 'ajax/search',
                 type: 'POST',
@@ -520,7 +534,7 @@
                 success: function(response) {
                     $('#loadingIndicator').hide();
                     $('#mainContent').show();
-                    
+
                     if (response.success) {
                         updateDashboardContent(response);
                     } else {
@@ -538,24 +552,24 @@
         // Pagination click handler for standard CodeIgniter pagination links
         $(document).on('click', '#paginationContainer .page-link:not(.ajax-page)', function(e) {
             e.preventDefault();
-            
+
             const url = $(this).attr('href');
             if (!url || url === '#') return;
-            
+
             // Extract page number from URL
             const urlParams = new URLSearchParams(url.split('?')[1]);
             const page = urlParams.get('page') || 1;
-            
+
             const searchParams = {
                 search: $('#search').val(),
-                dates: $('#dates').val(),
+                datetimes: $('#datetimes').val(),
                 page: page
             };
-            
+
             // Show loading indicator
             $('#loadingIndicator').show();
             $('#mainContent').hide();
-            
+
             $.ajax({
                 url: window.appConfig.baseUrl + 'ajax/search',
                 type: 'POST',
@@ -564,7 +578,7 @@
                 success: function(response) {
                     $('#loadingIndicator').hide();
                     $('#mainContent').show();
-                    
+
                     if (response.success) {
                         updateDashboardContent(response);
                     } else {
@@ -577,6 +591,70 @@
                     console.error('Pagination AJAX error:', error);
                 }
             });
+        });
+
+        // Filter button event handler
+        $('#filterBtn').on('click', function(e) {
+            e.preventDefault();
+            
+            const searchParams = {
+                search: $('#search').val(),
+                datetimes: $('#datetimes').val(),
+                page: 1
+            };
+
+            // Show loading indicator
+            $('#loadingIndicator').show();
+            $('#mainContent').hide();
+
+            $.ajax({
+                url: window.appConfig.baseUrl + 'ajax/search',
+                type: 'POST',
+                data: searchParams,
+                dataType: 'json',
+                success: function(response) {
+                    $('#loadingIndicator').hide();
+                    $('#mainContent').show();
+
+                    if (response.success) {
+                        updateDashboardContent(response);
+                        
+                        // Show clear button if there are active filters
+                        if (searchParams.search || searchParams.datetimes) {
+                            $('#clearBtn').removeClass('d-none');
+                        }
+                    } else {
+                        console.error('Filter error:', response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    $('#loadingIndicator').hide();
+                    $('#mainContent').show();
+                    console.error('Filter AJAX error:', error);
+                }
+            });
+        });
+
+        // Clear button event handler
+        $('#clearBtn').on('click', function(e) {
+            e.preventDefault();
+            
+            // Clear form inputs
+            $('#search').val('');
+            $('#datetimes').val('');
+            
+            // Hide clear button
+            $(this).addClass('d-none');
+            
+            // Reload dashboard with no filters
+            refreshDashboard();
+        });
+
+        // Enable search on Enter key
+        $('#search').on('keypress', function(e) {
+            if (e.which === 13) { // Enter key
+                $('#filterBtn').click();
+            }
         });
 
         window.renderFileList = renderFileList;

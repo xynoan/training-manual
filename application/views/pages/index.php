@@ -8,29 +8,29 @@
             Add
         </button>
     </div>
-    <form id="searchForm" class="d-flex flex-column flex-sm-row justify-content-center justify-content-sm-start gap-3 flex-wrap align-items-center align-items-sm-end mb-md-4" onsubmit="return false;">
+    <form id="searchForm" class="d-flex flex-column flex-sm-row justify-content-center justify-content-sm-start gap-3 flex-wrap align-items-center align-items-sm-end mb-0" onsubmit="return false;">
         <div class="responsiveFormGroup">
-            <label for="dates" class="form-label small text-muted mb-1">Date Range</label>
-            <input type="text" class="form-control" id="dates" name="dates"
+            <label for="datetimes" class="form-label small text-muted mb-1">Date Range</label>
+            <input type="text" class="form-control" id="datetimes" name="datetimes"
                 title="Filter from this date"
                 placeholder="Select date range"
-                value="<?= isset($dates) ? htmlspecialchars($dates) : '' ?>" readonly>
+                value="<?= isset($datetimes) ? htmlspecialchars($datetimes) : '' ?>">
         </div>
         <div class="responsiveFormGroup">
             <label for="search" class="form-label small text-muted mb-1">Search</label>
             <input type="text" class="form-control" id="search" name="search"
                 placeholder="Search by title, notes, or filename..."
-                value="<?= isset($search) ? htmlspecialchars($search) : '' ?>" readonly>
+                value="<?= isset($search) ? htmlspecialchars($search) : '' ?>">
         </div>
         <div class="d-block responsiveFormGroup">
             <label class="form-label small text-muted mb-1 d-none">&nbsp;</label>
             <div class="d-flex gap-2 flex-column flex-sm-row">
-                <button class="btn btn-primary" type="button" id="filterBtn" disabled>
+                <button class="btn btn-primary" type="button" id="filterBtn">
                     <i class="fas fa-filter"></i>
                     Filter
                 </button>
                 <button class="btn btn-outline-danger d-flex justify-content-center align-items-center gap-1 d-none"
-                    type="button" id="clearBtn" title="Clear all filters" disabled>
+                    type="button" id="clearBtn" title="Clear all filters">
                     <i class="fas fa-times-circle"></i>
                     Clear
                 </button>

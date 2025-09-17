@@ -9,21 +9,21 @@ class Ajax extends CI_Controller
         }
 
         $search = $this->input->post('search');
-        $dates = $this->input->post('dates');
+        $datetimes = $this->input->post('datetimes');
         $page = $this->input->post('page', true) ?: 1;
 
         $date_from = null;
         $date_to = null;
 
-        if (!empty($dates)) {
-            if (strpos($dates, ' - ') !== false) {
-                $date_parts = explode(' - ', $dates);
+        if (!empty($datetimes)) {
+            if (strpos($datetimes, ' - ') !== false) {
+                $date_parts = explode(' - ', $datetimes);
                 if (count($date_parts) == 2) {
                     $date_from = date('Y-m-d H:i:s', strtotime(trim($date_parts[0])));
                     $date_to = date('Y-m-d H:i:s', strtotime(trim($date_parts[1])));
                 }
             } else {
-                $date_from = date('Y-m-d H:i:s', strtotime($dates));
+                $date_from = date('Y-m-d H:i:s', strtotime($datetimes));
                 $date_to = $date_from;
             }
         }

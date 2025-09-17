@@ -9,20 +9,20 @@ class Pages extends CI_Controller
         $this->session->unset_userdata('temp_files');
 
         $search = $this->input->get('search') ?: $this->input->post('search');
-        $dates = $this->input->get('dates') ?: $this->input->post('dates');
+        $datetimes = $this->input->get('datetimes') ?: $this->input->post('datetimes');
 
         $date_from = null;
         $date_to = null;
 
-        if (!empty($dates)) {
-            if (strpos($dates, ' - ') !== false) {
-                $date_parts = explode(' - ', $dates);
+        if (!empty($datetimes)) {
+            if (strpos($datetimes, ' - ') !== false) {
+                $date_parts = explode(' - ', $datetimes);
                 if (count($date_parts) == 2) {
                     $date_from = date('Y-m-d H:i:s', strtotime(trim($date_parts[0])));
                     $date_to = date('Y-m-d H:i:s', strtotime(trim($date_parts[1])));
                 }
             } else {
-                $date_from = date('Y-m-d H:i:s', strtotime($dates));
+                $date_from = date('Y-m-d H:i:s', strtotime($datetimes));
                 $date_to = $date_from;
             }
         }
@@ -35,8 +35,8 @@ class Pages extends CI_Controller
         if (!empty($search)) {
             $query_params['search'] = $search;
         }
-        if (!empty($dates)) {
-            $query_params['dates'] = $dates;
+        if (!empty($datetimes)) {
+            $query_params['datetimes'] = $datetimes;
         }
 
         // Always use query string pagination for consistency with AJAX
@@ -61,7 +61,7 @@ class Pages extends CI_Controller
             'trainings' => $this->Training_model->get_all_trainings_paginated($config['per_page'], $offset, $search, $date_from, $date_to),
             'pagination' => $pagination,
             'search' => $search,
-            'dates' => $dates,
+            'datetimes' => $datetimes,
             'date_from' => $date_from,
             'date_to' => $date_to,
             'uploaded_files' => []
