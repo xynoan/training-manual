@@ -531,22 +531,13 @@ textarea::placeholder {
 
 
 /* ============================================================================
-   6. MEDIA QUERIES & RESPONSIVE DESIGN
+   6. MEDIA QUERIES & RESPONSIVE DESIGN - ENHANCED
    ============================================================================ */
 
-/* Mobile devices (max-width: 480px) */
-@media (max-width: 480px) {
-    .beautiful-success-alert {
-        right: 10px;
-        left: 10px;
-        max-width: none;
-        min-width: auto;
-        transform: translateY(-100px) scale(0.9);
-    }
-
-    .beautiful-success-alert.show {
-        transform: translateY(0) scale(1);
-    }
+/* Enhanced responsive form group handling */
+.responsiveFormGroup {
+    width: 100%;
+    margin-bottom: 1rem;
 }
 
 /* Small devices (max-width: 576px) */
@@ -561,6 +552,18 @@ textarea::placeholder {
 
     #submitBtn {
         margin-bottom: 0.5em;
+        width: 100%;
+    }
+    
+    /* Better mobile table handling */
+    .table-responsive-sm {
+        font-size: 0.875rem;
+    }
+    
+    /* Mobile-friendly form buttons */
+    .btn-group .dropdown-toggle {
+        font-size: 0.8rem;
+        padding: 0.25rem 0.5rem;
     }
 }
 
@@ -570,5 +573,38 @@ textarea::placeholder {
     #fileGroup,
     #notesGroup {
         width: 50% !important;
+    }
+    
+    .responsiveFormGroup {
+        width: auto;
+    }
+    
+    #submitBtn {
+        width: auto;
+    }
+}
+
+/* Large devices and up (min-width: 992px) */
+@media (min-width: 992px) {
+    .responsiveFormGroup {
+        max-width: none;
+    }
+}
+
+/* Extra responsive table improvements */
+@media (max-width: 768px) {
+    .table th,
+    .table td {
+        padding: 0.5rem 0.25rem;
+        font-size: 0.85rem;
+    }
+    
+    .file-preview-link {
+        font-size: 1rem !important;
+    }
+    
+    .btn-sm {
+        font-size: 0.75rem;
+        padding: 0.2rem 0.4rem;
     }
 }
