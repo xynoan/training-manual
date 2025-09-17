@@ -1,8 +1,8 @@
+<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
 <script type="text/javascript" src="<?php echo asset_url(); ?>js/initialize_quill.js"></script>
 <script type="text/javascript" src="<?php echo asset_url(); ?>js/notes_auto_save.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <script type="text/javascript" src="<?php echo asset_url(); ?>js/helper_functions.js"></script>
@@ -29,6 +29,9 @@
         $('#addBtn').on('click', function(e) {
             $('#dashboardSection').hide();
             $('#formSection').show();
+            
+            // Reinitialize drag and drop events when form becomes visible
+            initializeDragDropEvents();
         });
 
         $('#mainMenuBtn').on('click', function(e) {
@@ -40,6 +43,9 @@
             $('#submitBtnText').text('Update');
             $('#dashboardSection').hide();
             $('#formSection').show();
+            
+            // Reinitialize drag and drop events when form becomes visible
+            initializeDragDropEvents();
         });
 
         $('#submitBtn').on('click', function(e) {
@@ -261,64 +267,114 @@
             }
         }
 
-        $('#dropArea').on('click', function(e) {
-            e.preventDefault();
-            $('#fileInput').click();
-        });
+        // Initialize drag and drop events
+        initializeDragDropEvents();
 
-        $('#fileInput').on('change', function(e) {
-            const files = e.target.files;
-            if (files.length > 0) {
-                const fileCount = files.length;
-                const fileText = fileCount === 1 ? 'file' : 'files';
-                showFileAlert(`Processing ${fileCount} ${fileText}...`, 'info');
-                handleFiles(files);
-            }
-        });
+        function initializeDragDropEvents() {
+            console.log('Initializing drag and drop events...');
+            
+            // Remove any existing event handlers to prevent duplicates
+            $('#dropArea').off('click dragenter dragover dragleave drop');
+            $('#fileInput').off('change');
+            
+            $('#dropArea').on('click', function(e) {
+                console.log('Drop area clicked');
+                e.preventDefault();
+                $('#fileInput').click();
+            });
 
-        let dragCounter = 0;
-        
-        $('#dropArea').on('dragenter', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            dragCounter++;
-            $(this).addClass('dragover');
-            $('#drop-area-placeholder p').first().text('Drop files here to upload');
-            $('#drop-area-placeholder .text-muted').text('Release to add files');
-        });
+            $('#fileInput').on('change', function(e) {
+                console.log('File input changed');
+                const files = e.target.files;
+                if (files.length > 0) {
+                    const fileCount = files.length;
+                    const fileText = fileCount === 1 ? 'file' : 'files';
+                    showFileAlert(`Processing ${fileCount} ${fileText}...`, 'info');
+                    handleFiles(files);
+                }
+            });
 
-        $('#dropArea').on('dragover', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-        });
+            let dragCounter = 0;
+            let isDragActive = false;
+            
+            $('#dropArea').on('dragenter', function(e) {
+                console.log('Drag enter - counter:', dragCounter);
+                e.preventDefault();
+                e.stopPropagation();
+                
+                dragCounter++;
+                if (!isDragActive) {
+                    isDragActive = true;
+                    $(this).addClass('dragover');
+                    $('#drop-area-placeholder p').first().text('Drop files here to upload');
+                    $('#drop-area-placeholder .text-muted').text('Release to add files');
+                }
+            });
 
-        $('#dropArea').on('dragleave', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            dragCounter--;
-            if (dragCounter === 0) {
+            $('#dropArea').on('dragover', function(e) {
+                console.log('Drag over');
+                e.preventDefault();
+                e.stopPropagation();
+                // Ensure dataTransfer is set to allow drop
+                if (e.originalEvent.dataTransfer) {
+                    e.originalEvent.dataTransfer.dropEffect = 'copy';
+                }
+            });
+
+            $('#dropArea').on('dragleave', function(e) {
+                console.log('Drag leave - counter before:', dragCounter, 'target:', e.target, 'currentTarget:', e.currentTarget);
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Only decrement if the mouse actually leaves the drop area, not child elements
+                if (!$(this).is(e.relatedTarget) && !$(this).has(e.relatedTarget).length) {
+                    dragCounter--;
+                    console.log('Drag leave - counter after:', dragCounter);
+                    
+                    if (dragCounter <= 0) {
+                        dragCounter = 0;
+                        isDragActive = false;
+                        $(this).removeClass('dragover');
+                        $('#drop-area-placeholder p').first().text('Drag and Drop files here');
+                        $('#drop-area-placeholder .text-muted').text('or click to select a file');
+                    }
+                }
+            });
+
+            $('#dropArea').on('drop', function(e) {
+                console.log('Drop event triggered');
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Reset drag state
+                dragCounter = 0;
+                isDragActive = false;
                 $(this).removeClass('dragover');
                 $('#drop-area-placeholder p').first().text('Drag and Drop files here');
                 $('#drop-area-placeholder .text-muted').text('or click to select a file');
-            }
-        });
+                
+                const files = e.originalEvent.dataTransfer.files;
+                console.log('Files dropped:', files.length);
+                if (files.length > 0) {
+                    const fileCount = files.length;
+                    const fileText = fileCount === 1 ? 'file' : 'files';
+                    showFileAlert(`Processing ${fileCount} ${fileText}...`, 'info');
+                    handleFiles(files);
+                }
+            });
 
-        $('#dropArea').on('drop', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            dragCounter = 0;
-            $(this).removeClass('dragover');
-            $('#drop-area-placeholder p').first().text('Drag and Drop files here');
-            $('#drop-area-placeholder .text-muted').text('or click to select a file');
-            
-            const files = e.originalEvent.dataTransfer.files;
-            if (files.length > 0) {
-                const fileCount = files.length;
-                const fileText = fileCount === 1 ? 'file' : 'files';
-                showFileAlert(`Processing ${fileCount} ${fileText}...`, 'info');
-                handleFiles(files);
-            }
-        });
+            // Add global drag events to handle edge cases
+            $(document).on('dragenter dragover', function(e) {
+                e.preventDefault();
+            });
+
+            $(document).on('drop', function(e) {
+                // Prevent file from being opened in browser if dropped outside drop area
+                if (!$(e.target).closest('#dropArea').length) {
+                    e.preventDefault();
+                }
+            });
+        }
 
         function formatFileSize(bytes) {
             if (bytes === 0) return '0 Bytes';

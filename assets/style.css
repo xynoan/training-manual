@@ -99,18 +99,31 @@ textarea::placeholder {
     width: 50px;
     height: 50px;
     fill: #adb5bd;
+    pointer-events: none; /* Prevent interference with drag events */
 }
 
 .upload-box svg.removeFile {
     width: 25px;
     height: 25px;
     fill: white;
+    pointer-events: auto; /* Allow clicks on remove buttons */
 }
 
 .upload-box p {
     margin-top: 10px;
     color: #adb5bd;
     font-weight: 500;
+    pointer-events: none; /* Prevent interference with drag events */
+}
+
+/* Prevent child elements from interfering with drag events */
+#drop-area-placeholder * {
+    pointer-events: none;
+}
+
+/* Ensure the drop area itself can receive drag events */
+#dropArea {
+    pointer-events: auto;
 }
 
 /* Upload progress indicator */
@@ -126,6 +139,7 @@ textarea::placeholder {
     z-index: 100;
     display: none;
     border: 2px solid #e3f2fd;
+    pointer-events: none;
 }
 
 .upload-progress-indicator.show {
