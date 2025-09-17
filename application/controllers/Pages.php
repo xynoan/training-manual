@@ -52,10 +52,14 @@ class Pages extends CI_Controller
         // convert page number (1,2,3...) into offset (0,10,20...)
         $offset = ($page_num - 1) * $config['per_page'];
 
+        // Use the same AJAX pagination function for consistency
+        $total_pages = ceil($config['total_rows'] / $config['per_page']);
+        $pagination = generateAjaxPagination($page_num, $total_pages);
+        
         $data = [
             'title' => "TRAINING MANUAL",
             'trainings' => $this->Training_model->get_all_trainings_paginated($config['per_page'], $offset, $search, $date_from, $date_to),
-            'pagination' => $this->pagination->create_links(),
+            'pagination' => $pagination,
             'search' => $search,
             'dates' => $dates,
             'date_from' => $date_from,
