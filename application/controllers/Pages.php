@@ -27,10 +27,9 @@ class Pages extends CI_Controller
             }
         }
 
-        $uri_segment = 1;
         $config['total_rows'] = $this->Training_model->count_all_trainings($search, $date_from, $date_to);
         $config['per_page'] = 10;
-        $config['uri_segment'] = $uri_segment;
+        $config['use_page_numbers'] = TRUE;
 
         $query_params = [];
         if (!empty($search)) {
@@ -40,16 +39,16 @@ class Pages extends CI_Controller
             $query_params['dates'] = $dates;
         }
 
-        if (!empty($query_params)) {
-            $query_string = http_build_query($query_params);
-            $config['base_url'] = base_url() . '?' . $query_string . '&page=';
-            $config['page_query_string'] = TRUE;
-            $config['query_string_segment'] = 'page';
-        }
+        // Always use query string pagination for consistency with AJAX
+        $query_string = !empty($query_params) ? http_build_query($query_params) . '&' : '';
+        $config['base_url'] = base_url() . '?' . $query_string . 'page=';
+        $config['page_query_string'] = TRUE;
+        $config['query_string_segment'] = 'page';
 
         $this->pagination->initialize($config);
 
-        $page_num = ($this->uri->segment($uri_segment)) ? $this->uri->segment($uri_segment) : 1;
+        // Get page number from query string
+        $page_num = $this->input->get('page') ? (int)$this->input->get('page') : 1;
         // convert page number (1,2,3...) into offset (0,10,20...)
         $offset = ($page_num - 1) * $config['per_page'];
 

@@ -497,6 +497,88 @@
             }
         }
 
+        // Pagination click handler for AJAX pagination
+        $(document).on('click', '.ajax-page', function(e) {
+            e.preventDefault();
+            
+            const page = $(this).data('page');
+            const searchParams = {
+                search: $('#search').val(),
+                dates: $('#dates').val(),
+                page: page
+            };
+            
+            // Show loading indicator
+            $('#loadingIndicator').show();
+            $('#mainContent').hide();
+            
+            $.ajax({
+                url: window.appConfig.baseUrl + 'ajax/search',
+                type: 'POST',
+                data: searchParams,
+                dataType: 'json',
+                success: function(response) {
+                    $('#loadingIndicator').hide();
+                    $('#mainContent').show();
+                    
+                    if (response.success) {
+                        updateDashboardContent(response);
+                    } else {
+                        console.error('Pagination error:', response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    $('#loadingIndicator').hide();
+                    $('#mainContent').show();
+                    console.error('Pagination AJAX error:', error);
+                }
+            });
+        });
+
+        // Pagination click handler for standard CodeIgniter pagination links
+        $(document).on('click', '#paginationContainer .page-link:not(.ajax-page)', function(e) {
+            e.preventDefault();
+            
+            const url = $(this).attr('href');
+            if (!url || url === '#') return;
+            
+            // Extract page number from URL
+            const urlParams = new URLSearchParams(url.split('?')[1]);
+            const page = urlParams.get('page') || 1;
+            
+            const searchParams = {
+                search: $('#search').val(),
+                dates: $('#dates').val(),
+                page: page
+            };
+            
+            // Show loading indicator
+            $('#loadingIndicator').show();
+            $('#mainContent').hide();
+            
+            $.ajax({
+                url: window.appConfig.baseUrl + 'ajax/search',
+                type: 'POST',
+                data: searchParams,
+                dataType: 'json',
+                success: function(response) {
+                    $('#loadingIndicator').hide();
+                    $('#mainContent').show();
+                    
+                    if (response.success) {
+                        updateDashboardContent(response);
+                    } else {
+                        console.error('Pagination error:', response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    $('#loadingIndicator').hide();
+                    $('#mainContent').show();
+                    console.error('Pagination AJAX error:', error);
+                }
+            });
+        });
+
         window.renderFileList = renderFileList;
         window.updateRemovedFilesInput = updateRemovedFilesInput;
 
