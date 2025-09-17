@@ -22,7 +22,7 @@
                 placeholder="Search by title, notes, or filename..."
                 value="<?= isset($search) ? htmlspecialchars($search) : '' ?>">
         </div>
-        <div class="d-block responsiveFormGroup">
+        <div class="d-block responsiveFormGroup mb-3">
             <label class="form-label small text-muted mb-1 d-none">&nbsp;</label>
             <div class="d-flex gap-2 flex-column flex-sm-row">
                 <button class="btn btn-primary" type="button" id="filterBtn">

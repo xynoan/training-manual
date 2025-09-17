@@ -567,6 +567,12 @@ textarea::placeholder {
     }
 }
 
+@media (max-width: 768px) {
+    .responsiveFormGroup {
+        margin-bottom: 0;
+    }
+}
+
 /* Medium devices and up (min-width: 768px) */
 @media (min-width: 768px) {
     #titleGroup,
