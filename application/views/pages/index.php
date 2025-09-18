@@ -19,7 +19,7 @@
         <div class="responsiveFormGroup">
             <label for="search" class="form-label small text-muted mb-1">Search</label>
             <input type="text" class="form-control" id="search" name="search"
-                placeholder="Search by title, notes, or filename..."
+                placeholder="Search by title, notes"
                 value="<?= isset($search) ? htmlspecialchars($search) : '' ?>">
         </div>
         <div class="d-block responsiveFormGroup mb-3">

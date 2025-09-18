@@ -14,16 +14,23 @@
         $('input[name="datetimes"]').daterangepicker({
             timePicker: true,
             timePicker24Hour: true,
-            startDate: moment().startOf('hour'),
-            endDate: moment().startOf('hour').add(32, 'hour'),
+            autoUpdateInput: false, // Don't auto-populate the input
             locale: {
-                format: 'M/DD HH:mm'
+                format: 'M/DD HH:mm',
+                cancelLabel: 'Clear'
             }
         });
         
-        // Handle daterangepicker apply event
+        // Only update input when apply is clicked
         $('input[name="datetimes"]').on('apply.daterangepicker', function(ev, picker) {
+            $(this).val(picker.startDate.format('M/DD HH:mm') + ' - ' + picker.endDate.format('M/DD HH:mm'));
             // Trigger filtering when Apply is clicked in daterangepicker
+            performAjaxFilter();
+        });
+        
+        // Clear input when cancel is clicked
+        $('input[name="datetimes"]').on('cancel.daterangepicker', function(ev, picker) {
+            $(this).val('');
             performAjaxFilter();
         });
     });
