@@ -25,10 +25,6 @@
         <div class="d-block responsiveFormGroup mb-3">
             <label class="form-label small text-muted mb-1 d-none">&nbsp;</label>
             <div class="d-flex gap-2 flex-column flex-sm-row">
-                <button class="btn btn-primary" type="button" id="filterBtn">
-                    <i class="fas fa-filter"></i>
-                    Filter
-                </button>
                 <button class="btn btn-outline-danger d-flex justify-content-center align-items-center gap-1 d-none"
                     type="button" id="clearBtn" title="Clear all filters">
                     <i class="fas fa-times-circle"></i>

@@ -20,6 +20,12 @@
                 format: 'M/DD HH:mm'
             }
         });
+        
+        // Handle daterangepicker apply event
+        $('input[name="datetimes"]').on('apply.daterangepicker', function(ev, picker) {
+            // Trigger filtering when Apply is clicked in daterangepicker
+            performAjaxFilter();
+        });
     });
     window.appConfig = {
         baseUrl: '<?php echo base_url(); ?>'
@@ -593,10 +599,8 @@
             });
         });
 
-        // Filter button event handler
-        $('#filterBtn').on('click', function(e) {
-            e.preventDefault();
-            
+        // Centralized AJAX filter function
+        function performAjaxFilter() {
             const searchParams = {
                 search: $('#search').val(),
                 datetimes: $('#datetimes').val(),
@@ -622,6 +626,8 @@
                         // Show clear button if there are active filters
                         if (searchParams.search || searchParams.datetimes) {
                             $('#clearBtn').removeClass('d-none');
+                        } else {
+                            $('#clearBtn').addClass('d-none');
                         }
                     } else {
                         console.error('Filter error:', response.message);
@@ -633,6 +639,12 @@
                     console.error('Filter AJAX error:', error);
                 }
             });
+        }
+
+        // Filter button event handler (kept for backward compatibility)
+        $('#filterBtn').on('click', function(e) {
+            e.preventDefault();
+            performAjaxFilter();
         });
 
         // Clear button event handler
@@ -643,19 +655,48 @@
             $('#search').val('');
             $('#datetimes').val('');
             
+            // Clear any pending search timeout
+            clearTimeout(searchTimeout);
+            
             // Hide clear button
             $(this).addClass('d-none');
             
-            // Reload dashboard with no filters
-            refreshDashboard();
+            // Trigger filter to show all results
+            performAjaxFilter();
         });
 
-        // Enable search on Enter key
+        // Dynamic search filtering with debounce
+        let searchTimeout;
+        $('#search').on('input', function(e) {
+            // Clear previous timeout
+            clearTimeout(searchTimeout);
+            
+            // Set a new timeout to avoid too many AJAX requests
+            searchTimeout = setTimeout(function() {
+                performAjaxFilter();
+            }, 300); // 300ms delay
+        });
+
+        // Enable search on Enter key (immediate trigger)
         $('#search').on('keypress', function(e) {
             if (e.which === 13) { // Enter key
-                $('#filterBtn').click();
+                clearTimeout(searchTimeout); // Cancel any pending search
+                performAjaxFilter();
             }
         });
+
+        // Check for existing filters on page load and show clear button if needed
+        function checkInitialFilters() {
+            const searchValue = $('#search').val();
+            const datetimesValue = $('#datetimes').val();
+            
+            if (searchValue || datetimesValue) {
+                $('#clearBtn').removeClass('d-none');
+            }
+        }
+        
+        // Initialize filters check
+        checkInitialFilters();
 
         window.renderFileList = renderFileList;
         window.updateRemovedFilesInput = updateRemovedFilesInput;
