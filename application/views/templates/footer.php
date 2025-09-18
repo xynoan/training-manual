@@ -16,22 +16,32 @@
             timePicker24Hour: true,
             autoUpdateInput: false, // Don't auto-populate the input
             locale: {
-                format: 'M/DD HH:mm',
+                format: 'MM/DD/YYYY HH:mm',
                 cancelLabel: 'Clear'
             }
         });
         
         // Only update input when apply is clicked
         $('input[name="datetimes"]').on('apply.daterangepicker', function(ev, picker) {
-            $(this).val(picker.startDate.format('M/DD HH:mm') + ' - ' + picker.endDate.format('M/DD HH:mm'));
+            $(this).val(picker.startDate.format('MM/DD/YYYY HH:mm') + ' - ' + picker.endDate.format('MM/DD/YYYY HH:mm'));
+            console.log('Date range applied:', $(this).val());
             // Trigger filtering when Apply is clicked in daterangepicker
-            performAjaxFilter();
+            if (typeof window.performAjaxFilter === 'function') {
+                window.performAjaxFilter();
+            } else {
+                console.error('performAjaxFilter function not found');
+            }
         });
         
         // Clear input when cancel is clicked
         $('input[name="datetimes"]').on('cancel.daterangepicker', function(ev, picker) {
             $(this).val('');
-            performAjaxFilter();
+            console.log('Date range cleared');
+            if (typeof window.performAjaxFilter === 'function') {
+                window.performAjaxFilter();
+            } else {
+                console.error('performAjaxFilter function not found');
+            }
         });
     });
     window.appConfig = {
@@ -607,12 +617,15 @@
         });
 
         // Centralized AJAX filter function
-        function performAjaxFilter() {
+        window.performAjaxFilter = function() {
+            console.log('performAjaxFilter called');
             const searchParams = {
                 search: $('#search').val(),
                 datetimes: $('#datetimes').val(),
                 page: 1
             };
+            
+            console.log('Search params:', searchParams);
 
             // Show loading indicator
             $('#loadingIndicator').show();
@@ -624,6 +637,7 @@
                 data: searchParams,
                 dataType: 'json',
                 success: function(response) {
+                    console.log('AJAX response:', response);
                     $('#loadingIndicator').hide();
                     $('#mainContent').show();
 
@@ -644,6 +658,7 @@
                     $('#loadingIndicator').hide();
                     $('#mainContent').show();
                     console.error('Filter AJAX error:', error);
+                    console.error('XHR response:', xhr.responseText);
                 }
             });
         }
@@ -651,7 +666,7 @@
         // Filter button event handler (kept for backward compatibility)
         $('#filterBtn').on('click', function(e) {
             e.preventDefault();
-            performAjaxFilter();
+            window.performAjaxFilter();
         });
 
         // Clear button event handler
@@ -669,7 +684,7 @@
             $(this).addClass('d-none');
             
             // Trigger filter to show all results
-            performAjaxFilter();
+            window.performAjaxFilter();
         });
 
         // Dynamic search filtering with debounce
@@ -680,7 +695,7 @@
             
             // Set a new timeout to avoid too many AJAX requests
             searchTimeout = setTimeout(function() {
-                performAjaxFilter();
+                window.performAjaxFilter();
             }, 300); // 300ms delay
         });
 
@@ -688,7 +703,7 @@
         $('#search').on('keypress', function(e) {
             if (e.which === 13) { // Enter key
                 clearTimeout(searchTimeout); // Cancel any pending search
-                performAjaxFilter();
+                window.performAjaxFilter();
             }
         });
 
