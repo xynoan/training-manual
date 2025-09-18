@@ -14,18 +14,16 @@
         $('input[name="datetimes"]').daterangepicker({
             timePicker: true,
             timePicker24Hour: true,
-            autoUpdateInput: false, // Don't auto-populate the input
+            autoUpdateInput: false, 
             locale: {
                 format: 'MM/DD/YYYY HH:mm',
                 cancelLabel: 'Clear'
             }
         });
         
-        // Only update input when apply is clicked
         $('input[name="datetimes"]').on('apply.daterangepicker', function(ev, picker) {
             $(this).val(picker.startDate.format('MM/DD/YYYY HH:mm') + ' - ' + picker.endDate.format('MM/DD/YYYY HH:mm'));
             console.log('Date range applied:', $(this).val());
-            // Trigger filtering when Apply is clicked in daterangepicker
             if (typeof window.performAjaxFilter === 'function') {
                 window.performAjaxFilter();
             } else {
@@ -33,7 +31,6 @@
             }
         });
         
-        // Clear input when cancel is clicked
         $('input[name="datetimes"]').on('cancel.daterangepicker', function(ev, picker) {
             $(this).val('');
             console.log('Date range cleared');
@@ -116,7 +113,6 @@
                 dataType: 'json',
                 success: function(response) {
                     if (response.success) {
-                        // Show beautiful success alert
                         showBeautifulSuccessAlert(response.message, 'Training Saved Successfully!');
 
                         $('#mainForm')[0].reset();
@@ -644,7 +640,6 @@
                     if (response.success) {
                         updateDashboardContent(response);
                         
-                        // Show clear button if there are active filters
                         if (searchParams.search || searchParams.datetimes) {
                             $('#clearBtn').removeClass('d-none');
                         } else {
@@ -663,51 +658,40 @@
             });
         }
 
-        // Filter button event handler (kept for backward compatibility)
         $('#filterBtn').on('click', function(e) {
             e.preventDefault();
             window.performAjaxFilter();
         });
 
-        // Clear button event handler
         $('#clearBtn').on('click', function(e) {
             e.preventDefault();
             
-            // Clear form inputs
             $('#search').val('');
             $('#datetimes').val('');
             
-            // Clear any pending search timeout
             clearTimeout(searchTimeout);
             
-            // Hide clear button
             $(this).addClass('d-none');
             
-            // Trigger filter to show all results
             window.performAjaxFilter();
         });
 
-        // Dynamic search filtering with debounce
         let searchTimeout;
         $('#search').on('input', function(e) {
-            // Clear previous timeout
             clearTimeout(searchTimeout);
             
-            // Set a new timeout to avoid too many AJAX requests
             searchTimeout = setTimeout(function() {
                 window.performAjaxFilter();
-            }, 300); // 300ms delay
+            }, 300);
         });
 
-        // Enable search on Enter key (immediate trigger)
         $('#search').on('keypress', function(e) {
-            if (e.which === 13) { // Enter key
+            if (e.which === 13) {
                 clearTimeout(searchTimeout); // Cancel any pending search
                 window.performAjaxFilter();
             }
         });
 
-        // Check for existing filters on page load and show clear button if needed
         function checkInitialFilters() {
             const searchValue = $('#search').val();
             const datetimesValue = $('#datetimes').val();
@@ -717,7 +701,6 @@
             }
         }
         
-        // Initialize filters check
         checkInitialFilters();
 
         window.renderFileList = renderFileList;

@@ -227,10 +227,8 @@ function initializeTitleValidation() {
 }
 
 function showBeautifulSuccessAlert(message, title = 'Success!') {
-    // Remove any existing alerts
     $('#beautifulSuccessAlert').remove();
     
-    // Create the beautiful success alert HTML
     const alertHtml = `
         <div id="beautifulSuccessAlert" class="beautiful-success-alert">
             <div class="success-icon-container">
@@ -250,15 +248,12 @@ function showBeautifulSuccessAlert(message, title = 'Success!') {
         </div>
     `;
     
-    // Add to body
     $('body').append(alertHtml);
     
-    // Trigger show animation after a brief delay
     setTimeout(() => {
         $('#beautifulSuccessAlert').addClass('show');
     }, 100);
     
-    // Auto hide after 5 seconds
     setTimeout(() => {
         hideBeautifulSuccessAlert();
     }, 5000);

@@ -18,7 +18,6 @@ class Pages extends CI_Controller
             if (strpos($datetimes, ' - ') !== false) {
                 $date_parts = explode(' - ', $datetimes);
                 if (count($date_parts) == 2) {
-                    // Parse dates from MM/DD/YYYY HH:mm format
                     $start_date = DateTime::createFromFormat('m/d/Y H:i', trim($date_parts[0]));
                     $end_date = DateTime::createFromFormat('m/d/Y H:i', trim($date_parts[1]));
                     
@@ -26,19 +25,16 @@ class Pages extends CI_Controller
                         $date_from = $start_date->format('Y-m-d H:i:s');
                         $date_to = $end_date->format('Y-m-d H:i:s');
                     } else {
-                        // Fallback to strtotime if DateTime::createFromFormat fails
                         $date_from = date('Y-m-d H:i:s', strtotime(trim($date_parts[0])));
                         $date_to = date('Y-m-d H:i:s', strtotime(trim($date_parts[1])));
                     }
                 }
             } else {
-                // Parse single date from MM/DD/YYYY HH:mm format
                 $single_date = DateTime::createFromFormat('m/d/Y H:i', $datetimes);
                 if ($single_date !== false) {
                     $date_from = $single_date->format('Y-m-d H:i:s');
                     $date_to = $date_from;
                 } else {
-                    // Fallback to strtotime
                     $date_from = date('Y-m-d H:i:s', strtotime($datetimes));
                     $date_to = $date_from;
                 }
@@ -57,7 +53,6 @@ class Pages extends CI_Controller
             $query_params['datetimes'] = $datetimes;
         }
 
-        // Always use query string pagination for consistency with AJAX
         $query_string = !empty($query_params) ? http_build_query($query_params) . '&' : '';
         $config['base_url'] = base_url() . '?' . $query_string . 'page=';
         $config['page_query_string'] = TRUE;
@@ -65,12 +60,9 @@ class Pages extends CI_Controller
 
         $this->pagination->initialize($config);
 
-        // Get page number from query string
         $page_num = $this->input->get('page') ? (int)$this->input->get('page') : 1;
-        // convert page number (1,2,3...) into offset (0,10,20...)
         $offset = ($page_num - 1) * $config['per_page'];
 
-        // Use the same AJAX pagination function for consistency
         $total_pages = ceil($config['total_rows'] / $config['per_page']);
         $pagination = generateAjaxPagination($page_num, $total_pages);
         

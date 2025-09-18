@@ -19,7 +19,6 @@ class Ajax extends CI_Controller
             if (strpos($datetimes, ' - ') !== false) {
                 $date_parts = explode(' - ', $datetimes);
                 if (count($date_parts) == 2) {
-                    // Parse dates from MM/DD/YYYY HH:mm format
                     $start_date = DateTime::createFromFormat('m/d/Y H:i', trim($date_parts[0]));
                     $end_date = DateTime::createFromFormat('m/d/Y H:i', trim($date_parts[1]));
                     
@@ -27,19 +26,16 @@ class Ajax extends CI_Controller
                         $date_from = $start_date->format('Y-m-d H:i:s');
                         $date_to = $end_date->format('Y-m-d H:i:s');
                     } else {
-                        // Fallback to strtotime if DateTime::createFromFormat fails
                         $date_from = date('Y-m-d H:i:s', strtotime(trim($date_parts[0])));
                         $date_to = date('Y-m-d H:i:s', strtotime(trim($date_parts[1])));
                     }
                 }
             } else {
-                // Parse single date from MM/DD/YYYY HH:mm format
                 $single_date = DateTime::createFromFormat('m/d/Y H:i', $datetimes);
                 if ($single_date !== false) {
                     $date_from = $single_date->format('Y-m-d H:i:s');
                     $date_to = $date_from;
                 } else {
-                    // Fallback to strtotime
                     $date_from = date('Y-m-d H:i:s', strtotime($datetimes));
                     $date_to = $date_from;
                 }
