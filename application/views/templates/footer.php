@@ -233,7 +233,8 @@
         // Handle removal of existing files
         $(document).on('click', '.remove-existing-file', function(e) {
             e.preventDefault();
-            const fileItem = $(this).closest('.file-item');
+            e.stopPropagation();
+            const fileItem = $(this).closest('.file-card');
             const fileName = fileItem.data('file-name');
             
             // Add to removed files list
@@ -479,8 +480,13 @@
 
             $('#dropArea').on('click', function(e) {
                 console.log('Drop area clicked');
-                e.preventDefault();
-                $('#fileInput').click();
+                // Only trigger file input if clicking on the drop area itself or placeholder, not on file cards or buttons
+                if ($(e.target).closest('.file-card').length === 0 && 
+                    !$(e.target).hasClass('remove-existing-file') && 
+                    !$(e.target).closest('.remove-existing-file').length) {
+                    e.preventDefault();
+                    $('#fileInput').click();
+                }
             });
 
             $('#fileInput').on('change', function(e) {
