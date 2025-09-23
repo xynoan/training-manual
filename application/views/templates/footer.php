@@ -703,6 +703,64 @@
             }
         }
 
+        // Delete training handler
+        $(document).on('click', '.ajax-delete', function(e) {
+            e.preventDefault();
+            
+            const trainingId = $(this).data('id');
+            if (!trainingId) {
+                alert('Training ID not found');
+                return;
+            }
+            
+            // Show confirmation modal
+            $('#confirmationMessage').text('Are you sure you want to delete this training manual? This action cannot be undone.');
+            $('#confirmationModal').modal('show');
+            
+            // Store the training ID for confirmation
+            $('#confirmActionBtn').data('training-id', trainingId);
+        });
+        
+        // Handle confirmation modal confirm button
+        $('#confirmActionBtn').on('click', function() {
+            const trainingId = $(this).data('training-id');
+            if (!trainingId) return;
+            
+            const confirmBtn = $(this);
+            const originalText = confirmBtn.text();
+            
+            confirmBtn.prop('disabled', true).text('Deleting...');
+            
+            $.ajax({
+                url: window.appConfig.baseUrl + 'ajax/delete',
+                type: 'POST',
+                data: { id: trainingId },
+                dataType: 'json',
+                success: function(response) {
+                    $('#confirmationModal').modal('hide');
+                    
+                    if (response.success) {
+                        // Show success message
+                        showBeautifulSuccessAlert(response.message || 'Training manual deleted successfully!', 'Deleted Successfully!');
+                        
+                        // Refresh the training list
+                        refreshDashboard();
+                    } else {
+                        alert(response.message || 'Failed to delete training manual');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    $('#confirmationModal').modal('hide');
+                    console.error('Delete error:', error);
+                    alert('An error occurred while deleting the training manual. Please try again.');
+                },
+                complete: function() {
+                    confirmBtn.prop('disabled', false).text(originalText);
+                    $('#confirmActionBtn').removeData('training-id');
+                }
+            });
+        });
+
         // Pagination click handler for AJAX pagination
         $(document).on('click', '.ajax-page', function(e) {
             e.preventDefault();

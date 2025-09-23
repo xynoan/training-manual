@@ -68,7 +68,38 @@ class Training_model extends CI_Model
 
     public function delete_training($id)
     {
-        return $this->db->delete('tbl_training_manual', ['id' => $id]);
+        // Start transaction
+        $this->db->trans_start();
+        
+        // Get file information before deletion for cleanup
+        $training = $this->get_training_by_id($id);
+        
+        // Delete related records first
+        $this->db->delete('tbl_training_manual_file', ['manual_id' => $id]);
+        $this->db->delete('tbl_training_manual_notes', ['manual_id' => $id]);
+        
+        // Delete main training record
+        $this->db->delete('tbl_training_manual', ['id' => $id]);
+        
+        // Complete transaction
+        $this->db->trans_complete();
+        
+        if ($this->db->trans_status() === FALSE) {
+            return false;
+        }
+        
+        // Clean up files from filesystem
+        if ($training && isset($training['file_names']) && is_array($training['file_names'])) {
+            $upload_path = FCPATH . 'uploads/';
+            foreach ($training['file_names'] as $file_name) {
+                $file_path = $upload_path . trim($file_name);
+                if (file_exists($file_path)) {
+                    @unlink($file_path);
+                }
+            }
+        }
+        
+        return true;
     }
 
     public function get_training_by_id($id)
