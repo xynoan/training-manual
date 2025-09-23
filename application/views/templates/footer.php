@@ -183,17 +183,15 @@
                 const fileIcon = getFileIcon(fileExtension);
                 
                 const fileItem = $(`
-                    <div class="file-item existing-file" data-file-name="${fileName}" data-training-id="${trainingId}" data-file-index="${index}">
+                    <div class="file-card existing-file" data-file-name="${fileName}" data-training-id="${trainingId}" data-file-index="${index}" style="opacity: 0; animation: slideInUp 0.4s ease-out ${index * 0.1}s forwards;">
                         <div class="file-icon">${fileIcon}</div>
                         <div class="file-info">
                             <div class="file-name" title="${fileName}">${fileName}</div>
-                            <div class="file-size text-muted small">Existing file</div>
+                            <div class="file-size text-muted">Existing file</div>
                         </div>
-                        <div class="file-actions">
-                            <button type="button" class="btn btn-sm btn-outline-danger remove-existing-file" title="Remove file">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-danger remove-existing-file" title="Remove file">
+                            <i class="fas fa-times"></i>
+                        </button>
                     </div>
                 `);
                 
