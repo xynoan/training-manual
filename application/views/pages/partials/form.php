@@ -50,7 +50,7 @@
             <div id="editor">
                 <p><br /></p>
             </div>
-            <!-- <textarea class="form-control" id="notes" name="notes" placeholder="Optional" readonly><?= isset($_POST['notes']) ? $_POST['notes'] : '' ?></textarea> -->
+            <?= isset($_POST['notes']) ? $_POST['notes'] : '' ?></textarea>
         </div>
         <div id="notesError" class="text-danger mt-2" style="display: none;"></div>
     </form>

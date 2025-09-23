@@ -61,7 +61,6 @@
         }
 
         $('#addBtn').on('click', function(e) {
-            // Clear form for new training
             $('#mainForm')[0].reset();
             $('input[name="id"]').val('');
             $('#submitBtnText').text('Save');
@@ -79,12 +78,10 @@
             $('#dashboardSection').hide();
             $('#formSection').show();
 
-            // Reinitialize drag and drop events when form becomes visible
             initializeDragDropEvents();
         });
 
         $('#mainMenuBtn').on('click', function(e) {
-            // Clear form when going back to dashboard
             $('#mainForm')[0].reset();
             $('input[name="id"]').val('');
             $('#submitBtnText').text('Save');
@@ -117,11 +114,9 @@
                 return;
             }
             
-            // Switch to form view first
             $('#dashboardSection').hide();
             $('#formSection').show();
             
-            // Load training data via AJAX
             $.ajax({
                 url: window.appConfig.baseUrl + 'ajax/load_training',
                 type: 'POST',
@@ -145,35 +140,27 @@
             });
         });
 
-        // Function to populate form with training data
         function populateFormWithTrainingData(training) {
-            // Clear form first
             clearFormErrors();
             
-            // Set form to edit mode
             $('#submitBtnText').text('Update');
             $('input[name="id"]').val(training.id);
             
-            // Populate title
             $('#title').val(training.title || '');
             
-            // Populate notes using Quill editor
             if (typeof quill !== 'undefined' && training.note) {
                 quill.root.innerHTML = training.note;
             }
             
-            // Handle existing files - display them in the file list
             if (training.file_names && training.file_names.length > 0) {
                 displayExistingFiles(training.file_names, training.id);
             }
             
-            // Reinitialize drag and drop events
             if (typeof initializeDragDropEvents === 'function') {
                 initializeDragDropEvents();
             }
         }
         
-        // Function to display existing files in edit mode
         function displayExistingFiles(fileNames, trainingId) {
             const fileList = $('#fileList');
             fileList.empty();
@@ -198,11 +185,9 @@
                 fileList.append(fileItem);
             });
             
-            // Update drop area visibility
             updateDropAreaVisibility();
         }
         
-        // Function to get file icon based on extension
         function getFileIcon(extension) {
             switch(extension.toLowerCase()) {
                 case 'pdf':
@@ -215,7 +200,6 @@
             }
         }
         
-        // Function to update drop area visibility
         function updateDropAreaVisibility() {
             const fileList = $('#fileList');
             const placeholder = $('#drop-area-placeholder');
@@ -230,19 +214,16 @@
             }
         }
         
-        // Handle removal of existing files
         $(document).on('click', '.remove-existing-file', function(e) {
             e.preventDefault();
             e.stopPropagation();
             const fileItem = $(this).closest('.file-card');
             const fileName = fileItem.data('file-name');
             
-            // Add to removed files list
             const removedFiles = JSON.parse($('#removedFiles').val() || '[]');
             removedFiles.push(fileName);
             $('#removedFiles').val(JSON.stringify(removedFiles));
             
-            // Remove from UI
             fileItem.remove();
             updateDropAreaVisibility();
         });
@@ -468,19 +449,16 @@
             }
         }
 
-        // Initialize drag and drop events
         initializeDragDropEvents();
 
         function initializeDragDropEvents() {
             console.log('Initializing drag and drop events...');
 
-            // Remove any existing event handlers to prevent duplicates
             $('#dropArea').off('click dragenter dragover dragleave drop');
             $('#fileInput').off('change');
 
             $('#dropArea').on('click', function(e) {
                 console.log('Drop area clicked');
-                // Only trigger file input if clicking on the drop area itself or placeholder, not on file cards or buttons
                 if ($(e.target).closest('.file-card').length === 0 && 
                     !$(e.target).hasClass('remove-existing-file') && 
                     !$(e.target).closest('.remove-existing-file').length) {
@@ -521,7 +499,6 @@
                 console.log('Drag over');
                 e.preventDefault();
                 e.stopPropagation();
-                // Ensure dataTransfer is set to allow drop
                 if (e.originalEvent.dataTransfer) {
                     e.originalEvent.dataTransfer.dropEffect = 'copy';
                 }
@@ -532,7 +509,6 @@
                 e.preventDefault();
                 e.stopPropagation();
 
-                // Only decrement if the mouse actually leaves the drop area, not child elements
                 if (!$(this).is(e.relatedTarget) && !$(this).has(e.relatedTarget).length) {
                     dragCounter--;
                     console.log('Drag leave - counter after:', dragCounter);
@@ -552,7 +528,6 @@
                 e.preventDefault();
                 e.stopPropagation();
 
-                // Reset drag state
                 dragCounter = 0;
                 isDragActive = false;
                 $(this).removeClass('dragover');
@@ -569,13 +544,11 @@
                 }
             });
 
-            // Add global drag events to handle edge cases
             $(document).on('dragenter dragover', function(e) {
                 e.preventDefault();
             });
 
             $(document).on('drop', function(e) {
-                // Prevent file from being opened in browser if dropped outside drop area
                 if (!$(e.target).closest('#dropArea').length) {
                     e.preventDefault();
                 }
@@ -703,7 +676,6 @@
             }
         }
 
-        // Delete training handler
         $(document).on('click', '.ajax-delete', function(e) {
             e.preventDefault();
             
@@ -713,15 +685,12 @@
                 return;
             }
             
-            // Show confirmation modal
             $('#confirmationMessage').text('Are you sure you want to delete this training manual? This action cannot be undone.');
             $('#confirmationModal').modal('show');
             
-            // Store the training ID for confirmation
             $('#confirmActionBtn').data('training-id', trainingId);
         });
         
-        // Handle confirmation modal confirm button
         $('#confirmActionBtn').on('click', function() {
             const trainingId = $(this).data('training-id');
             if (!trainingId) return;
@@ -740,10 +709,8 @@
                     $('#confirmationModal').modal('hide');
                     
                     if (response.success) {
-                        // Show success message
                         showBeautifulSuccessAlert(response.message || 'Training manual deleted successfully!', 'Deleted Successfully!');
                         
-                        // Refresh the training list
                         refreshDashboard();
                     } else {
                         alert(response.message || 'Failed to delete training manual');
@@ -761,7 +728,6 @@
             });
         });
 
-        // Pagination click handler for AJAX pagination
         $(document).on('click', '.ajax-page', function(e) {
             e.preventDefault();
 
@@ -772,7 +738,6 @@
                 page: page
             };
 
-            // Show loading indicator
             $('#loadingIndicator').show();
             $('#mainContent').hide();
 
@@ -799,14 +764,12 @@
             });
         });
 
-        // Pagination click handler for standard CodeIgniter pagination links
         $(document).on('click', '#paginationContainer .page-link:not(.ajax-page)', function(e) {
             e.preventDefault();
 
             const url = $(this).attr('href');
             if (!url || url === '#') return;
 
-            // Extract page number from URL
             const urlParams = new URLSearchParams(url.split('?')[1]);
             const page = urlParams.get('page') || 1;
 
@@ -816,7 +779,6 @@
                 page: page
             };
 
-            // Show loading indicator
             $('#loadingIndicator').show();
             $('#mainContent').hide();
 
@@ -843,7 +805,6 @@
             });
         });
 
-        // Centralized AJAX filter function
         window.performAjaxFilter = function() {
             console.log('performAjaxFilter called');
             const searchParams = {
@@ -854,7 +815,6 @@
             
             console.log('Search params:', searchParams);
 
-            // Show loading indicator
             $('#loadingIndicator').show();
             $('#mainContent').hide();
 
@@ -918,7 +878,7 @@
 
         $('#search').on('keypress', function(e) {
             if (e.which === 13) {
-                clearTimeout(searchTimeout); // Cancel any pending search
+                clearTimeout(searchTimeout);
                 window.performAjaxFilter();
             }
         });
