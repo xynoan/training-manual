@@ -260,6 +260,42 @@ class Ajax extends CI_Controller
             ]));
     }
 
+    public function load_training()
+    {
+        if (!$this->input->is_ajax_request()) {
+            show_404();
+        }
+
+        $id = $this->input->post('id');
+        if (!$id) {
+            $this->output
+                ->set_content_type('application/json')
+                ->set_output(json_encode([
+                    'success' => false,
+                    'message' => 'Invalid training ID'
+                ]));
+            return;
+        }
+
+        $training = $this->Training_model->get_training_by_id($id);
+        if (!$training) {
+            $this->output
+                ->set_content_type('application/json')
+                ->set_output(json_encode([
+                    'success' => false,
+                    'message' => 'Training manual not found'
+                ]));
+            return;
+        }
+
+        $this->output
+            ->set_content_type('application/json')
+            ->set_output(json_encode([
+                'success' => true,
+                'training' => $training
+            ]));
+    }
+
     public function edit()
     {
         if (!$this->input->is_ajax_request()) {

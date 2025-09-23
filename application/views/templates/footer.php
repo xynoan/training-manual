@@ -61,6 +61,21 @@
         }
 
         $('#addBtn').on('click', function(e) {
+            // Clear form for new training
+            $('#mainForm')[0].reset();
+            $('input[name="id"]').val('');
+            $('#submitBtnText').text('Save');
+            
+            if (typeof quill !== 'undefined') {
+                quill.setContents([]);
+            }
+            
+            if (typeof clearUploadedFiles === 'function') {
+                clearUploadedFiles();
+            }
+            
+            clearFormErrors();
+            
             $('#dashboardSection').hide();
             $('#formSection').show();
 
@@ -69,17 +84,168 @@
         });
 
         $('#mainMenuBtn').on('click', function(e) {
+            // Clear form when going back to dashboard
+            $('#mainForm')[0].reset();
+            $('input[name="id"]').val('');
+            $('#submitBtnText').text('Save');
+            $('#removedFiles').val('[]');
+            
+            if (typeof quill !== 'undefined') {
+                quill.setContents([]);
+            }
+            
+            if (typeof clearUploadedFiles === 'function') {
+                clearUploadedFiles();
+            }
+            
+            $('#fileList').empty();
+            if (typeof updateDropAreaVisibility === 'function') {
+                updateDropAreaVisibility();
+            }
+            clearFormErrors();
+            
             $('#formSection').hide();
             $('#dashboardSection').show();
         });
 
-        $(document).on('click', '.dropdown-item:contains("Edit")', function(e) {
-            $('#submitBtnText').text('Update');
+        $(document).on('click', '.edit-training', function(e) {
+            e.preventDefault();
+            
+            const trainingId = $(this).data('id');
+            if (!trainingId) {
+                alert('Training ID not found');
+                return;
+            }
+            
+            // Switch to form view first
             $('#dashboardSection').hide();
             $('#formSection').show();
+            
+            // Load training data via AJAX
+            $.ajax({
+                url: window.appConfig.baseUrl + 'ajax/load_training',
+                type: 'POST',
+                data: { id: trainingId },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success && response.training) {
+                        populateFormWithTrainingData(response.training);
+                    } else {
+                        alert(response.message || 'Failed to load training data');
+                        $('#formSection').hide();
+                        $('#dashboardSection').show();
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error loading training data:', error);
+                    alert('Failed to load training data. Please try again.');
+                    $('#formSection').hide();
+                    $('#dashboardSection').show();
+                }
+            });
+        });
 
-            // Reinitialize drag and drop events when form becomes visible
-            initializeDragDropEvents();
+        // Function to populate form with training data
+        function populateFormWithTrainingData(training) {
+            // Clear form first
+            clearFormErrors();
+            
+            // Set form to edit mode
+            $('#submitBtnText').text('Update');
+            $('input[name="id"]').val(training.id);
+            
+            // Populate title
+            $('#title').val(training.title || '');
+            
+            // Populate notes using Quill editor
+            if (typeof quill !== 'undefined' && training.note) {
+                quill.root.innerHTML = training.note;
+            }
+            
+            // Handle existing files - display them in the file list
+            if (training.file_names && training.file_names.length > 0) {
+                displayExistingFiles(training.file_names, training.id);
+            }
+            
+            // Reinitialize drag and drop events
+            if (typeof initializeDragDropEvents === 'function') {
+                initializeDragDropEvents();
+            }
+        }
+        
+        // Function to display existing files in edit mode
+        function displayExistingFiles(fileNames, trainingId) {
+            const fileList = $('#fileList');
+            fileList.empty();
+            
+            fileNames.forEach(function(fileName, index) {
+                const fileExtension = fileName.split('.').pop().toLowerCase();
+                const fileIcon = getFileIcon(fileExtension);
+                
+                const fileItem = $(`
+                    <div class="file-item existing-file" data-file-name="${fileName}" data-training-id="${trainingId}" data-file-index="${index}">
+                        <div class="file-icon">${fileIcon}</div>
+                        <div class="file-info">
+                            <div class="file-name" title="${fileName}">${fileName}</div>
+                            <div class="file-size text-muted small">Existing file</div>
+                        </div>
+                        <div class="file-actions">
+                            <button type="button" class="btn btn-sm btn-outline-danger remove-existing-file" title="Remove file">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                `);
+                
+                fileList.append(fileItem);
+            });
+            
+            // Update drop area visibility
+            updateDropAreaVisibility();
+        }
+        
+        // Function to get file icon based on extension
+        function getFileIcon(extension) {
+            switch(extension.toLowerCase()) {
+                case 'pdf':
+                    return '<i class="fas fa-file-pdf text-danger"></i>';
+                case 'ppt':
+                case 'pptx':
+                    return '<i class="fas fa-file-powerpoint text-warning"></i>';
+                default:
+                    return '<i class="fas fa-file"></i>';
+            }
+        }
+        
+        // Function to update drop area visibility
+        function updateDropAreaVisibility() {
+            const fileList = $('#fileList');
+            const placeholder = $('#drop-area-placeholder');
+            const dropArea = $('#dropArea');
+            
+            if (fileList.children().length > 0) {
+                placeholder.addClass('d-none');
+                dropArea.addClass('has-files');
+            } else {
+                placeholder.removeClass('d-none');
+                dropArea.removeClass('has-files');
+            }
+        }
+        
+        // Handle removal of existing files
+        $(document).on('click', '.remove-existing-file', function(e) {
+            e.preventDefault();
+            const fileItem = $(this).closest('.file-item');
+            const fileName = fileItem.data('file-name');
+            
+            // Add to removed files list
+            const removedFiles = JSON.parse($('#removedFiles').val() || '[]');
+            removedFiles.push(fileName);
+            $('#removedFiles').val(JSON.stringify(removedFiles));
+            
+            // Remove from UI
+            fileItem.remove();
+            updateDropAreaVisibility();
         });
 
         $('#submitBtn').on('click', function(e) {
@@ -240,12 +406,15 @@
                             <td class="align-middle">${training.note || ''}</td>
                             <td class="align-middle">
                                 <div class="btn-group">
-                                    <button type="button" class="btn btn-danger btn-sm dropdown-toggle rounded" disabled>
+                                    <button type="button" class="btn btn-danger btn-sm dropdown-toggle rounded" data-bs-toggle="dropdown" aria-expanded="false">
                                         Actions
                                     </button>
                                     <ul class="dropdown-menu">
                                         <li>
-                                            <a class="d-flex align-items-center gap-2 dropdown-item text-primary" href="#">
+                                            <a class="d-flex align-items-center gap-2 dropdown-item text-primary edit-training" href="#" 
+                                               data-id="${training.id}"
+                                               data-title="${training.title || ''}"
+                                               data-note="${training.note || ''}">
                                                 <i class="fas fa-edit"></i>
                                                 Edit
                                             </a>

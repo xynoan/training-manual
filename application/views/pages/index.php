@@ -80,12 +80,15 @@
                                 <td class="align-middle"><?= isset($training['note']) ? $training['note'] : '' ?></td>
                                 <td class="align-middle">
                                     <div class="btn-group">
-                                        <button type="button" class="btn btn-danger btn-sm dropdown-toggle rounded" disabled>
+                                        <button type="button" class="btn btn-danger btn-sm dropdown-toggle rounded" data-bs-toggle="dropdown" aria-expanded="false">
                                             Actions
                                         </button>
                                         <ul class="dropdown-menu">
                                             <li>
-                                                <a class="d-flex align-items-center gap-2 dropdown-item text-primary" href="#">
+                                                <a class="d-flex align-items-center gap-2 dropdown-item text-primary edit-training" href="#" 
+                                                   data-id="<?= isset($training['id']) ? $training['id'] : '' ?>"
+                                                   data-title="<?= isset($training['title']) ? htmlspecialchars($training['title']) : '' ?>"
+                                                   data-note="<?= isset($training['note']) ? htmlspecialchars($training['note']) : '' ?>">
                                                     <i class="fas fa-edit"></i>
                                                     Edit
                                                 </a>
