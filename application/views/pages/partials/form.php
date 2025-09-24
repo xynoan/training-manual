@@ -11,7 +11,7 @@
                 </button>
                 <button type="button" class="btn btn-danger gap-1 responsiveFormGroup" id="mainMenuBtn">
                     <i class="fas fa-arrow-left"></i>
-                    Main Menu
+                    Dashboard
                 </button>
             </div>
         </div>
