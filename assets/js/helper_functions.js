@@ -12,7 +12,7 @@ function handleFiles(files) {
     const maxFiles = 5;
     const maxSizeMB = 100;
     const allowedTypes = ["pdf", "ppt", "pptx"];
-    const totalFiles = files.length + window.existingFiles.length;
+    const totalFiles = files.length + window.existingFiles.length + window.currentFiles.length;
     
     if (totalFiles > maxFiles) {
         showFileAlert(`You can only upload a maximum of ${maxFiles} files total.`, 'error');
@@ -48,7 +48,7 @@ function handleFiles(files) {
     showUploadProgress();
 
     setTimeout(() => {
-        window.currentFiles = Array.from(files);
+        window.currentFiles = [...(window.currentFiles || []), ...Array.from(files)];
 
         const dt = new DataTransfer();
         window.currentFiles.forEach(file => dt.items.add(file));
