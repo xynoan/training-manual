@@ -6,8 +6,11 @@ function generateAjaxPagination($current_page, $total_pages)
 
     $pagination = '<nav aria-label="Page navigation"><ul class="pagination">';
 
-    if ($current_page > 1) {
+    // Previous button - disabled if on first page or no pages
+    if ($current_page > 1 && $total_pages > 0) {
         $pagination .= '<li class="page-item"><a class="page-link ajax-page" href="#" data-page="' . ($current_page - 1) . '">&laquo; Previous</a></li>';
+    } else {
+        $pagination .= '<li class="page-item disabled"><span class="page-link">&laquo; Previous</span></li>';
     }
 
     $start = max(1, $current_page - 2);
@@ -32,8 +35,11 @@ function generateAjaxPagination($current_page, $total_pages)
         $pagination .= '<li class="page-item"><a class="page-link ajax-page" href="#" data-page="' . $total_pages . '">' . $total_pages . '</a></li>';
     }
 
-    if ($current_page < $total_pages) {
+    // Next button - disabled if on last page or no pages
+    if ($current_page < $total_pages && $total_pages > 0) {
         $pagination .= '<li class="page-item"><a class="page-link ajax-page" href="#" data-page="' . ($current_page + 1) . '">Next &raquo;</a></li>';
+    } else {
+        $pagination .= '<li class="page-item disabled"><span class="page-link">Next &raquo;</span></li>';
     }
 
     $pagination .= '</ul></nav>';

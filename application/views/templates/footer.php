@@ -314,10 +314,14 @@
         });
 
         function refreshDashboard() {
+            refreshDashboardToPage(1);
+        }
+        
+        function refreshDashboardToPage(page) {
             const searchParams = {
                 search: $('#search').val(),
                 datetimes: $('#datetimes').val(),
-                page: 1
+                page: page || 1
             };
 
             $.ajax({
@@ -447,6 +451,17 @@
 
             if (response.pagination) {
                 $('#paginationContainer').html(response.pagination);
+            } else if (response.total_pages === 0) {
+                $('#paginationContainer').html(`
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            <li class="page-item disabled"><span class="page-link">&laquo; Previous</span></li>
+                            <li class="page-item disabled"><span class="page-link">Next &raquo;</span></li>
+                        </ul>
+                    </nav>
+                `);
+            } else {
+                $('#paginationContainer').html('');
             }
         }
 
@@ -723,10 +738,21 @@
             
             confirmBtn.prop('disabled', true).text('Deleting...');
             
+            let currentPage = 1;
+            const activePage = $('.pagination .page-item.active .page-link');
+            if (activePage.length > 0) {
+                currentPage = parseInt(activePage.text()) || 1;
+            }
+            
             $.ajax({
                 url: window.appConfig.baseUrl + 'ajax/delete',
                 type: 'POST',
-                data: { id: trainingId },
+                data: { 
+                    id: trainingId,
+                    current_page: currentPage,
+                    search: $('#search').val(),
+                    datetimes: $('#datetimes').val()
+                },
                 dataType: 'json',
                 success: function(response) {
                     $('#confirmationModal').modal('hide');
@@ -734,7 +760,11 @@
                     if (response.success) {
                         showBeautifulSuccessAlert(response.message || 'Training manual deleted successfully!', 'Deleted Successfully!');
                         
-                        refreshDashboard();
+                        if (response.pagination_info) {
+                            refreshDashboardToPage(response.pagination_info.current_page);
+                        } else {
+                            refreshDashboard();
+                        }
                     } else {
                         alert(response.message || 'Failed to delete training manual');
                     }

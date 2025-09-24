@@ -70,6 +70,10 @@ class Ajax extends CI_Controller
         }
 
         $id = $this->input->post('id');
+        $current_page = (int)$this->input->post('current_page', 1);
+        $search = $this->input->post('search', '');
+        $datetimes = $this->input->post('datetimes', '');
+        
         if (!$id) {
             $this->output
                 ->set_content_type('application/json')
@@ -80,13 +84,52 @@ class Ajax extends CI_Controller
             return;
         }
 
-        $this->Training_model->delete_training($id);
+        // Delete the training manual
+        $result = $this->Training_model->delete_training($id);
+        
+        if (!$result) {
+            $this->output
+                ->set_content_type('application/json')
+                ->set_output(json_encode([
+                    'success' => false,
+                    'message' => 'Failed to delete training manual'
+                ]));
+            return;
+        }
+
+        // Parse date range if provided
+        $date_from = '';
+        $date_to = '';
+        if (!empty($datetimes)) {
+            $dates = explode(' - ', $datetimes);
+            if (count($dates) == 2) {
+                $date_from = trim($dates[0]);
+                $date_to = trim($dates[1]);
+            }
+        }
+
+        // Get updated pagination info
+        $config['per_page'] = 10;
+        $total_rows = $this->Training_model->count_all_trainings($search, $date_from, $date_to);
+        $total_pages = ceil($total_rows / $config['per_page']);
+        
+        // Adjust current page if it's now out of bounds
+        if ($current_page > $total_pages && $total_pages > 0) {
+            $current_page = $total_pages;
+        } else if ($total_pages == 0) {
+            $current_page = 1;
+        }
 
         $this->output
             ->set_content_type('application/json')
             ->set_output(json_encode([
                 'success' => true,
-                'message' => 'Training manual deleted successfully!'
+                'message' => 'Training manual deleted successfully!',
+                'pagination_info' => [
+                    'current_page' => $current_page,
+                    'total_pages' => $total_pages,
+                    'total_rows' => $total_rows
+                ]
             ]));
     }
 
