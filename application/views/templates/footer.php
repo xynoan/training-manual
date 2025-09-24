@@ -897,6 +897,80 @@
         window.renderFileList = renderFileList;
         window.updateRemovedFilesInput = updateRemovedFilesInput;
 
+        $(document).on('click', '.file-preview-link', function(e) {
+            e.preventDefault();
+            
+            const trainingId = $(this).data('training-id');
+            const fileIndex = $(this).data('file-index');
+            const fileName = $(this).data('file-name');
+            const fileExtension = $(this).data('file-extension');
+            
+            if (!trainingId || fileIndex === undefined) {
+                console.error('Missing training ID or file index');
+                return;
+            }
+            
+            $('#filePreviewModalLabel').text(fileName);
+            
+            $('#filePreviewModal').modal('show');
+            
+            $('#filePreviewContent').html(`
+                <div class="d-flex justify-content-center align-items-center h-100">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            `);
+            
+            const baseUrl = window.appConfig ? window.appConfig.baseUrl : '';
+            const fileUrl = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + 'file/preview_file/' + trainingId + '/' + fileIndex;
+            
+            $('#downloadFileBtn').attr('href', fileUrl).attr('download', fileName);
+            
+            if (fileExtension === 'pdf') {
+                $('#filePreviewContent').html(`
+                    <iframe src="${fileUrl}" 
+                            width="100%" 
+                            height="600px" 
+                            style="border: none;"
+                            title="PDF Preview">
+                        <p>Your browser does not support PDFs. 
+                           <a href="${fileUrl}" target="_blank">Download the PDF</a>.</p>
+                    </iframe>
+                `);
+            } else if (fileExtension === 'ppt' || fileExtension === 'pptx') {
+                $('#filePreviewContent').html(`
+                    <div class="d-flex flex-column justify-content-center align-items-center h-100 text-center">
+                        <div class="mb-4">
+                            <i class="fas fa-file-powerpoint" style="font-size: 4rem; color: #d04423;"></i>
+                        </div>
+                        <h5 class="mb-3">PowerPoint Preview</h5>
+                        <p class="mb-4 text-muted">PowerPoint files cannot be previewed directly in the browser.<br>
+                           Click the download button below to open the file.</p>
+                        <a href="${fileUrl}" class="btn btn-primary" download="${fileName}">
+                            <i class="fas fa-download me-2"></i>
+                            Download ${fileName}
+                        </a>
+                    </div>
+                `);
+            } else {
+                $('#filePreviewContent').html(`
+                    <div class="d-flex flex-column justify-content-center align-items-center h-100 text-center">
+                        <div class="mb-4">
+                            <i class="fas fa-file" style="font-size: 4rem; color: #6c757d;"></i>
+                        </div>
+                        <h5 class="mb-3">File Preview</h5>
+                        <p class="mb-4 text-muted">This file type cannot be previewed directly in the browser.<br>
+                           Click the download button below to open the file.</p>
+                        <a href="${fileUrl}" class="btn btn-primary" download="${fileName}">
+                            <i class="fas fa-download me-2"></i>
+                            Download ${fileName}
+                        </a>
+                    </div>
+                `);
+            }
+        });
+
     });
 </script>
 </div>
