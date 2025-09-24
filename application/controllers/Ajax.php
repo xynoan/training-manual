@@ -84,7 +84,6 @@ class Ajax extends CI_Controller
             return;
         }
 
-        // Delete the training manual
         $result = $this->Training_model->delete_training($id);
         
         if (!$result) {
@@ -97,7 +96,6 @@ class Ajax extends CI_Controller
             return;
         }
 
-        // Parse date range if provided
         $date_from = '';
         $date_to = '';
         if (!empty($datetimes)) {
@@ -108,12 +106,10 @@ class Ajax extends CI_Controller
             }
         }
 
-        // Get updated pagination info
         $config['per_page'] = 10;
         $total_rows = $this->Training_model->count_all_trainings($search, $date_from, $date_to);
         $total_pages = ceil($total_rows / $config['per_page']);
         
-        // Adjust current page if it's now out of bounds
         if ($current_page > $total_pages && $total_pages > 0) {
             $current_page = $total_pages;
         } else if ($total_pages == 0) {
