@@ -1056,7 +1056,7 @@
 
         function positionTooltip(e) {
             const $tooltip = $('#hoverPreviewTooltip');
-            const tooltipWidth = 400; // max-width from CSS
+            const tooltipWidth = 400; 
             const tooltipHeight = $tooltip.outerHeight() || 300;
             const windowWidth = $(window).width();
             const windowHeight = $(window).height();
