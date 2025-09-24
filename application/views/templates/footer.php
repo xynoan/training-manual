@@ -950,8 +950,144 @@
         window.renderFileList = renderFileList;
         window.updateRemovedFilesInput = updateRemovedFilesInput;
 
+        let hoverTimeout;
+        let isTooltipVisible = false;
+
+        $(document).on('mouseenter', '.file-preview-link', function(e) {
+            const $link = $(this);
+            const trainingId = $link.data('training-id');
+            const fileIndex = $link.data('file-index');
+            const fileName = $link.data('file-name');
+            const fileExtension = $link.data('file-extension');
+            
+            if (!trainingId || fileIndex === undefined) {
+                return;
+            }
+
+            clearTimeout(hoverTimeout);
+            
+            hoverTimeout = setTimeout(() => {
+                showHoverPreview($link, trainingId, fileIndex, fileName, fileExtension, e);
+            }, 300);
+        });
+
+        $(document).on('mouseleave', '.file-preview-link', function(e) {
+            clearTimeout(hoverTimeout);
+            hideHoverPreview();
+        });
+
+        $(document).on('mousemove', '.file-preview-link', function(e) {
+            if (isTooltipVisible) {
+                positionTooltip(e);
+            }
+        });
+
+        $(document).on('mouseleave', '#hoverPreviewTooltip', function() {
+            hideHoverPreview();
+        });
+
+        function showHoverPreview($link, trainingId, fileIndex, fileName, fileExtension, e) {
+            const $tooltip = $('#hoverPreviewTooltip');
+            
+            $('#hoverPreviewTitle').text(fileName);
+            
+            $('#hoverPreviewContent').html(`
+                <div class="d-flex justify-content-center align-items-center p-4">
+                    <div class="spinner-border spinner-border-sm" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            `);
+            
+            positionTooltip(e);
+            $tooltip.removeClass('d-none');
+            isTooltipVisible = true;
+            
+            const baseUrl = window.appConfig ? window.appConfig.baseUrl : '';
+            const fileUrl = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + 'file/preview_file/' + trainingId + '/' + fileIndex;
+            
+            if (fileExtension === 'pdf') {
+                $('#hoverPreviewContent').html(`
+                    <div class="p-3">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <i class="fas fa-file-pdf text-danger"></i>
+                            <span class="small text-muted">PDF Document</span>
+                        </div>
+                        <iframe src="${fileUrl}" 
+                                width="100%" 
+                                height="200px" 
+                                style="border: none; border-radius: 4px;"
+                                title="PDF Preview">
+                            <p class="small text-muted">PDF preview not available</p>
+                        </iframe>
+                        <div class="mt-2 text-center">
+                            <small class="text-muted">Click to view full document</small>
+                        </div>
+                    </div>
+                `);
+            } else if (fileExtension === 'ppt' || fileExtension === 'pptx') {
+                $('#hoverPreviewContent').html(`
+                    <div class="p-3 text-center">
+                        <div class="mb-3">
+                            <i class="fas fa-file-powerpoint" style="font-size: 3rem; color: #d04423;"></i>
+                        </div>
+                        <h6 class="mb-2">PowerPoint Presentation</h6>
+                        <p class="small text-muted mb-0">Click to download and view</p>
+                    </div>
+                `);
+            } else {
+                $('#hoverPreviewContent').html(`
+                    <div class="p-3 text-center">
+                        <div class="mb-3">
+                            <i class="fas fa-file" style="font-size: 3rem; color: #6c757d;"></i>
+                        </div>
+                        <h6 class="mb-2">File Preview</h6>
+                        <p class="small text-muted mb-0">Click to download</p>
+                    </div>
+                `);
+            }
+        }
+
+        function hideHoverPreview() {
+            clearTimeout(hoverTimeout);
+            $('#hoverPreviewTooltip').addClass('d-none');
+            isTooltipVisible = false;
+        }
+
+        function positionTooltip(e) {
+            const $tooltip = $('#hoverPreviewTooltip');
+            const tooltipWidth = 400; // max-width from CSS
+            const tooltipHeight = $tooltip.outerHeight() || 300;
+            const windowWidth = $(window).width();
+            const windowHeight = $(window).height();
+            const scrollTop = $(window).scrollTop();
+            const scrollLeft = $(window).scrollLeft();
+            
+            let left = e.pageX + 15;
+            let top = e.pageY - 10;
+            
+            if (left + tooltipWidth > windowWidth + scrollLeft) {
+                left = e.pageX - tooltipWidth - 15;
+            }
+            
+            if (top + tooltipHeight > windowHeight + scrollTop) {
+                top = e.pageY - tooltipHeight - 10;
+            }
+            
+            if (top < scrollTop) {
+                top = scrollTop + 10;
+            }
+            
+            $tooltip.css({
+                left: left + 'px',
+                top: top + 'px'
+            });
+        }
+
         $(document).on('click', '.file-preview-link', function(e) {
             e.preventDefault();
+            
+            hideHoverPreview();
             
             const trainingId = $(this).data('training-id');
             const fileIndex = $(this).data('file-index');
