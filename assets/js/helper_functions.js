@@ -6,11 +6,13 @@ function clearFormErrors() {
 
 function handleFiles(files) {
     /* error handlers */
-    if (typeof existingFiles === 'undefined') existingFiles = [];
+    if (typeof window.existingFiles === 'undefined') window.existingFiles = [];
+    if (typeof window.currentFiles === 'undefined') window.currentFiles = [];
+    
     const maxFiles = 5;
     const maxSizeMB = 100;
     const allowedTypes = ["pdf", "ppt", "pptx"];
-    const totalFiles = files.length + existingFiles.length;
+    const totalFiles = files.length + window.existingFiles.length;
     
     if (totalFiles > maxFiles) {
         showFileAlert(`You can only upload a maximum of ${maxFiles} files total.`, 'error');
@@ -46,16 +48,16 @@ function handleFiles(files) {
     showUploadProgress();
 
     setTimeout(() => {
-        currentFiles = Array.from(files);
+        window.currentFiles = Array.from(files);
 
         const dt = new DataTransfer();
-        currentFiles.forEach(file => dt.items.add(file));
+        window.currentFiles.forEach(file => dt.items.add(file));
         document.getElementById('fileInput').files = dt.files;
 
         hideUploadProgress();
 
-        if (typeof renderFileList === 'function') {
-            renderFileList();
+        if (typeof window.renderFileList === 'function') {
+            window.renderFileList();
         }
 
         $('#dropArea').removeClass('error dragover uploading');
@@ -68,38 +70,38 @@ function handleFiles(files) {
 }
 
 function restoreUploadedFiles() {
-    if (typeof existingFiles === 'undefined') existingFiles = [];
-    if (typeof currentFiles === 'undefined') currentFiles = [];
-    if (typeof removedExistingFiles === 'undefined') removedExistingFiles = [];
+    if (typeof window.existingFiles === 'undefined') window.existingFiles = [];
+    if (typeof window.currentFiles === 'undefined') window.currentFiles = [];
+    if (typeof window.removedExistingFiles === 'undefined') window.removedExistingFiles = [];
 
-    existingFiles = [];
-    currentFiles = [];
-    removedExistingFiles = [];
+    window.existingFiles = [];
+    window.currentFiles = [];
+    window.removedExistingFiles = [];
 
     if (typeof window.removedFilesData !== 'undefined' && window.removedFilesData && window.removedFilesData.length > 0) {
-        removedExistingFiles = window.removedFilesData.map(fileName => fileName.trim());
+        window.removedExistingFiles = window.removedFilesData.map(fileName => fileName.trim());
     }
 
     if (typeof window.existingFilesData !== 'undefined' && window.existingFilesData && window.existingFilesData.length > 0) {
-        existingFiles = window.existingFilesData.filter(fileName => {
+        window.existingFiles = window.existingFilesData.filter(fileName => {
             const trimmedName = fileName && fileName.trim();
-            return trimmedName && !removedExistingFiles.includes(trimmedName);
+            return trimmedName && !window.removedExistingFiles.includes(trimmedName);
         });
     }
 
     if (typeof window.uploadedFilesData !== 'undefined' && window.uploadedFilesData && window.uploadedFilesData.length > 0) {
-        currentFiles = window.uploadedFilesData || [];
+        window.currentFiles = window.uploadedFilesData || [];
     }
 
-    if (typeof updateRemovedFilesInput === 'function') {
-        updateRemovedFilesInput();
+    if (typeof window.updateRemovedFilesInput === 'function') {
+        window.updateRemovedFilesInput();
     }
 
-    if (typeof renderFileList === 'function') {
-        renderFileList();
+    if (typeof window.renderFileList === 'function') {
+        window.renderFileList();
     }
 
-    const hasFiles = existingFiles.length > 0 || currentFiles.length > 0;
+    const hasFiles = window.existingFiles.length > 0 || window.currentFiles.length > 0;
     if (hasFiles) {
         $('#dropArea').removeClass('error').addClass('has-files');
         $('#drop-area-placeholder').addClass('d-none');
@@ -110,9 +112,9 @@ function restoreUploadedFiles() {
 }
 
 function clearUploadedFiles() {
-    if (typeof existingFiles !== 'undefined') existingFiles = [];
-    if (typeof currentFiles !== 'undefined') currentFiles = [];
-    if (typeof removedExistingFiles !== 'undefined') removedExistingFiles = [];
+    if (typeof window.existingFiles !== 'undefined') window.existingFiles = [];
+    if (typeof window.currentFiles !== 'undefined') window.currentFiles = [];
+    if (typeof window.removedExistingFiles !== 'undefined') window.removedExistingFiles = [];
     
     $('#fileInput').val('');
     

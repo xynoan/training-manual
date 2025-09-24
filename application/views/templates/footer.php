@@ -162,6 +162,11 @@
         }
         
         function displayExistingFiles(fileNames, trainingId) {
+            if (typeof window.existingFiles === 'undefined') window.existingFiles = [];
+            if (typeof window.currentFiles === 'undefined') window.currentFiles = [];
+            
+            window.existingFiles = fileNames || [];
+            
             const fileList = $('#fileList');
             fileList.empty();
             
@@ -219,13 +224,26 @@
             e.stopPropagation();
             const fileItem = $(this).closest('.file-card');
             const fileName = fileItem.data('file-name');
+            const fileIndex = fileItem.data('file-index');
             
-            const removedFiles = JSON.parse($('#removedFiles').val() || '[]');
-            removedFiles.push(fileName);
-            $('#removedFiles').val(JSON.stringify(removedFiles));
+            if (typeof window.removedExistingFiles === 'undefined') window.removedExistingFiles = [];
+            if (typeof window.existingFiles === 'undefined') window.existingFiles = [];
             
-            fileItem.remove();
-            updateDropAreaVisibility();
+            window.removedExistingFiles.push(fileName);
+            
+            if (fileIndex !== undefined && window.existingFiles[fileIndex]) {
+                window.existingFiles.splice(fileIndex, 1);
+            }
+            
+            if (typeof window.updateRemovedFilesInput === 'function') {
+                window.updateRemovedFilesInput();
+            }
+            
+            fileItem.css('animation', 'slideOutRight 0.3s ease-in forwards');
+            setTimeout(() => {
+                fileItem.remove();
+                updateDropAreaVisibility();
+            }, 300);
         });
 
         $('#submitBtn').on('click', function(e) {
@@ -579,14 +597,19 @@
             const fileListContainer = $('#fileList');
             fileListContainer.empty();
 
-            const totalFiles = (existingFiles ? existingFiles.length : 0) + (currentFiles ? currentFiles.length : 0);
+            const existingFiles = window.existingFiles || [];
+            const currentFiles = window.currentFiles || [];
+            
+            const totalFiles = existingFiles.length + currentFiles.length;
             if (totalFiles > 0) {
                 $('#dropArea').addClass('has-files');
+                $('#drop-area-placeholder').addClass('d-none');
             } else {
                 $('#dropArea').removeClass('has-files');
+                $('#drop-area-placeholder').removeClass('d-none');
             }
 
-            if (typeof existingFiles !== 'undefined' && existingFiles.length > 0) {
+            if (existingFiles.length > 0) {
                 existingFiles.forEach((fileName, index) => {
                     const extension = fileName.split('.').pop();
                     const fileCard = `
@@ -607,10 +630,10 @@
                 });
             }
 
-            if (typeof currentFiles !== 'undefined' && currentFiles.length > 0) {
+            if (currentFiles.length > 0) {
                 currentFiles.forEach((file, index) => {
                     const extension = file.name.split('.').pop();
-                    const delay = (existingFiles ? existingFiles.length : 0) * 0.1 + index * 0.1;
+                    const delay = existingFiles.length * 0.1 + index * 0.1;
                     const fileCard = `
                         <div class="file-card new-file file-upload-success" data-file-name="${file.name}" style="opacity: 0; animation: slideInUp 0.4s ease-out ${delay}s forwards;">
                             <div class="file-icon">
@@ -641,28 +664,28 @@
 
                 setTimeout(() => {
                     if (type === 'existing') {
-                        if (typeof removedExistingFiles === 'undefined') removedExistingFiles = [];
-                        removedExistingFiles.push(existingFiles[index]);
-                        existingFiles.splice(index, 1);
+                        if (typeof window.removedExistingFiles === 'undefined') window.removedExistingFiles = [];
+                        window.removedExistingFiles.push(window.existingFiles[index]);
+                        window.existingFiles.splice(index, 1);
 
-                        if (typeof updateRemovedFilesInput === 'function') {
-                            updateRemovedFilesInput();
+                        if (typeof window.updateRemovedFilesInput === 'function') {
+                            window.updateRemovedFilesInput();
                         }
 
                         showFileAlert(`Removed "${fileName}" from existing files`, 'info');
                     } else if (type === 'current') {
-                        currentFiles.splice(index, 1);
+                        window.currentFiles.splice(index, 1);
 
                         const dt = new DataTransfer();
-                        currentFiles.forEach(file => dt.items.add(file));
+                        window.currentFiles.forEach(file => dt.items.add(file));
                         document.getElementById('fileInput').files = dt.files;
 
                         showFileAlert(`Removed "${fileName}" from upload queue`, 'info');
                     }
 
-                    renderFileList();
+                    window.renderFileList();
 
-                    const totalFiles = (existingFiles ? existingFiles.length : 0) + (currentFiles ? currentFiles.length : 0);
+                    const totalFiles = (window.existingFiles ? window.existingFiles.length : 0) + (window.currentFiles ? window.currentFiles.length : 0);
                     if (totalFiles === 0) {
                         $('#drop-area-placeholder').removeClass('d-none');
                     }
@@ -671,8 +694,8 @@
         }
 
         function updateRemovedFilesInput() {
-            if (typeof removedExistingFiles !== 'undefined') {
-                $('#removedFiles').val(JSON.stringify(removedExistingFiles));
+            if (typeof window.removedExistingFiles !== 'undefined') {
+                $('#removedFiles').val(JSON.stringify(window.removedExistingFiles));
             }
         }
 
